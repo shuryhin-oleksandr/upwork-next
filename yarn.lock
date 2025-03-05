@@ -78,6 +78,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ant-design/nextjs-registry@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@ant-design/nextjs-registry@npm:1.0.2"
+  peerDependencies:
+    "@ant-design/cssinjs": ^1.18.2
+    antd: ^5.0.0
+    next: ^14.0.0 || ^15.0.0
+    react: ">=16.0.0"
+    react-dom: ">=16.0.0"
+  checksum: fd20a63dc1652e6c749580a8b08fa31da50c3c1d2474482a05bb58a3adc0ca5a7ee5040568533da874e18262e7b95fb80638b0c4aa487da4e4c97f9fefc23209
+  languageName: node
+  linkType: hard
+
 "@ant-design/react-slick@npm:~1.1.2":
   version: 1.1.2
   resolution: "@ant-design/react-slick@npm:1.1.2"
@@ -4222,6 +4235,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "upwork-next@workspace:."
   dependencies:
+    "@ant-design/nextjs-registry": ^1.0.2
     "@eslint/eslintrc": ^3
     "@types/node": ^20
     "@types/react": ^19
