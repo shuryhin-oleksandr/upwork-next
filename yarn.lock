@@ -705,6 +705,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-devtools@npm:5.65.0":
+  version: 5.65.0
+  resolution: "@tanstack/query-devtools@npm:5.65.0"
+  checksum: 6c33dfcca8e1cee18f313598982b23fa95c18f60f2cd1b7d852f36c2f4399cfa3e743d1b26580406029a169f263f1e3b22dbbf58e8bd2e0c70cfe91af26bd5fd
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.67.1":
+  version: 5.67.1
+  resolution: "@tanstack/react-query-devtools@npm:5.67.1"
+  dependencies:
+    "@tanstack/query-devtools": 5.65.0
+  peerDependencies:
+    "@tanstack/react-query": ^5.67.1
+    react: ^18 || ^19
+  checksum: 79ced509ec64165b3ebe88ca5d68dbae30cc88735496a685ab54cb2398ce4c10e0857e672b60ab576a33a4774b90c7f0f3deca76ffb22b9735dc9f11f077151c
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:^5.67.1":
   version: 5.67.1
   resolution: "@tanstack/react-query@npm:5.67.1"
@@ -4268,6 +4287,7 @@ __metadata:
     "@eslint/eslintrc": ^3
     "@tanstack/eslint-plugin-query": ^5.66.1
     "@tanstack/react-query": ^5.67.1
+    "@tanstack/react-query-devtools": ^5.67.1
     "@types/node": ^20
     "@types/react": ^19
     "@types/react-dom": ^19
