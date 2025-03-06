@@ -687,6 +687,35 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/eslint-plugin-query@npm:^5.66.1":
+  version: 5.66.1
+  resolution: "@tanstack/eslint-plugin-query@npm:5.66.1"
+  dependencies:
+    "@typescript-eslint/utils": ^8.18.1
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+  checksum: 070d7c910ce808d784fba6619f66095c9c5e576eccf191b78bcac06068175450d052386e2dc7a2cdba24957d748b97ddd6be27e99cd774c6c2d094498de6a11d
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-core@npm:5.67.1":
+  version: 5.67.1
+  resolution: "@tanstack/query-core@npm:5.67.1"
+  checksum: 0d6f86bf18ca243fb1cb54a633ee7f9897faa83187c3f28bb85aaff45b3ef3b5d6050b4a1e245aa2e9282b6d2805a6ace7f4f65f811d11e37087add51bf194d9
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.67.1":
+  version: 5.67.1
+  resolution: "@tanstack/react-query@npm:5.67.1"
+  dependencies:
+    "@tanstack/query-core": 5.67.1
+  peerDependencies:
+    react: ^18 || ^19
+  checksum: bc42ba824f73cb086b3b15ef61cc6b83451d5a6d645b70c619cda90f7c644989e3ac8fcc990249a64b43dc27bb6315dafeabbc55d6f01d2fd9719d856a8ff54e
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:^1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -822,7 +851,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.26.0":
+"@typescript-eslint/utils@npm:8.26.0, @typescript-eslint/utils@npm:^8.18.1":
   version: 8.26.0
   resolution: "@typescript-eslint/utils@npm:8.26.0"
   dependencies:
@@ -4237,6 +4266,8 @@ __metadata:
   dependencies:
     "@ant-design/nextjs-registry": ^1.0.2
     "@eslint/eslintrc": ^3
+    "@tanstack/eslint-plugin-query": ^5.66.1
+    "@tanstack/react-query": ^5.67.1
     "@types/node": ^20
     "@types/react": ^19
     "@types/react-dom": ^19
