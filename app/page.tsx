@@ -3,8 +3,21 @@
 import { getRooms } from "@/app/api";
 import { Room } from "@/app/interfaces";
 import { useQuery } from "@tanstack/react-query";
-import { Layout, theme } from "antd";
+import { Layout, Table, TableProps, theme } from "antd";
 import { Content } from "antd/es/layout/layout";
+
+const columns: TableProps<Room>["columns"] = [
+  {
+    title: "Name",
+    dataIndex: "roomName",
+    key: "roomName",
+  },
+  {
+    title: "Topic",
+    dataIndex: "topic",
+    key: "topic",
+  },
+];
 
 export default function Home() {
   const { isPending, isError, data, error } = useQuery<Room[]>({
@@ -15,6 +28,8 @@ export default function Home() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const RoomsTable = <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} />;
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
@@ -32,11 +47,7 @@ export default function Home() {
           ) : isError ? (
             <span>Error: {error.message}</span>
           ) : (
-            data.map((room) => (
-              <div style={{ marginBottom: "1rem" }} key={room.id}>
-                {JSON.stringify(room)}
-              </div>
-            ))
+            RoomsTable
           )}
         </div>
       </Content>
