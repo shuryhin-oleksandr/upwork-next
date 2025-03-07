@@ -29,7 +29,7 @@ export default function Home() {
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Content style={{ padding: "48px", maxWidth: "1200px", margin: "auto", width: "100%" }}>
+      <Content style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%" }}>
         <Card>
           {isPending ? (
             <span>Loading...</span>
