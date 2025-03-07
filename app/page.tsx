@@ -29,11 +29,11 @@ export default function Home() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const RoomsTable = <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} />;
+  const RoomsTable = <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} size="small" />;
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Content style={{ padding: "48px", maxWidth: "1200px", margin: "auto", width: "100%" }}>
+      <Content style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%" }}>
         <div
           style={{
             background: colorBgContainer,
