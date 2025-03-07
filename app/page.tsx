@@ -1,19 +1,10 @@
 "use client";
 
+import { getRooms } from "@/app/api";
+import { Room } from "@/app/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { Layout, theme } from "antd";
 import { Content } from "antd/es/layout/layout";
-import axios from "axios";
-
-const getRooms = async () => {
-  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/upwork/rooms`;
-  const response = await axios.get(url);
-  return response.data;
-};
-
-interface Room {
-  id: string;
-}
 
 export default function Home() {
   const { isPending, isError, data, error } = useQuery<Room[]>({
