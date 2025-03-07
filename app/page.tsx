@@ -3,7 +3,7 @@
 import { getRooms } from "@/app/api";
 import { Room } from "@/app/interfaces";
 import { useQuery } from "@tanstack/react-query";
-import { Layout, Table, TableProps, theme } from "antd";
+import { Card, Layout, Table, TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 
 const columns: TableProps<Room>["columns"] = [
@@ -25,23 +25,12 @@ export default function Home() {
     queryFn: getRooms,
   });
 
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
   const RoomsTable = <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} size="small" />;
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <Content style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%" }}>
-        <div
-          style={{
-            background: colorBgContainer,
-            minHeight: 280,
-            padding: 24,
-            borderRadius: borderRadiusLG,
-          }}
-        >
+      <Content style={{ padding: "48px", maxWidth: "1200px", margin: "auto", width: "100%" }}>
+        <Card>
           {isPending ? (
             <span>Loading...</span>
           ) : isError ? (
@@ -49,7 +38,7 @@ export default function Home() {
           ) : (
             RoomsTable
           )}
-        </div>
+        </Card>
       </Content>
     </Layout>
   );
