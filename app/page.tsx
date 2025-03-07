@@ -25,7 +25,15 @@ export default function Home() {
     queryFn: getRooms,
   });
 
-  const RoomsTable = <Table columns={columns} dataSource={data} pagination={{ pageSize: 20 }} size="small" />;
+  const RoomsTable = (
+    <Table
+      columns={columns}
+      dataSource={data}
+      rowKey="id"
+      pagination={{ pageSize: 20 }}
+      size="small"
+    />
+  );
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
