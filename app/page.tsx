@@ -1,12 +1,11 @@
 "use client";
 
 import { getRooms } from "@/app/api";
-import { Room } from "@/app/interfaces";
 import { useQuery } from "@tanstack/react-query";
 import { Card, Layout, Table, TableProps } from "antd";
 import { Content } from "antd/es/layout/layout";
 
-const columns: TableProps<Room>["columns"] = [
+const columns: TableProps["columns"] = [
   {
     title: "Name",
     dataIndex: "roomName",
@@ -25,7 +24,7 @@ const columns: TableProps<Room>["columns"] = [
 ];
 
 export default function Home() {
-  const { isPending, isError, data, error } = useQuery<Room[]>({
+  const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
   });
