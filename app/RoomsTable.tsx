@@ -121,13 +121,6 @@ const RoomsTable: React.FC = () => {
     },
   ]);
 
-  const [count, setCount] = useState(2);
-
-  const handleDelete = (key: React.Key) => {
-    const newData = dataSource.filter((item) => item.key !== key);
-    setDataSource(newData);
-  };
-
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
       title: "name",
@@ -142,16 +135,6 @@ const RoomsTable: React.FC = () => {
     {
       title: "address",
       dataIndex: "address",
-    },
-    {
-      title: "operation",
-      dataIndex: "operation",
-      render: (_, record) =>
-        dataSource.length >= 1 ? (
-          <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(record.key)}>
-            <a>Delete</a>
-          </Popconfirm>
-        ) : null,
     },
   ];
 
