@@ -105,7 +105,7 @@ interface DataType {
 
 type ColumnTypes = Exclude<TableProps<DataType>["columns"], undefined>;
 
-const App: React.FC = () => {
+const RoomsTable: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
       key: "0",
@@ -155,17 +155,6 @@ const App: React.FC = () => {
     },
   ];
 
-  const handleAdd = () => {
-    const newData: DataType = {
-      key: count,
-      name: `Edward King ${count}`,
-      age: "32",
-      address: `London, Park Lane no. ${count}`,
-    };
-    setDataSource([...dataSource, newData]);
-    setCount(count + 1);
-  };
-
   const handleSave = (row: DataType) => {
     const newData = [...dataSource];
     const index = newData.findIndex((item) => row.key === item.key);
@@ -202,9 +191,6 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-        Add a row
-      </Button>
       <Table<DataType>
         components={components}
         rowClassName={() => "editable-row"}
@@ -216,4 +202,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default RoomsTable;
