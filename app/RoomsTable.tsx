@@ -98,9 +98,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
 interface DataType {
   key: React.Key;
-  name: string;
-  age: string;
-  address: string;
+  roomName: string;
+  topic: string;
+  meta: { action: string };
 }
 
 type ColumnTypes = Exclude<TableProps<DataType>["columns"], undefined>;
@@ -109,32 +109,32 @@ const RoomsTable: React.FC = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([
     {
       key: "0",
-      name: "Edward King 0",
-      age: "32",
-      address: "London, Park Lane no. 0",
+      roomName: "Edward King 0",
+      topic: "32",
+      meta: { action: "London, Park Lane no. 0", }
     },
     {
       key: "1",
-      name: "Edward King 1",
-      age: "32",
-      address: "London, Park Lane no. 1",
+      roomName: "Edward King 1",
+      topic: "32",
+      meta: { action: "London, Park Lane no. 1" },
     },
   ]);
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
-      title: "name",
-      dataIndex: "name",
+      title: "Name",
+      dataIndex: "roomName",
       width: "30%",
       editable: true,
     },
     {
-      title: "age",
-      dataIndex: "age",
+      title: "Topic",
+      dataIndex: "topic",
     },
     {
-      title: "address",
-      dataIndex: "address",
+      title: "Action",
+      dataIndex: ["meta", "action"],
     },
   ];
 
