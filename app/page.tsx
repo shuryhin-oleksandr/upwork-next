@@ -34,7 +34,7 @@ export default function Home() {
       columns={columns}
       dataSource={data}
       rowKey="id"
-      pagination={{ pageSize: 20 }}
+      pagination={{ pageSize: 15 }}
       size="small"
     />
   );
