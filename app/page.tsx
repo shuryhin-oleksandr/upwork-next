@@ -17,6 +17,11 @@ const columns: TableProps<Room>["columns"] = [
     dataIndex: "topic",
     key: "topic",
   },
+  {
+    title: "Action",
+    dataIndex: ["meta", "action"],
+    key: "action",
+  },
 ];
 
 export default function Home() {
