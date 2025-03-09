@@ -1,6 +1,7 @@
 import type { GetRef, InputRef, TableProps } from "antd";
 import { Form, Input, Table } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
+const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
@@ -48,6 +49,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<InputRef>(null);
   const form = useContext(EditableContext)!;
+  const formFieldName = Array.isArray(dataIndex) ? dataIndex.join(".") : dataIndex;
 
   useEffect(() => {
     if (editing) {
@@ -55,17 +57,47 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     }
   }, [editing]);
 
+  const getNestedValue = (record: any, dataIndex: string | string[]) => {
+    if (Array.isArray(dataIndex)) {
+      return dataIndex.reduce((obj, key) => obj?.[key], record);
+    }
+    return record[dataIndex];
+  };
+
+  function convertDottedKeysToNested(obj: Record<string, any>): Record<string, any> {
+    const result: Record<string, any> = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const keys = key.split(".");
+        keys.reduce((acc, curr, idx) => {
+          if (idx === keys.length - 1) {
+            acc[curr] = obj[key];
+          } else {
+            if (!acc[curr]) {
+              acc[curr] = {};
+            }
+            return acc[curr];
+          }
+          return acc;
+        }, result);
+      }
+    }
+    return result;
+  }
+
   const toggleEdit = () => {
     setEditing(!editing);
-    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+    const initialValue = getNestedValue(record, dataIndex);
+    form.setFieldsValue({ [formFieldName]: initialValue });
   };
 
   const save = async () => {
     try {
       const values = await form.validateFields();
+      const nestedValues = convertDottedKeysToNested(values);
 
       toggleEdit();
-      handleSave({ ...record, ...values });
+      handleSave({ ...record, ...nestedValues });
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -76,16 +108,16 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item
-        style={{ margin: 0 }}
-        name={dataIndex}
+        style={{ margin: 0}}
+        name={formFieldName}
         rules={[{ required: true, message: `${title} is required.` }]}
       >
-        <Input ref={inputRef} onPressEnter={save} onBlur={save} />
+        <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
-        style={{ paddingInlineEnd: 24 }}
+        // style={{ paddingInlineEnd: 24 }}
         onClick={toggleEdit}
       >
         {children}
@@ -111,7 +143,7 @@ const RoomsTable: React.FC = () => {
       key: "0",
       roomName: "Edward King 0",
       topic: "32",
-      meta: { action: "London, Park Lane no. 0", }
+      meta: { action: "London, Park Lane no. 0" },
     },
     {
       key: "1",
@@ -135,6 +167,8 @@ const RoomsTable: React.FC = () => {
     {
       title: "Action",
       dataIndex: ["meta", "action"],
+      width: "50%",
+      editable: true,
     },
   ];
 
