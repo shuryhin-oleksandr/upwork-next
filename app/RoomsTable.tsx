@@ -159,17 +159,18 @@ const RoomsTable: React.FC = () => {
     {
       title: "Name",
       dataIndex: "roomName",
-      width: "30%",
+      width: "25%",
       editable: true,
     },
     {
       title: "Topic",
       dataIndex: "topic",
+      width: "50%",
     },
     {
       title: "Action",
       dataIndex: ["meta", "action"],
-      width: "50%",
+      width: "25%",
       editable: true,
     },
   ];
