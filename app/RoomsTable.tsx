@@ -1,7 +1,8 @@
-import { getRooms } from "@/app/api";
-import { useQuery } from "@tanstack/react-query";
+import { getRooms, updateRoomMeta } from "@/app/api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
 import { Form, Input, Table } from "antd";
+import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
 const { TextArea } = Input;
 
@@ -97,9 +98,8 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     try {
       const values = await form.validateFields();
       const nestedValues = convertDottedKeysToNested(values);
-
       toggleEdit();
-      handleSave({ ...record, ...nestedValues });
+      handleSave(_.merge({}, record, nestedValues));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -110,7 +110,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item
-        style={{ margin: 0}}
+        style={{ margin: 0 }}
         name={formFieldName}
         // rules={[{ required: true, message: `${title} is required.` }]}
       >
@@ -134,26 +134,31 @@ interface DataType {
   id: React.Key;
   roomName: string;
   topic: string;
-  meta: { action: string };
+  meta: { _id: string; action: string };
 }
 
 type ColumnTypes = Exclude<TableProps<DataType>["columns"], undefined>;
 
 const RoomsTable: React.FC = () => {
+  const queryClient = useQueryClient();
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
   });
-  
-  const [dataSource, setDataSource] = useState<DataType[]>(data);  
+  const mutation = useMutation({
+    mutationFn: updateRoomMeta,
+    onSuccess: () => queryClient.invalidateQueries("rooms"),
+  });
+
+  const [dataSource, setDataSource] = useState<DataType[]>(data);
   useEffect(() => {
     if (data) {
       setDataSource(data);
     }
   }, [data]);
 
-  if (isPending) return <span>Loading...</span>
-  if (isError) return <span>Error: {error.message}</span>
+  if (isPending) return <span>Loading...</span>;
+  if (isError) return <span>Error: {error.message}</span>;
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
@@ -176,14 +181,7 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: DataType) => {
-    const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.id === item.id);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    setDataSource(newData);
+    mutation.mutate({ id: row.meta._id, data: row.meta });
   };
 
   const components = {
