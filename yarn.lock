@@ -756,6 +756,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash@npm:^4.17.16":
+  version: 4.17.16
+  resolution: "@types/lodash@npm:4.17.16"
+  checksum: 915618c5735b10007e0ed7d06fdce6b344f88fc721d492b189a69064bfd046d2382e1ba61d683eeb61cad60ca0286cd110e6fe0fa4ab2e99066a40478376831d
+  languageName: node
+  linkType: hard
+
 "@types/node@npm:^20":
   version: 20.17.23
   resolution: "@types/node@npm:20.17.23"
@@ -2697,6 +2704,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: eb835a2e51d381e561e508ce932ea50a8e5a68f4ebdd771ea240d3048244a8d13658acbd502cd4829768c56f2e16bdd4340b9ea141297d472517b83868e677f7
+  languageName: node
+  linkType: hard
+
 "loose-envify@npm:^1.4.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
@@ -4367,6 +4381,7 @@ __metadata:
     "@tanstack/eslint-plugin-query": ^5.66.1
     "@tanstack/react-query": ^5.67.1
     "@tanstack/react-query-devtools": ^5.67.1
+    "@types/lodash": ^4.17.16
     "@types/node": ^20
     "@types/react": ^19
     "@types/react-dom": ^19
@@ -4374,6 +4389,7 @@ __metadata:
     axios: ^1.8.1
     eslint: ^9
     eslint-config-next: 15.2.1
+    lodash: ^4.17.21
     next: 15.2.1
     react: ^19.0.0
     react-dom: ^19.0.0
