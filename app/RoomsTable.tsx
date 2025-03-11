@@ -1,3 +1,5 @@
+import { getRooms } from "@/app/api";
+import { useQuery } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
 import { Form, Input, Table } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -110,7 +112,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       <Form.Item
         style={{ margin: 0}}
         name={formFieldName}
-        rules={[{ required: true, message: `${title} is required.` }]}
+        // rules={[{ required: true, message: `${title} is required.` }]}
       >
         <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
       </Form.Item>
@@ -129,7 +131,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 };
 
 interface DataType {
-  key: React.Key;
+  id: React.Key;
   roomName: string;
   topic: string;
   meta: { action: string };
@@ -138,20 +140,20 @@ interface DataType {
 type ColumnTypes = Exclude<TableProps<DataType>["columns"], undefined>;
 
 const RoomsTable: React.FC = () => {
-  const [dataSource, setDataSource] = useState<DataType[]>([
-    {
-      key: "0",
-      roomName: "Edward King 0",
-      topic: "32",
-      meta: { action: "London, Park Lane no. 0" },
-    },
-    {
-      key: "1",
-      roomName: "Edward King 1",
-      topic: "32",
-      meta: { action: "London, Park Lane no. 1" },
-    },
-  ]);
+  const { isPending, isError, data, error } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: getRooms,
+  });
+  
+  const [dataSource, setDataSource] = useState<DataType[]>(data);  
+  useEffect(() => {
+    if (data) {
+      setDataSource(data);
+    }
+  }, [data]);
+
+  if (isPending) return <span>Loading...</span>
+  if (isError) return <span>Error: {error.message}</span>
 
   const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
     {
@@ -174,7 +176,7 @@ const RoomsTable: React.FC = () => {
 
   const handleSave = (row: DataType) => {
     const newData = [...dataSource];
-    const index = newData.findIndex((item) => row.key === item.key);
+    const index = newData.findIndex((item) => row.id === item.id);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -214,6 +216,7 @@ const RoomsTable: React.FC = () => {
         bordered
         dataSource={dataSource}
         columns={columns as ColumnTypes}
+        rowKey={(record) => record.id}
       />
     </div>
   );
