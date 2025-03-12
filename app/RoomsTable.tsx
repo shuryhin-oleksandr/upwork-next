@@ -112,7 +112,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       <Form.Item
         style={{ margin: 0 }}
         name={formFieldName}
-        // rules={[{ required: true, message: `${title} is required.` }]}
       >
         <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
       </Form.Item>
@@ -130,14 +129,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-interface DataType {
+interface Room {
   id: React.Key;
   roomName: string;
   topic: string;
   meta: { _id: string; action: string };
 }
 
-type ColumnTypes = Exclude<TableProps<DataType>["columns"], undefined>;
+type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
 const RoomsTable: React.FC = () => {
   const queryClient = useQueryClient();
@@ -180,7 +179,7 @@ const RoomsTable: React.FC = () => {
     },
   ];
 
-  const handleSave = (row: DataType) => {
+  const handleSave = (row: Room) => {
     mutation.mutate({ id: row.meta._id, data: row.meta });
   };
 
@@ -197,7 +196,7 @@ const RoomsTable: React.FC = () => {
     }
     return {
       ...col,
-      onCell: (record: DataType) => ({
+      onCell: (record: Room) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -209,7 +208,7 @@ const RoomsTable: React.FC = () => {
 
   return (
     <div>
-      <Table<DataType>
+      <Table<Room>
         components={components}
         rowClassName={() => "editable-row"}
         bordered
