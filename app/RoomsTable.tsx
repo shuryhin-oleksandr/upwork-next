@@ -1,7 +1,7 @@
 import { getRooms, updateRoomMeta } from "@/app/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
-import { Form, Input, Table } from "antd";
+import { Form, Input, message, Table } from "antd";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
 const { TextArea } = Input;
@@ -109,10 +109,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   if (editable) {
     childNode = editing ? (
-      <Form.Item
-        style={{ margin: 0 }}
-        name={formFieldName}
-      >
+      <Form.Item style={{ margin: 0 }} name={formFieldName}>
         <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
       </Form.Item>
     ) : (
@@ -140,13 +137,21 @@ type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
 const RoomsTable: React.FC = () => {
   const queryClient = useQueryClient();
+  const [messageApi, contextHolder] = message.useMessage();
+
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
   });
   const mutation = useMutation({
     mutationFn: updateRoomMeta,
-    onSuccess: () => queryClient.invalidateQueries("rooms"),
+    onSuccess: () => {
+      messageApi.success("Data saved successfully!");
+      queryClient.invalidateQueries("rooms");
+    },
+    onError: (error) => {
+      messageApi.error(`Data save failed: ${error} !`);
+    },
   });
 
   if (isPending) return <span>Loading...</span>;
@@ -201,6 +206,7 @@ const RoomsTable: React.FC = () => {
 
   return (
     <div>
+      {contextHolder}
       <Table<Room>
         components={components}
         rowClassName={() => "editable-row"}
