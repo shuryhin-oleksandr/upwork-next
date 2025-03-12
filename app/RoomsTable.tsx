@@ -149,13 +149,6 @@ const RoomsTable: React.FC = () => {
     onSuccess: () => queryClient.invalidateQueries("rooms"),
   });
 
-  const [dataSource, setDataSource] = useState<DataType[]>(data);
-  useEffect(() => {
-    if (data) {
-      setDataSource(data);
-    }
-  }, [data]);
-
   if (isPending) return <span>Loading...</span>;
   if (isError) return <span>Error: {error.message}</span>;
 
@@ -212,7 +205,7 @@ const RoomsTable: React.FC = () => {
         components={components}
         rowClassName={() => "editable-row"}
         bordered
-        dataSource={dataSource}
+        dataSource={data}
         columns={columns as ColumnTypes}
         rowKey={(record) => record.id}
       />
