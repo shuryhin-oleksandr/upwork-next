@@ -10,6 +10,7 @@ export interface UpdateRoomMetaDto {
   action: string;
 }
 export interface RoomMeta {
+  _id: string;
   action: string;
 }
 

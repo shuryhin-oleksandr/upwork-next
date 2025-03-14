@@ -1,4 +1,4 @@
-import { getRooms, updateRoomMeta } from "@/app/api";
+import { getRooms, RoomMeta, updateRoomMeta } from "@/app/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
 import { Form, Input, message, Table } from "antd";
@@ -70,7 +70,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     try {
       const values = await form.validateFields();
       toggleEdit();
-      const newRecord = { ...record };
+      const newRecord = _.cloneDeep(record);
       _.set(newRecord, dataIndex, values[formKey]);
       handleSave(newRecord);
     } catch (errInfo) {
@@ -103,7 +103,7 @@ interface Room {
   id: React.Key;
   roomName: string;
   topic: string;
-  meta: { _id: string; action: string };
+  meta: RoomMeta;
 }
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
@@ -116,14 +116,28 @@ const RoomsTable: React.FC = () => {
     queryKey: ["rooms"],
     queryFn: getRooms,
   });
-  const mutation = useMutation({
+  const roomMetaUpdateMutation = useMutation({
     mutationFn: updateRoomMeta,
+    onMutate: ( data ) => {
+      queryClient.cancelQueries({ queryKey: ["rooms"] });
+      const previousRooms = queryClient.getQueryData(["rooms"]);
+
+      queryClient.setQueryData(["rooms"], (oldRooms: Room[]) =>
+        oldRooms.map((room: Room) =>
+          room.meta?._id === data._id ? _.merge({}, room, { meta: data }) : room
+        )
+      );
+      return { previousRooms };
+    },
     onSuccess: () => {
       messageApi.success("Data saved successfully!");
-      queryClient.invalidateQueries("rooms");
     },
-    onError: (error) => {
+    onError: (error, _, context) => {
       messageApi.error(`Data save failed: ${error} !`);
+      queryClient.setQueryData(["rooms"], context?.previousRooms);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
   });
 
@@ -151,7 +165,7 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    mutation.mutate({ id: row.meta._id, data: row.meta });
+    roomMetaUpdateMutation.mutate( row.meta );
   };
 
   const components = {
