@@ -52,7 +52,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<InputRef>(null);
   const form = useContext(EditableContext)!;
-  const formFieldName = Array.isArray(dataIndex) ? dataIndex.join(".") : dataIndex;
+  const formKey = Array.isArray(dataIndex) ? dataIndex.join(".") : dataIndex;
 
   useEffect(() => {
     if (editing) {
@@ -60,46 +60,19 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     }
   }, [editing]);
 
-  const getNestedValue = (record: any, dataIndex: string | string[]) => {
-    if (Array.isArray(dataIndex)) {
-      return dataIndex.reduce((obj, key) => obj?.[key], record);
-    }
-    return record[dataIndex];
-  };
-
-  function convertDottedKeysToNested(obj: Record<string, any>): Record<string, any> {
-    const result: Record<string, any> = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const keys = key.split(".");
-        keys.reduce((acc, curr, idx) => {
-          if (idx === keys.length - 1) {
-            acc[curr] = obj[key];
-          } else {
-            if (!acc[curr]) {
-              acc[curr] = {};
-            }
-            return acc[curr];
-          }
-          return acc;
-        }, result);
-      }
-    }
-    return result;
-  }
-
   const toggleEdit = () => {
     setEditing(!editing);
-    const initialValue = getNestedValue(record, dataIndex);
-    form.setFieldsValue({ [formFieldName]: initialValue });
+    const value = _.get(record, dataIndex);
+    form.setFieldsValue({ [formKey]: value });
   };
 
   const save = async () => {
     try {
       const values = await form.validateFields();
-      const nestedValues = convertDottedKeysToNested(values);
       toggleEdit();
-      handleSave(_.merge({}, record, nestedValues));
+      const newRecord = { ...record };
+      _.set(newRecord, dataIndex, values[formKey]);
+      handleSave(newRecord);
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -109,7 +82,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   if (editable) {
     childNode = editing ? (
-      <Form.Item style={{ margin: 0 }} name={formFieldName}>
+      <Form.Item style={{ margin: 0 }} name={formKey}>
         <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
       </Form.Item>
     ) : (
