@@ -1,4 +1,5 @@
-import { getRooms, RoomMeta, updateRoomMeta } from "@/app/api";
+import { getRooms, updateRoomMeta } from "@/app/api";
+import { EditableRowProps, EditableCellProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
 import { Form, Input, message, Table } from "antd";
@@ -10,17 +11,6 @@ type FormInstance<T> = GetRef<typeof Form<T>>;
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
-interface Item {
-  key: string;
-  name: string;
-  age: string;
-  address: string;
-}
-
-interface EditableRowProps {
-  index: number;
-}
-
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -31,14 +21,6 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
     </Form>
   );
 };
-
-interface EditableCellProps {
-  title: React.ReactNode;
-  editable: boolean;
-  dataIndex: keyof Item;
-  record: Item;
-  handleSave: (record: Item) => void;
-}
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   title,
@@ -99,13 +81,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   return <td {...restProps}>{childNode}</td>;
 };
 
-interface Room {
-  id: React.Key;
-  roomName: string;
-  topic: string;
-  meta: RoomMeta;
-}
-
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
 const RoomsTable: React.FC = () => {
@@ -118,7 +93,7 @@ const RoomsTable: React.FC = () => {
   });
   const roomMetaUpdateMutation = useMutation({
     mutationFn: updateRoomMeta,
-    onMutate: ( data ) => {
+    onMutate: (data) => {
       queryClient.cancelQueries({ queryKey: ["rooms"] });
       const previousRooms = queryClient.getQueryData(["rooms"]);
 
@@ -165,7 +140,7 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    roomMetaUpdateMutation.mutate( row.meta );
+    roomMetaUpdateMutation.mutate(row.meta);
   };
 
   const components = {
