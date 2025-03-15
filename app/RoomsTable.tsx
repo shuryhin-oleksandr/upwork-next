@@ -1,4 +1,4 @@
-import { getRooms, updateRoomMeta } from "@/app/api";
+import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
 import { EditableRowProps, EditableCellProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
@@ -92,6 +92,33 @@ const RoomsTable: React.FC = () => {
     queryKey: ["rooms"],
     queryFn: getRooms,
   });
+
+  const roomMetaCreateMutation = useMutation({
+    mutationFn: createRoomMeta,
+    onMutate: (data) => {
+      queryClient.cancelQueries({ queryKey: ["rooms"] });
+      const previousRooms = queryClient.getQueryData(["rooms"]);
+
+      queryClient.setQueryData(["rooms"], (oldRooms: Room[]) =>
+        oldRooms.map((room: Room) =>
+          room.id === data.roomId ? _.merge({}, room, { meta: data }) : room
+        )
+      );
+      return { previousRooms };
+    },
+    onSuccess: () => {
+      messageApi.success("Data saved successfully!");
+    },
+    onError: (error, _, context) => {
+      const errorMessage = error?.response?.data?.message || error.message;
+      messageApi.error(`Data save failed: ${errorMessage} !`);
+      queryClient.setQueryData(["rooms"], context?.previousRooms);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
+    },
+  });
+
   const roomMetaUpdateMutation = useMutation({
     mutationFn: updateRoomMeta,
     onMutate: (data) => {
@@ -109,7 +136,8 @@ const RoomsTable: React.FC = () => {
       messageApi.success("Data saved successfully!");
     },
     onError: (error, _, context) => {
-      messageApi.error(`Data save failed: ${error} !`);
+      const errorMessage = error?.response?.data?.message || error.message;
+      messageApi.error(`Data save failed: ${errorMessage} !`);
       queryClient.setQueryData(["rooms"], context?.previousRooms);
     },
     onSettled: () => {
@@ -144,7 +172,8 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    roomMetaUpdateMutation.mutate(row.meta);
+    if (!row.meta?._id) roomMetaCreateMutation.mutate(row.meta);
+    else roomMetaUpdateMutation.mutate(row.meta);
   };
 
   const components = {

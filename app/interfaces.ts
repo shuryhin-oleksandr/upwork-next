@@ -8,12 +8,20 @@ export interface Room {
   meta: RoomMeta;
 }
 
+export interface CreateRoomMetaDto {
+  roomId: string;
+  action: string;
+}
+
 export interface UpdateRoomMetaDto {
+  _id: string;
+  // TODO: roomId
   action: string;
 }
 
 export interface RoomMeta {
   _id: string;
+  roomId: string;
   action: string;
 }
 export interface EditableRowProps {
