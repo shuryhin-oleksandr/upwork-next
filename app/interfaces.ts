@@ -2,7 +2,7 @@ import { NamePath } from "antd/es/form/interface";
 import React from "react";
 
 export interface Room {
-  id: React.Key;
+  id: string;
   roomName: string;
   topic: string;
   meta: RoomMeta;

@@ -47,7 +47,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    const value = _.get(record, dataIndex);
+    const value = _.cloneDeep(_.get(record, dataIndex));
     form.setFieldValue(dataIndex, value);
   };
 
@@ -172,7 +172,7 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    if (!row.meta?._id) roomMetaCreateMutation.mutate(row.meta);
+    if (!row.meta?._id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
     else roomMetaUpdateMutation.mutate(row.meta);
   };
 
