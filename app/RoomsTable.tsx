@@ -9,8 +9,9 @@ const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
-
+const EditableContext = React.createContext<FormInstance<Room> | null>(null);
+// Index needed for compatibility with Antd Table public API
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
@@ -23,6 +24,8 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 };
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
+  // Index needed for compatibility with Antd Table public API
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
   editable,
   children,
@@ -119,7 +122,11 @@ const RoomsTable: React.FC = () => {
   if (isPending) return <span>Loading...</span>;
   if (isError) return <span>Error: {error.message}</span>;
 
-  const defaultColumns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[] = [
+  const defaultColumns: (ColumnTypes[number] & {
+    editable?: boolean;
+    // TODO: Fix type
+    dataIndex: string | string[];
+  })[] = [
     {
       title: "Name",
       dataIndex: "roomName",

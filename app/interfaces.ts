@@ -21,7 +21,8 @@ export interface EditableRowProps {
 export interface EditableCellProps {
   title: React.ReactNode;
   editable: boolean;
-  dataIndex: keyof Room;
+  // TODO: fix type
+  dataIndex: string | string[];
   record: Room;
   handleSave: (record: Room) => void;
 }
