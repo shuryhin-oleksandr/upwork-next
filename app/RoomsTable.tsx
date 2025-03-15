@@ -3,6 +3,7 @@ import { EditableRowProps, EditableCellProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, InputRef, TableProps } from "antd";
 import { Form, Input, message, Table } from "antd";
+import { NamePath } from "antd/es/form/interface";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
 const { TextArea } = Input;
@@ -37,7 +38,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<InputRef>(null);
   const form = useContext(EditableContext)!;
-  const formKey = Array.isArray(dataIndex) ? dataIndex.join(".") : dataIndex;
 
   useEffect(() => {
     if (editing) {
@@ -48,16 +48,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const toggleEdit = () => {
     setEditing(!editing);
     const value = _.get(record, dataIndex);
-    form.setFieldsValue({ [formKey]: value });
+    form.setFieldValue(dataIndex, value);
   };
 
   const save = async () => {
     try {
       const values = await form.validateFields();
       toggleEdit();
-      const newRecord = _.cloneDeep(record);
-      _.set(newRecord, dataIndex, values[formKey]);
-      handleSave(newRecord);
+      handleSave(_.merge({}, record, values));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -67,7 +65,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   if (editable) {
     childNode = editing ? (
-      <Form.Item style={{ margin: 0 }} name={formKey}>
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
         <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
       </Form.Item>
     ) : (
@@ -124,8 +122,7 @@ const RoomsTable: React.FC = () => {
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
-    // TODO: Fix type
-    dataIndex: string | string[];
+    dataIndex: NamePath<Room>;
   })[] = [
     {
       title: "Name",
