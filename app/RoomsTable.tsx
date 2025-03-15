@@ -47,8 +47,10 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    const value = _.cloneDeep(_.get(record, dataIndex));
-    form.setFieldValue(dataIndex, value);
+    if (!editing) {
+      const value = _.get(record, dataIndex);
+      form.setFieldValue(dataIndex, value);
+    }
   };
 
   const save = async () => {
