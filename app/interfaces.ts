@@ -1,3 +1,4 @@
+import { NamePath } from "antd/es/form/interface";
 import React from "react";
 
 export interface Room {
@@ -21,8 +22,7 @@ export interface EditableRowProps {
 export interface EditableCellProps {
   title: React.ReactNode;
   editable: boolean;
-  // TODO: fix type
-  dataIndex: string | string[];
+  dataIndex: NamePath<Room>;
   record: Room;
   handleSave: (record: Room) => void;
 }
