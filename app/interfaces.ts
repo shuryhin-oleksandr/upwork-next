@@ -10,19 +10,19 @@ export interface Room {
 
 export interface CreateRoomMetaDto {
   roomId: string;
-  action: string;
+  comment: string;
 }
 
 export interface UpdateRoomMetaDto {
   _id: string;
   // TODO: roomId
-  action: string;
+  comment: string;
 }
 
 export interface RoomMeta {
   _id: string;
   roomId: string;
-  action: string;
+  comment: string;
 }
 export interface EditableRowProps {
   index: number;
