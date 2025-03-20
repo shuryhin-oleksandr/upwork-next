@@ -170,6 +170,12 @@ const RoomsTable: React.FC = () => {
       dataIndex: ["meta", "action"],
       width: "25%",
       editable: true,
+      sorter: (a, b) => {
+        const aHasAction = a.meta?.action ? 1 : 0;
+        const bHasAction = b.meta?.action ? 1 : 0;
+        return bHasAction - aHasAction;
+      },
+      defaultSortOrder: 'ascend'
     },
   ];
 
@@ -211,6 +217,7 @@ const RoomsTable: React.FC = () => {
         dataSource={data}
         columns={columns as ColumnTypes}
         rowKey={(record) => record.id}
+        pagination={{ pageSize: 15 }}
       />
     </div>
   );
