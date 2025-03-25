@@ -56,6 +56,12 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
+      // If the value is empty, just toggle edit mode without saving
+      const value = _.get(values, dataIndex);
+      if (!value) {
+        toggleEdit();
+        return;
+      }
       toggleEdit();
       handleSave(_.merge({}, record, values));
     } catch (errInfo) {
@@ -158,7 +164,6 @@ const RoomsTable: React.FC = () => {
       title: "Name",
       dataIndex: "roomName",
       width: "25%",
-      editable: true,
     },
     {
       title: "Topic",
