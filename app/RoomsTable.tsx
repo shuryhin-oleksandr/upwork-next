@@ -2,7 +2,7 @@ import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
 import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { Form, Input, InputNumber, message, Table } from "antd";
+import { Form, Input, InputNumber, message, Table, Tag } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -193,6 +193,18 @@ const RoomsTable: React.FC = () => {
       editable: true,
       editableType: "number",
       sorter: (a, b) => (a.meta?.bant || 0) - (b.meta?.bant || 0),
+      render: (value: number) => {
+        if (!value) return null;
+        const colors = {
+          5: "success",
+          4: "processing",
+          3: "warning",
+          2: "error",
+          1: "error",
+        };
+        const color = colors[Math.floor(value) as keyof typeof colors] || 'default';
+        return <Tag color={color}>{value}</Tag>;
+      }
     },
     {
       title: "Comment",
