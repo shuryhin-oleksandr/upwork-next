@@ -61,12 +61,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      // If the value is empty, just toggle edit mode without saving
-      const value = _.get(values, dataIndex);
-      if (!value) {
+      
+      const newValue = _.get(values, dataIndex);
+      const originalValue = _.get(record, dataIndex);
+      if (_.isEqual(originalValue, newValue)) {
         toggleEdit();
         return;
       }
+
       toggleEdit();
       handleSave(_.merge({}, record, values));
     } catch (errInfo) {
