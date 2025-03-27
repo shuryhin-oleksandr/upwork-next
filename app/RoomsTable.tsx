@@ -1,8 +1,8 @@
 import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
-import { EditableRowProps, EditableCellProps, Room } from "@/app/interfaces";
+import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { GetRef, InputRef, TableProps } from "antd";
-import { Form, Input, message, Table } from "antd";
+import type { GetRef, TableProps } from "antd";
+import { Form, Input, InputNumber, message, Table } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -24,6 +24,10 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   );
 };
 
+type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
+
+type EditableType = "text" | "number";
+
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -33,10 +37,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   dataIndex,
   record,
   handleSave,
+  editableType = "text",
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
-  const inputRef = useRef<InputRef>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const form = useContext(EditableContext)!;
 
   useEffect(() => {
@@ -74,7 +79,17 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
-        <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
+        {editableType === "number" ? (
+          <InputNumber
+            ref={inputRef}
+            onPressEnter={save}
+            onBlur={save}
+            style={{ width: "100%" }}
+            controls={false}
+          />
+        ) : (
+          <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
+        )}
       </Form.Item>
     ) : (
       <div
@@ -89,8 +104,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   return <td {...restProps}>{childNode}</td>;
 };
-
-type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
 const RoomsTable: React.FC = () => {
   const queryClient = useQueryClient();
@@ -158,6 +171,7 @@ const RoomsTable: React.FC = () => {
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
+    editableType?: EditableType;
     dataIndex: NamePath<Room>;
   })[] = [
     {
@@ -168,7 +182,15 @@ const RoomsTable: React.FC = () => {
     {
       title: "Topic",
       dataIndex: "topic",
-      width: "50%",
+      width: "45%",
+    },
+    {
+      title: "Bant",
+      dataIndex: ["meta", "bant"],
+      width: "5%",
+      editable: true,
+      editableType: "number",
+      sorter: (a, b) => (a.meta?.bant || 0) - (b.meta?.bant || 0),
     },
     {
       title: "Comment",
@@ -180,7 +202,7 @@ const RoomsTable: React.FC = () => {
         const bHasComment = b.meta?.comment ? 1 : 0;
         return bHasComment - aHasComment;
       },
-      defaultSortOrder: 'ascend'
+      defaultSortOrder: "ascend",
     },
   ];
 
@@ -208,6 +230,7 @@ const RoomsTable: React.FC = () => {
         dataIndex: col.dataIndex,
         title: col.title,
         handleSave,
+        editableType: col.editableType,
       }),
     };
   });
@@ -222,7 +245,7 @@ const RoomsTable: React.FC = () => {
         dataSource={data}
         columns={columns as ColumnTypes}
         rowKey={(record) => record.id}
-        pagination={{ pageSize: 15 }}
+        pagination={{ showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
         size="small"
       />
     </div>
