@@ -169,7 +169,6 @@ const RoomsTable: React.FC = () => {
     },
   });
 
-  if (isPending) return <span>Loading...</span>;
   if (isError) return <span>Error: {error.message}</span>;
 
   const defaultColumns: (ColumnTypes[number] & {
@@ -251,6 +250,7 @@ const RoomsTable: React.FC = () => {
         rowKey={(record) => record.id}
         pagination={{ showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
         size="small"
+        loading={isPending}
       />
     </div>
   );
