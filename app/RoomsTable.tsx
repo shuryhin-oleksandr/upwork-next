@@ -193,7 +193,7 @@ const RoomsTable: React.FC = () => {
       editable: true,
       editableType: "number",
       sorter: (a, b) => (a.meta?.bant || 0) - (b.meta?.bant || 0),
-      render: (value: number) => <MemoizedBantTag value={value} />
+      render: (value: number) => <MemoizedBantTag value={value} />,
     },
     {
       title: "Comment",
@@ -248,7 +248,10 @@ const RoomsTable: React.FC = () => {
         dataSource={data}
         columns={columns as ColumnTypes}
         rowKey={(record) => record.id}
-        pagination={{ showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items` }}
+        pagination={{
+          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          showSizeChanger: true,
+        }}
         size="small"
         loading={isPending}
       />
