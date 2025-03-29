@@ -184,7 +184,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Topic",
       dataIndex: "topic",
-      width: "45%",
+      width: "40%",
     },
     {
       title: "Bant",
@@ -206,6 +206,13 @@ const RoomsTable: React.FC = () => {
         return bHasComment - aHasComment;
       },
       defaultSortOrder: "ascend",
+    },
+    {
+      title: "FU #",
+      dataIndex: "followUpsNumber",
+      width: "5%",
+      render: (value: number) => 
+        value ? <Tag color="blue" style={{ marginRight: 0 }}>{`FU-${value}`}</Tag> : null,
     },
   ];
 
