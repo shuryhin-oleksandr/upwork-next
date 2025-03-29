@@ -180,6 +180,11 @@ const RoomsTable: React.FC = () => {
       title: "Name",
       dataIndex: "roomName",
       width: "25%",
+      render: (text: string, record: Room) => (
+        <a href={record.url} target="_blank" rel="noopener noreferrer">
+          {text}
+        </a>
+      ),
     },
     {
       title: "Topic",
@@ -211,7 +216,7 @@ const RoomsTable: React.FC = () => {
       title: "FU #",
       dataIndex: "followUpsNumber",
       width: "5%",
-      render: (value: number) => 
+      render: (value: number) =>
         value ? <Tag color="blue" style={{ marginRight: 0 }}>{`FU-${value}`}</Tag> : null,
     },
   ];

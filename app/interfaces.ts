@@ -5,6 +5,7 @@ export interface Room {
   id: string;
   roomName: string;
   topic: string;
+  url: string;
   //  TODO: Rationalise
   followUpsNumber: number;
   meta: RoomMeta;
