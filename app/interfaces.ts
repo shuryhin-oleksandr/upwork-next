@@ -7,7 +7,7 @@ export interface Room {
   topic: string;
   url: string;
   //  TODO: Rationalise
-  followUpsNumber: number;
+  nextFollowUpNumber: number;
   nextFollowUpDate: string;
   meta: RoomMeta;
 }
