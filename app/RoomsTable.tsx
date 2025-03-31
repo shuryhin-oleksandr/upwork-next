@@ -7,6 +7,7 @@ import { Form, Input, InputNumber, message, Table, Tag } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import dayjs from 'dayjs';
 const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -179,7 +180,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Name",
       dataIndex: "roomName",
-      width: "25%",
+      width: "20%",
       render: (text: string, record: Room) => (
         <a href={record.url} target="_blank" rel="noopener noreferrer">
           {text}
@@ -189,7 +190,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Topic",
       dataIndex: "topic",
-      width: "40%",
+      width: "35%",
     },
     {
       title: "Bant",
@@ -218,6 +219,12 @@ const RoomsTable: React.FC = () => {
       width: "5%",
       render: (value: number) =>
         value ? <Tag color="blue" style={{ marginRight: 0 }}>{`FU-${value}`}</Tag> : null,
+    },
+    {
+      title: "FU date",
+      dataIndex: "nextFollowUpDate",
+      width: "10%",
+      render: (value: string) => value && dayjs(value).format("DD-MM-YYYY"),
     },
   ];
 
