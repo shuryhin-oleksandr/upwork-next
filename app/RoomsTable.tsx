@@ -204,7 +204,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "30%",
+      width: "35%",
       editable: true,
       sorter: (a, b) => {
         const aHasComment = a.meta?.comment ? 1 : 0;
@@ -214,20 +214,20 @@ const RoomsTable: React.FC = () => {
       defaultSortOrder: "ascend",
     },
     {
-      title: "FU #",
+      title: "FU#",
       dataIndex: "nextFollowUpNumber",
-      width: "5%",
-      render: (value: number) =>
-        value ? <Tag color="blue" style={{ marginRight: 0 }}>{`FU-${value}`}</Tag> : null,
+      width: "2%",
+      align: "center",
+      render: (value: number) => value || null,
     },
     {
       title: "FU date",
       dataIndex: "nextFollowUpDate",
-      width: "10%",
+      width: "8%",
       render: (value: string) => value && dayjs(value).format("D MMM YY"),
       sorter: (a, b) => {
-        if (!a.nextFollowUpDate) return 1;
-        if (!b.nextFollowUpDate) return -1;
+        if (!a.nextFollowUpDate) return -1;
+        if (!b.nextFollowUpDate) return 1;
         return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
       },
     },

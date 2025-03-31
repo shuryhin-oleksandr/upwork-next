@@ -11,7 +11,7 @@ export function BantTag({ value }: { value: number }) {
     1: "error",
   };
   const color = colors[Math.floor(value) as keyof typeof colors] || 'default';
-  return <Tag color={color}>{value}</Tag>;
+  return <Tag color={color} style={{ marginRight: 0 }}>{value}</Tag>;
 }
 
 export const MemoizedBantTag = React.memo(BantTag, (prev, next) => prev.value === next.value);
