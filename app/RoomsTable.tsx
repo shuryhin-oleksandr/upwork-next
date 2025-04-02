@@ -1,5 +1,5 @@
 import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
-import { BantTag, MemoizedBantTag } from "@/app/components";
+import { BantTag, FollowUpDate, MemoizedBantTag } from "@/app/components";
 import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
@@ -224,7 +224,7 @@ const RoomsTable: React.FC = () => {
       title: "FU date",
       dataIndex: "nextFollowUpDate",
       width: "8%",
-      render: (value: string) => value && dayjs(value).format("D MMM YY"),
+      render: (value: string) => value && <FollowUpDate date={dayjs(value)} />,
       sorter: (a, b) => {
         if (!a.nextFollowUpDate) return -1;
         if (!b.nextFollowUpDate) return 1;
