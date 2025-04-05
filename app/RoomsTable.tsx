@@ -282,6 +282,7 @@ const RoomsTable: React.FC = () => {
         pagination={{
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
           showSizeChanger: true,
+          defaultPageSize: 50,
         }}
         size="small"
         loading={isPending}
