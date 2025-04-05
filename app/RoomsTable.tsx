@@ -8,6 +8,7 @@ import { NamePath } from "antd/es/form/interface";
 import dayjs from "dayjs";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -20,7 +21,7 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   return (
     <Form form={form} component={false}>
       <EditableContext.Provider value={form}>
-        <tr {...props} />
+        <motion.tr {...props} layout />
       </EditableContext.Provider>
     </Form>
   );
