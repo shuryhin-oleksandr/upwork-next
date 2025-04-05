@@ -7,7 +7,7 @@ import { Form, Input, InputNumber, message, Table, Tag } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -63,7 +63,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      
       const newValue = _.get(values, dataIndex);
       const originalValue = _.get(record, dataIndex);
       if (_.isEqual(originalValue, newValue)) {
@@ -198,7 +197,7 @@ const RoomsTable: React.FC = () => {
       width: "5%",
       editable: true,
       editableType: "number",
-      sorter: (a, b) => (a.meta?.bant || 0) - (b.meta?.bant || 0),
+      sorter: { multiple: 1, compare: (a, b) => (a.meta?.bant || 0) - (b.meta?.bant || 0) },
       render: (value: number) => <MemoizedBantTag value={value} />,
     },
     {
@@ -206,10 +205,13 @@ const RoomsTable: React.FC = () => {
       dataIndex: ["meta", "comment"],
       width: "35%",
       editable: true,
-      sorter: (a, b) => {
-        const aHasComment = a.meta?.comment ? 1 : 0;
-        const bHasComment = b.meta?.comment ? 1 : 0;
-        return bHasComment - aHasComment;
+      sorter: {
+        multiple: 2,
+        compare: (a, b) => {
+          const aHasComment = a.meta?.comment ? 1 : 0;
+          const bHasComment = b.meta?.comment ? 1 : 0;
+          return bHasComment - aHasComment;
+        },
       },
       defaultSortOrder: "ascend",
     },
@@ -225,10 +227,13 @@ const RoomsTable: React.FC = () => {
       dataIndex: "nextFollowUpDate",
       width: "8%",
       render: (value: string) => value && <FollowUpDate date={dayjs(value)} />,
-      sorter: (a, b) => {
-        if (!a.nextFollowUpDate) return -1;
-        if (!b.nextFollowUpDate) return 1;
-        return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
+      sorter: {
+        multiple: 1,
+        compare: (a, b) => {
+          if (!a.nextFollowUpDate) return -1;
+          if (!b.nextFollowUpDate) return 1;
+          return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
+        },
       },
     },
   ];
