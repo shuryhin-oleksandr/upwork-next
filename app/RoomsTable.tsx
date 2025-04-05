@@ -198,6 +198,7 @@ const RoomsTable: React.FC = () => {
       editable: true,
       editableType: "number",
       sorter: { multiple: 1, compare: (a, b) => (a.meta?.bant || 0) - (b.meta?.bant || 0) },
+      sortDirections: ["descend"],
       render: (value: number) => <MemoizedBantTag value={value} />,
     },
     {
@@ -210,11 +211,11 @@ const RoomsTable: React.FC = () => {
         compare: (a, b) => {
           const aHasComment = a.meta?.comment ? 1 : 0;
           const bHasComment = b.meta?.comment ? 1 : 0;
-          return bHasComment - aHasComment;
+          return aHasComment - bHasComment;
         },
       },
-      defaultSortOrder: "ascend",
-      sortDirections: ["ascend"],
+      defaultSortOrder: "descend",
+      sortDirections: ["descend"],
     },
     {
       title: "FU#",
