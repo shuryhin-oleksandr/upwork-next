@@ -214,6 +214,7 @@ const RoomsTable: React.FC = () => {
         },
       },
       defaultSortOrder: "ascend",
+      sortDirections: ["ascend"],
     },
     {
       title: "FU#",
