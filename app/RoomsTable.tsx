@@ -191,6 +191,11 @@ const RoomsTable: React.FC = () => {
       title: "Topic",
       dataIndex: "topic",
       width: "30%",
+      render: (topic: string, room: Room) => room.jobUrl && (
+        <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
+          {topic}
+        </a>
+      )
     },
     {
       title: "Bant",

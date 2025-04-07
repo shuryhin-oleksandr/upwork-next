@@ -6,6 +6,7 @@ export interface Room {
   roomName: string;
   topic: string;
   url: string;
+  jobUrl: string;
   //  TODO: Rationalise
   nextFollowUpNumber: number;
   nextFollowUpDate: string;
