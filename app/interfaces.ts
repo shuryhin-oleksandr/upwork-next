@@ -9,7 +9,7 @@ export interface Room {
   jobUrl: string;
   //  TODO: Rationalise
   nextFollowUpNumber: number;
-  nextFollowUpDate: string;
+  nextFollowUpDateAuto: string;
   meta: RoomMeta;
 }
 

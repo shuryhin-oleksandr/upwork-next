@@ -1,5 +1,5 @@
 import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
-import { FollowUpDate, MemoizedBantTag } from "@/app/components";
+import { FollowUpDateAuto, MemoizedBantTag } from "@/app/components";
 import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
@@ -191,11 +191,12 @@ const RoomsTable: React.FC = () => {
       title: "Topic",
       dataIndex: "topic",
       width: "30%",
-      render: (topic: string, room: Room) => room.jobUrl && (
-        <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
-          {topic}
-        </a>
-      )
+      render: (topic: string, room: Room) =>
+        room.jobUrl && (
+          <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
+            {topic}
+          </a>
+        ),
     },
     {
       title: "Bant",
@@ -232,15 +233,15 @@ const RoomsTable: React.FC = () => {
     },
     {
       title: "FU date",
-      dataIndex: "nextFollowUpDate",
+      dataIndex: "nextFollowUpDateAuto",
       width: "8%",
-      render: (value: string) => value && <FollowUpDate date={dayjs(value)} />,
+      render: (value: string) => value && <FollowUpDateAuto date={dayjs(value)} />,
       sorter: {
         multiple: 1,
         compare: (a, b) => {
-          if (!a.nextFollowUpDate) return -1;
-          if (!b.nextFollowUpDate) return 1;
-          return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
+          if (!a.nextFollowUpDateAuto) return -1;
+          if (!b.nextFollowUpDateAuto) return 1;
+          return dayjs(a.nextFollowUpDateAuto).diff(dayjs(b.nextFollowUpDateAuto));
         },
       },
     },
