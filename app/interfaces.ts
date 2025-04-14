@@ -18,6 +18,7 @@ export interface RoomMeta {
   roomId: string;
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: string;
 }
 
 export interface CreateRoomMetaDto {
