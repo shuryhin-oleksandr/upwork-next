@@ -1,5 +1,5 @@
+import AntdProvider from "@/app/providers/AntdProvider";
 import ReactQueryClientProvider from "@/app/ReactQueryClientProvider";
-import { AntdRegistry } from "@ant-design/nextjs-registry";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -28,7 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ReactQueryClientProvider>
-          <AntdRegistry>{children}</AntdRegistry>
+          <AntdProvider>{children}</AntdProvider>
         </ReactQueryClientProvider>
       </body>
     </html>
