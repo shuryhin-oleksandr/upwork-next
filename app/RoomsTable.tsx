@@ -1,14 +1,14 @@
 import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
-import { FollowUpDateAuto, MemoizedBantTag } from "@/app/components";
+import { FollowUpDate, MemoizedBantTag } from "@/app/components";
 import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { Form, Input, InputNumber, message, Table } from "antd";
+import { DatePicker, Form, Input, InputNumber, message, Table } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import dayjs from "dayjs";
+import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
@@ -29,7 +29,7 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
-type EditableType = "text" | "number";
+type EditableType = "text" | "number" | "date";
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
@@ -57,7 +57,12 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     setEditing(!editing);
     if (!editing) {
       const value = _.get(record, dataIndex);
-      form.setFieldValue(dataIndex, value);
+      // TODO: Ratinalise conversion to Dayjs
+      if (editableType === "date") {
+        form.setFieldValue(dataIndex, dayjs(value));
+      } else {
+        form.setFieldValue(dataIndex, value);
+      }
     }
   };
 
@@ -83,7 +88,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
-        {editableType === "number" ? (
+        {editableType === "number" && (
           <InputNumber
             ref={inputRef}
             onPressEnter={save}
@@ -91,7 +96,18 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             style={{ width: "100%" }}
             controls={false}
           />
-        ) : (
+        )}
+        {editableType === "date" && (
+          <DatePicker
+            // TODO: Fix ref type
+            ref={inputRef}
+            onBlur={save}
+            onPressEnter={save}
+            style={{ width: "100%" }}
+            format="D MMM YY"
+          />
+        )}
+        {editableType === "text" && (
           <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
         )}
       </Form.Item>
@@ -180,7 +196,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Name",
       dataIndex: "roomName",
-      width: "20%",
+      width: "18%",
       render: (text: string, record: Room) => (
         <a href={record.url} target="_blank" rel="noopener noreferrer">
           {text}
@@ -211,7 +227,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "35%",
+      width: "33%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -233,9 +249,14 @@ const RoomsTable: React.FC = () => {
     },
     {
       title: "FU date",
-      dataIndex: "nextFollowUpDateAuto",
-      width: "8%",
-      render: (value: string) => value && <FollowUpDateAuto date={dayjs(value)} />,
+      dataIndex: ["meta", "nextFollowUpDateCustom"],
+      width: "12%",
+      editable: true,
+      editableType: "date",
+      render: (value: string, record: Room) => {
+        const followUpDate = record?.meta?.nextFollowUpDateCustom || record.nextFollowUpDateAuto;
+        return followUpDate && <FollowUpDate date={dayjs(followUpDate)} />;
+      },
       sorter: {
         multiple: 1,
         compare: (a, b) => {

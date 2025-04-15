@@ -44,5 +44,5 @@ export interface EditableCellProps {
   dataIndex: NamePath<Room>;
   record: Room;
   handleSave: (record: Room) => void;
-  editableType?: 'text' | 'number';
+  editableType?: "text" | "number" | "date";
 }
