@@ -58,7 +58,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     if (!editing) {
       const value = _.get(record, dataIndex);
       // TODO: Ratinalise conversion to Dayjs
-      if (editableType === "date") {
+      if (value && editableType === "date") {
         form.setFieldValue(dataIndex, dayjs(value));
       } else {
         form.setFieldValue(dataIndex, value);
@@ -255,7 +255,8 @@ const RoomsTable: React.FC = () => {
       editableType: "date",
       render: (value: string, record: Room) => {
         const followUpDate = record?.meta?.nextFollowUpDateCustom || record.nextFollowUpDateAuto;
-        return followUpDate && <FollowUpDate date={dayjs(followUpDate)} />;
+        const ansterix = Boolean(record.meta?.nextFollowUpDateCustom);
+        return followUpDate && <FollowUpDate date={dayjs(followUpDate)} ansterix={ansterix} />;
       },
       sorter: {
         multiple: 1,
