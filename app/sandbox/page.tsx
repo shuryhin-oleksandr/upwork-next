@@ -1,7 +1,10 @@
 "use client";
 
+import { useMutation } from "@tanstack/react-query";
 import { Button, Card, DatePicker, Form, FormProps, Input, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
+import dayjs from "dayjs";
+import { useState } from "react";
 
 export default function Sandbox() {
   return (
@@ -17,11 +20,6 @@ export default function Sandbox() {
 
 type FieldType = {
   inputDate?: string;
-  pickerDate?: string;
-};
-
-const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-  console.log("Success:", values);
 };
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
@@ -29,6 +27,26 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 };
 
 function Tmp() {
+  const [sentValues, setSentValues] = useState<FieldType | null>(null);
+  const { mutate, error, data } = useMutation({
+    mutationFn: async (values: FieldType) => {
+      setSentValues(values);
+      const response = await fetch("http://localhost:3001/upwork/sandbox", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      return response.json();
+    },
+  });
+
+  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    console.log("Submitting:", values);
+    mutate(values);
+  };
+
   return (
     <Form
       name="basic"
@@ -44,19 +62,16 @@ function Tmp() {
         <Input />
       </Form.Item>
 
-      <Form.Item<FieldType>
-        label="Picker Date"
-        name="pickerDate"
-        rules={[{ required: true, message: "Please input your date!" }]}
-      >
-        <DatePicker format="D MMM YY" />
-      </Form.Item>
-
       <Form.Item label={null}>
         <Button type="primary" htmlType="submit">
           Submit
         </Button>
       </Form.Item>
+
+      {data && <p>Form data: {JSON.stringify(data)}</p>}
+      {error && <p>Error: {error.message}</p>}
+      {data && <br />}
+      {sentValues && <p>Sent Values: {JSON.stringify(sentValues)}</p>}
     </Form>
   );
 }
