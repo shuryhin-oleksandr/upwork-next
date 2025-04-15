@@ -29,6 +29,7 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 function Tmp() {
   const [sentValues, setSentValues] = useState<FieldType | null>(null);
   const [form] = Form.useForm();
+  const [displayValue, setDisplayValue] = useState("");
 
   const { mutate, error, data } = useMutation({
     mutationFn: async (values: FieldType) => {
@@ -62,8 +63,12 @@ function Tmp() {
         label="Input Date"
         name="inputDate"
         rules={[{ required: true, message: "Please input your date!" }]}
+        normalize={(value) => value + "AAA"}
+        getValueProps={() => ({
+          value: displayValue,
+        })}
       >
-        <Input />
+        <Input onChange={(e) => setDisplayValue(e.target.value)} />
       </Form.Item>
 
       <Form.Item label={null}>
