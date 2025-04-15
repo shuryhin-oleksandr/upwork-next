@@ -4,7 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Button, Card, DatePicker, Form, FormProps, Input, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Sandbox() {
   return (
@@ -28,6 +28,8 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
 
 function Tmp() {
   const [sentValues, setSentValues] = useState<FieldType | null>(null);
+  const [form] = Form.useForm();
+
   const { mutate, error, data } = useMutation({
     mutationFn: async (values: FieldType) => {
       setSentValues(values);
@@ -49,6 +51,8 @@ function Tmp() {
 
   return (
     <Form
+      form={form}
+      onValuesChange={() => console.log("Form:", form.getFieldsValue())}
       name="basic"
       style={{ maxWidth: 600 }}
       onFinish={onFinish}
