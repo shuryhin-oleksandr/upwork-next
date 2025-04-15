@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, DatePicker, Form, FormProps, Layout } from "antd";
+import { Button, Card, DatePicker, Form, FormProps, Input, Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 
 export default function Sandbox() {
@@ -16,7 +16,8 @@ export default function Sandbox() {
 }
 
 type FieldType = {
-  date?: string;
+  inputDate?: string;
+  pickerDate?: string;
 };
 
 const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
@@ -27,7 +28,7 @@ const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
   console.log("Failed:", errorInfo);
 };
 
-function Tmp() { 
+function Tmp() {
   return (
     <Form
       name="basic"
@@ -36,8 +37,16 @@ function Tmp() {
       onFinishFailed={onFinishFailed}
     >
       <Form.Item<FieldType>
-        label="Date"
-        name="date"
+        label="Input Date"
+        name="inputDate"
+        rules={[{ required: true, message: "Please input your date!" }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Form.Item<FieldType>
+        label="Picker Date"
+        name="pickerDate"
         rules={[{ required: true, message: "Please input your date!" }]}
       >
         <DatePicker format="D MMM YY" />
