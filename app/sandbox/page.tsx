@@ -20,6 +20,7 @@ export default function Sandbox() {
 
 type FieldType = {
   inputDate?: string;
+  stateInputDate?: string;
 };
 
 const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
@@ -64,11 +65,20 @@ function Tmp() {
         name="inputDate"
         rules={[{ required: true, message: "Please input your date!" }]}
         normalize={(value) => value + "AAA"}
-        getValueProps={() => ({
-          value: displayValue,
-        })}
       >
-        <Input onChange={(e) => setDisplayValue(e.target.value)} />
+        <Input
+          onChange={(e) => setDisplayValue(e.target.value)}
+          value={displayValue}
+        />
+      </Form.Item>
+
+      <Form.Item<FieldType>
+        label="State input Date"
+        name="stateInputDate"
+        rules={[{ required: true, message: "Please input your date!" }]}
+        normalize={(value) => value + "AAA"}
+      >
+        <StateInput />
       </Form.Item>
 
       <Form.Item label={null}>
@@ -77,6 +87,7 @@ function Tmp() {
         </Button>
       </Form.Item>
 
+      {"Display value: " + displayValue}
       {data && <p>Form data: {JSON.stringify(data)}</p>}
       {error && <p>Error: {error.message}</p>}
       {data && <br />}
@@ -84,3 +95,20 @@ function Tmp() {
     </Form>
   );
 }
+
+function StateInput (props) {
+  const [internalValue, setInternalValue] = useState("");
+
+  console.log("Props:", props);
+
+  return (
+    <Input
+      {...props}
+      value={internalValue}
+      onChange={(e) => {
+        setInternalValue(e.target.value);
+        props.onChange?.(e);
+      }}
+    />
+  );
+};
