@@ -101,10 +101,10 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
           <DatePicker
             // TODO: Fix ref type
             ref={inputRef}
-            onBlur={save}
-            onPressEnter={save}
+            onChange={() => save()}
             style={{ width: "100%" }}
             format="D MMM YY"
+            defaultOpen={true}
           />
         )}
         {editableType === "text" && (
