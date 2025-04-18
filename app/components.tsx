@@ -22,7 +22,7 @@ export function BantTag({ value }: { value: number }) {
 
 export const MemoizedBantTag = React.memo(BantTag, (prev, next) => prev.value === next.value);
 
-export function FollowUpDate({ date, ansterix }: { date: dayjs.Dayjs; ansterix: boolean }) {
+export function FollowUpDate({ date, asterix: ansterix }: { date: dayjs.Dayjs; asterix: boolean }) {
   const isOverdueOrToday = !date.isAfter(dayjs(), "day");
 
   return (

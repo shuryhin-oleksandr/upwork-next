@@ -253,19 +253,19 @@ const RoomsTable: React.FC = () => {
       width: "12%",
       editable: true,
       editableType: "date",
-      render: (value: string, record: Room) => {
-        const followUpDate = record?.meta?.nextFollowUpDateCustom || record.nextFollowUpDateAuto;
-        const ansterix = Boolean(record.meta?.nextFollowUpDateCustom);
-        return followUpDate && <FollowUpDate date={dayjs(followUpDate)} ansterix={ansterix} />;
-      },
+      render: (value: string, record: Room) =>
+        record.nextFollowUpDate && (
+          <FollowUpDate
+            date={dayjs(record.nextFollowUpDate)}
+            asterix={!!record.nextFollowUpDateIsCustom}
+          />
+        ),
       sorter: {
         multiple: 1,
         compare: (a, b) => {
-          const dateA = a?.meta?.nextFollowUpDateCustom || a.nextFollowUpDateAuto;
-          const dateB = b?.meta?.nextFollowUpDateCustom || b.nextFollowUpDateAuto;
-          if (!dateA) return -1;
-          if (!dateB) return 1;
-          return dayjs(dateA).diff(dayjs(dateB));
+          if (!a.nextFollowUpDate) return -1;
+          if (!b.nextFollowUpDate) return 1;
+          return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
         },
       },
     },
