@@ -3,8 +3,9 @@ import { FollowUpDate, MemoizedBantTag } from "@/app/components";
 import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { DatePicker, Form, Input, InputNumber, message, Table } from "antd";
+import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
 import { NamePath } from "antd/es/form/interface";
+import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import _ from "lodash";
@@ -126,6 +127,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 };
 
 const RoomsTable: React.FC = () => {
+  const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -237,7 +239,6 @@ const RoomsTable: React.FC = () => {
           return aHasComment - bHasComment;
         },
       },
-      defaultSortOrder: "descend",
       sortDirections: ["descend"],
     },
     {
@@ -245,29 +246,38 @@ const RoomsTable: React.FC = () => {
       dataIndex: "nextFollowUpNumber",
       width: "2%",
       align: "center",
-      render: (value: number) => value || null,
+      render: (value: number, record: Room) => (record.isContract ? null : value || null),
     },
     {
       title: "FU date",
       dataIndex: ["meta", "nextFollowUpDateCustom"],
       width: "12%",
+      align: "center",
       editable: true,
       editableType: "date",
-      render: (value: string, record: Room) =>
-        record.nextFollowUpDate && (
-          <FollowUpDate
-            date={dayjs(record.nextFollowUpDate)}
-            asterix={!!record.nextFollowUpDateIsCustom}
-          />
-        ),
+      render: (value: string, record: Room) => {
+        if (record.isContract) return null;
+        if (!record.nextFollowUpDate)
+          return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
+        else
+          return (
+            <FollowUpDate
+              date={dayjs(record.nextFollowUpDate)}
+              asterix={!!record.nextFollowUpDateIsCustom}
+            />
+          );
+      },
       sorter: {
         multiple: 1,
         compare: (a, b) => {
+          if (a.isContract) return 1;
+          if (b.isContract) return -1;
           if (!a.nextFollowUpDate) return -1;
           if (!b.nextFollowUpDate) return 1;
           return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
         },
       },
+      defaultSortOrder: "ascend",
     },
   ];
 

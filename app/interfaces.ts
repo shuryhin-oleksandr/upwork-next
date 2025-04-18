@@ -11,6 +11,7 @@ export interface Room {
   nextFollowUpNumber: number;
   nextFollowUpDate: string;
   nextFollowUpDateIsCustom: boolean | null;
+  isContract: boolean;
   meta: RoomMeta;
 }
 
