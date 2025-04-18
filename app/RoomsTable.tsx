@@ -261,9 +261,11 @@ const RoomsTable: React.FC = () => {
       sorter: {
         multiple: 1,
         compare: (a, b) => {
-          if (!a.nextFollowUpDateAuto) return -1;
-          if (!b.nextFollowUpDateAuto) return 1;
-          return dayjs(a.nextFollowUpDateAuto).diff(dayjs(b.nextFollowUpDateAuto));
+          const dateA = a?.meta?.nextFollowUpDateCustom || a.nextFollowUpDateAuto;
+          const dateB = b?.meta?.nextFollowUpDateCustom || b.nextFollowUpDateAuto;
+          if (!dateA) return -1;
+          if (!dateB) return 1;
+          return dayjs(dateA).diff(dayjs(dateB));
         },
       },
     },
