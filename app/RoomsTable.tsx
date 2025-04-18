@@ -70,7 +70,10 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      const newValue = _.get(values, dataIndex);
+      const newValue =
+        editableType === "date"
+          ? _.get(values, dataIndex)?.toISOString()
+          : _.get(values, dataIndex);
       const originalValue = _.get(record, dataIndex);
       if (_.isEqual(originalValue, newValue)) {
         toggleEdit();
@@ -103,6 +106,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             // TODO: Fix ref type
             ref={inputRef}
             onChange={() => save()}
+            onBlur={() => save()}
             style={{ width: "100%" }}
             format="D MMM YY"
             defaultOpen={true}
