@@ -1,8 +1,8 @@
 "use client";
 
-import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Input, Flex } from "antd";
+import { Button, Form, Input } from "antd";
+import React from "react";
 
 const App: React.FC = () => {
   const onFinish = (values: any) => {
@@ -28,20 +28,11 @@ const App: React.FC = () => {
       >
         <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
       </Form.Item>
-      <Form.Item>
-        <Flex justify="space-between" align="center">
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-          <a href="">Forgot password</a>
-        </Flex>
-      </Form.Item>
 
       <Form.Item>
         <Button block type="primary" htmlType="submit">
           Log in
         </Button>
-        or <a href="">Register now!</a>
       </Form.Item>
     </Form>
   );
