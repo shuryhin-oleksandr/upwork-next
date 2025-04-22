@@ -3,6 +3,8 @@ import ReactQueryClientProvider from "@/app/ReactQueryClientProvider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Layout } from "antd";
+import { Content } from "antd/es/layout/layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ReactQueryClientProvider>
-          <AntdProvider>{children}</AntdProvider>
+          <AntdProvider>
+            <Layout style={{ minHeight: "100vh" }}>
+              <Content
+                style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%" }}
+              >
+                {children}
+              </Content>
+            </Layout>
+          </AntdProvider>
         </ReactQueryClientProvider>
       </body>
     </html>
