@@ -33,7 +33,7 @@ export default function RootLayout({
           <AntdProvider>
             <Layout style={{ minHeight: "100vh" }}>
               <Content
-                style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%" }}
+                style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%", display: "flex", flexDirection: "column" }}
               >
                 {children}
               </Content>
