@@ -48,3 +48,8 @@ export interface EditableCellProps {
   handleSave: (record: Room) => void;
   editableType?: "text" | "number" | "date";
 }
+
+export interface LoginDto {
+  username: string;
+  password: string;
+}

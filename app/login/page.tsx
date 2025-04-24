@@ -1,11 +1,26 @@
 "use client";
 
+import { login } from "@/app/api";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Form, Input } from "antd";
 
 export default function Login() {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const mutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      // TODO: redirect to rooms table
+      console.log("Login successful", data);
+      localStorage.setItem("accessToken", data.access_token);
+    },
+    onError: (error) => {
+      // TODO: Show error message
+      console.log("Login failed", error);
+    },
+  });
+
+  const onSubmit = (values: any) => {
+    mutation.mutate(values);
   };
 
   return (
@@ -19,7 +34,7 @@ export default function Login() {
       }}
     >
       <Card title="Log in" style={{ width: "100%", maxWidth: 400 }}>
-        <Form name="login" onFinish={onFinish}>
+        <Form name="login" onFinish={onSubmit}>
           <Form.Item
             name="username"
             rules={[{ required: true, message: "Please input your Username!" }]}

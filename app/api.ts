@@ -1,4 +1,4 @@
-import { CreateRoomMetaDto, UpdateRoomMetaDto } from "@/app/interfaces";
+import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/interfaces";
 import axios from "axios";
 
 export const getRooms = async () => {
@@ -15,6 +15,13 @@ export const updateRoomMeta = async (data: UpdateRoomMetaDto) => {
 
 export const createRoomMeta = async (data: CreateRoomMetaDto) => {
   const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/upwork/room-metas/`;
+  const response = await axios.post(url, data);
+  return response.data;
+};
+
+// TODO: Rationalise location
+export const login = async (data: LoginDto) => {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/login`;
   const response = await axios.post(url, data);
   return response.data;
 };
