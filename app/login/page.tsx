@@ -13,13 +13,12 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: redirect to rooms table
-      console.log("Login successful", data);
       localStorage.setItem("accessToken", data.access_token);
+      setFormError(null);
     },
     // TODO: Error handling DRY
     onError: (error: AxiosError<{ message: string }>) => {
       setFormError(error?.response?.data.message || error.message);
-      console.log("Login failed", error);
     },
   });
 
