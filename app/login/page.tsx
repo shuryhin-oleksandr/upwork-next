@@ -3,9 +3,12 @@
 import { login } from "@/app/api";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Card, Form, Input } from "antd";
+import { Button, Card, Form, Input, Alert } from "antd";
+import { AxiosError } from "axios";
+import { useState } from "react";
 
 export default function Login() {
+  const [formError, setFormError] = useState<string | null>(null);
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
@@ -13,8 +16,9 @@ export default function Login() {
       console.log("Login successful", data);
       localStorage.setItem("accessToken", data.access_token);
     },
-    onError: (error) => {
-      // TODO: Show error message
+    // TODO: Error handling DRY
+    onError: (error: AxiosError<{ message: string }>) => {
+      setFormError(error?.response?.data.message || error.message);
       console.log("Login failed", error);
     },
   });
@@ -47,6 +51,11 @@ export default function Login() {
           >
             <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
           </Form.Item>
+          {formError && (
+            <Form.Item>
+              <Alert type="error" message={formError} showIcon />
+            </Form.Item>
+          )}
 
           <Form.Item>
             <Button block type="primary" htmlType="submit">
