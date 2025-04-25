@@ -25,3 +25,9 @@ export const login = async (data: LoginDto) => {
   const response = await axios.post(url, data);
   return response.data;
 };
+
+export const refreshToken = async (refreshToken: string) => {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/refresh`;
+  const response = await axios.post(url, { refreshToken });
+  return response.data;
+};
