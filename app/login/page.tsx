@@ -13,8 +13,8 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: redirect to rooms table
-      localStorage.setItem("accessToken", data.access_token);
-      localStorage.setItem("refreshToken", data.refresh_token);
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
       setFormError(null);
     },
     // TODO: Error handling DRY
