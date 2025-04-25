@@ -14,6 +14,7 @@ export default function Login() {
     onSuccess: (data) => {
       // TODO: redirect to rooms table
       localStorage.setItem("accessToken", data.access_token);
+      localStorage.setItem("refreshToken", data.refresh_token);
       setFormError(null);
     },
     // TODO: Error handling DRY
