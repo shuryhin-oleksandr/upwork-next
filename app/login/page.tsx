@@ -12,11 +12,10 @@ import { useState } from "react";
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
-  
+
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      // TODO: redirect to rooms table
       TokenManager.setTokens(data);
       router.push("/");
       setFormError(null);
