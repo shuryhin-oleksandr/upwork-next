@@ -70,7 +70,7 @@ export const createRoomMeta = async (data: CreateRoomMetaDto) => {
   return response.data;
 };
 
-// TODO: Rationalise location
+// TODO: Rationalise file location
 export const login = async (data: LoginDto) => {
   const url = "/auth/login";
   const response = await api.post(url, data);

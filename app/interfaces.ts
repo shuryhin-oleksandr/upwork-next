@@ -49,6 +49,7 @@ export interface EditableCellProps {
   editableType?: "text" | "number" | "date";
 }
 
+// TODO: Rationalise file and LoginDto location
 export interface LoginDto {
   username: string;
   password: string;
