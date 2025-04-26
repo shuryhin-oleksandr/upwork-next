@@ -10,8 +10,6 @@ export const api = axios.create({
 const mutex = new Mutex();
 
 api.interceptors.request.use(async (config) => {
-  await mutex.waitForUnlock();
-
   const accessToken = TokenManager.getAccessToken();
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -22,26 +20,30 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
-      const release = await mutex.acquire();
-      const refreshToken = TokenManager.getRefreshToken() || "";
-      if (!refreshToken) {
+    if (error.response?.status !== 401) throw error;
+
+    const refreshToken = TokenManager.getRefreshToken() || "";
+    if (!refreshToken) {
+      TokenManager.removeTokens();
+      throw error;
+    }
+
+    if (mutex.isLocked()) {
+      await mutex.waitForUnlock();
+      return api.request(error.config);
+    }
+
+    const release = await mutex.acquire();
+    try {
+      const data = await refresh(refreshToken);
+      TokenManager.setTokens(data);
+      release();
+      return api.request(error.config);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
         TokenManager.removeTokens();
         release();
         throw error;
-      }
-
-      try {
-        const data = await refresh(refreshToken);
-        TokenManager.setTokens(data);
-        release();
-        return api.request(error.config);
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status === 401) {
-          TokenManager.removeTokens();
-          release();
-          throw error;
-        }
       }
     }
   }
