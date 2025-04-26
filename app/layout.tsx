@@ -1,5 +1,5 @@
 import AntdProvider from "@/app/lib/AntdProvider";
-import LoginRedirectHandler from "@/app/lib/LoginRedirectHandler";
+import LoginRedirectHandler from "@/app/login/LoginRedirectHandler";
 import ReactQueryClientProvider from "@/app/lib/ReactQueryClientProvider";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
