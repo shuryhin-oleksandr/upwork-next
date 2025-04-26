@@ -38,14 +38,15 @@ api.interceptors.response.use(
       const data = await refresh(refreshToken);
       TokenManager.setTokens(data);
       release();
-      return api.request(error.config);
-    } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
+    } catch (refreshTokenError) {
+      if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
         TokenManager.removeTokens();
         release();
         throw error;
       }
     }
+    
+    return api.request(error.config);
   }
 );
 
