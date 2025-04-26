@@ -1,18 +1,51 @@
 import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/interfaces";
+import { TokenManager } from "@/app/services/TokenManager";
 import axios from "axios";
+import { Mutex } from "async-mutex";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
 });
 
-api.interceptors.request.use((config) => {
-  const accessToken = localStorage.getItem("accessToken");
+const mutex = new Mutex();
+
+api.interceptors.request.use(async (config) => {
+  await mutex.waitForUnlock();
+
+  const accessToken = TokenManager.getAccessToken();
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
-  console.log(config.headers);
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      const release = await mutex.acquire();
+      const refreshToken = TokenManager.getRefreshToken() || "";
+      if (!refreshToken) {
+        TokenManager.removeTokens();
+        release();
+        throw error;
+      }
+
+      try {
+        const data = await refresh(refreshToken);
+        TokenManager.setTokens(data);
+        release();
+        return api.request(error.config);
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.status === 401) {
+          TokenManager.removeTokens();
+          release();
+          throw error;
+        }
+      }
+    }
+  }
+);
 
 export const getRooms = async () => {
   const url = "/upwork/rooms";
@@ -39,8 +72,12 @@ export const login = async (data: LoginDto) => {
   return response.data;
 };
 
-export const refreshToken = async (refreshToken: string) => {
+export const refresh = async (refreshToken: string) => {
   const url = "/auth/refresh";
-  const response = await api.post(url, { refreshToken });
+  const response = await axios.post(
+    url,
+    { refreshToken },
+    { baseURL: process.env.NEXT_PUBLIC_BACKEND_URL }
+  );
   return response.data;
 };

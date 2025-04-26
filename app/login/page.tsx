@@ -1,12 +1,12 @@
 "use client";
 
 import { login } from "@/app/api";
+import { TokenManager } from "@/app/services/TokenManager";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Form, Input, Alert } from "antd";
 import { AxiosError } from "axios";
 import { useState } from "react";
-
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -14,8 +14,7 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: redirect to rooms table
-      localStorage.setItem("accessToken", data.accessToken);
-      localStorage.setItem("refreshToken", data.refreshToken);
+      TokenManager.setTokens(data);
       setFormError(null);
     },
     // TODO: Error handling DRY
