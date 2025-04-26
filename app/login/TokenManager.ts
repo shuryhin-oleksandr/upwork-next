@@ -3,7 +3,6 @@ interface JwtResponse {
   refreshToken: string;
 }
 
-// TODO: Rationalise file name & location
 export class TokenManager {
   private static readonly ACCESS_TOKEN_KEY = "accessToken";
   private static readonly REFRESH_TOKEN_KEY = "refreshToken";

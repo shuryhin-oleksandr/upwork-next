@@ -1,5 +1,5 @@
 import { emitter, REDIRECT_TO_LOGIN } from "@/app/lib/events";
-import { TokenManager } from "@/app/lib/TokenManager";
+import { TokenManager } from "@/app/login/TokenManager";
 import { refresh } from "@/app/login/api";
 import { Mutex } from "async-mutex";
 import axios from "axios";
