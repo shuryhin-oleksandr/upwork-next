@@ -1,4 +1,4 @@
-import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/interfaces";
+import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/(home)/interfaces";
 import { emitter, REDIRECT_TO_LOGIN } from "@/app/lib/events";
 import { TokenManager } from "@/app/lib/TokenManager";
 import { Mutex } from "async-mutex";

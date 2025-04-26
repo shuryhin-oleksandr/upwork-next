@@ -1,6 +1,6 @@
 import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/lib/api";
-import { FollowUpDate, MemoizedBantTag } from "@/app/components";
-import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
+import { FollowUpDate, MemoizedBantTag } from "@/app/(home)/components";
+import { EditableCellProps, EditableRowProps, Room } from "@/app/(home)/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
 import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
