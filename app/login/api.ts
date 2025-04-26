@@ -1,6 +1,10 @@
 import { api } from "@/app/lib/api";
 import axios from "axios";
-import { LoginDto } from "./interfaces";
+
+export interface LoginDto {
+  username: string;
+  password: string;
+}
 
 export const login = async (data: LoginDto) => {
   const url = "/auth/login";
