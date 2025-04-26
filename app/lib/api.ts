@@ -1,6 +1,6 @@
-import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/(home)/interfaces";
 import { emitter, REDIRECT_TO_LOGIN } from "@/app/lib/events";
 import { TokenManager } from "@/app/lib/TokenManager";
+import { refresh } from "@/app/login/api";
 import { Mutex } from "async-mutex";
 import axios from "axios";
 
@@ -51,22 +51,3 @@ api.interceptors.response.use(
     return api.request(error.config);
   }
 );
-
-export const getRooms = async () => {
-  const url = "/upwork/rooms";
-  const response = await api.get(url);
-  return response.data;
-};
-
-export const updateRoomMeta = async (data: UpdateRoomMetaDto) => {
-  const url = `/upwork/room-metas/${data._id}`;
-  const response = await api.patch(url, data);
-  return response.data;
-};
-
-export const createRoomMeta = async (data: CreateRoomMetaDto) => {
-  const url = "/upwork/room-metas/";
-  const response = await api.post(url, data);
-  return response.data;
-};
-

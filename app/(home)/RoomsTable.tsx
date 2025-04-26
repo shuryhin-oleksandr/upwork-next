@@ -1,6 +1,3 @@
-import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/lib/api";
-import { FollowUpDate, MemoizedBantTag } from "@/app/(home)/components";
-import { EditableCellProps, EditableRowProps, Room } from "@/app/(home)/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
 import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
@@ -10,6 +7,10 @@ import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { createRoomMeta, getRooms, updateRoomMeta } from "./api";
+import { FollowUpDate, MemoizedBantTag } from "./components";
+import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
+
 const { TextArea } = Input;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;

@@ -1,4 +1,3 @@
-// TODO: Rationalise interface location
 interface JwtResponse {
   accessToken: string;
   refreshToken: string;
