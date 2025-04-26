@@ -70,19 +70,3 @@ export const createRoomMeta = async (data: CreateRoomMetaDto) => {
   return response.data;
 };
 
-// TODO: Rationalise file location
-export const login = async (data: LoginDto) => {
-  const url = "/auth/login";
-  const response = await api.post(url, data);
-  return response.data;
-};
-
-export const refresh = async (refreshToken: string) => {
-  const url = "/auth/refresh";
-  const response = await axios.post(
-    url,
-    { refreshToken },
-    { baseURL: process.env.NEXT_PUBLIC_BACKEND_URL }
-  );
-  return response.data;
-};

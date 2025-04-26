@@ -48,9 +48,3 @@ export interface EditableCellProps {
   handleSave: (record: Room) => void;
   editableType?: "text" | "number" | "date";
 }
-
-// TODO: Rationalise file and LoginDto location
-export interface LoginDto {
-  username: string;
-  password: string;
-}
