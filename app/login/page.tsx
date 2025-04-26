@@ -4,17 +4,21 @@ import { login } from "@/app/login/api";
 import { TokenManager } from "@/app/login/TokenManager";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
-import { Button, Card, Form, Input, Alert } from "antd";
+import { Alert, Button, Card, Form, Input } from "antd";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
-
+  const router = useRouter();
+  
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: redirect to rooms table
       TokenManager.setTokens(data);
+      router.push("/");
       setFormError(null);
     },
     // TODO: Error handling DRY
