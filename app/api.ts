@@ -1,8 +1,8 @@
 import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/interfaces";
+import { emitter, REDIRECT_TO_LOGIN } from "@/app/lib/events";
 import { TokenManager } from "@/app/services/TokenManager";
-import axios from "axios";
 import { Mutex } from "async-mutex";
-import { LogoutError } from "@/app/errors";
+import axios from "axios";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -26,6 +26,7 @@ api.interceptors.response.use(
     const refreshToken = TokenManager.getRefreshToken() || "";
     if (!refreshToken) {
       TokenManager.removeTokens();
+      emitter.emit(REDIRECT_TO_LOGIN);
       throw error;
     }
 
@@ -37,6 +38,7 @@ api.interceptors.response.use(
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
           TokenManager.removeTokens();
+          emitter.emit(REDIRECT_TO_LOGIN);
           throw error;
         }
       } finally {
