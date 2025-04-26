@@ -1,6 +1,6 @@
 "use client";
 
-import { emitter, REDIRECT_TO_LOGIN } from "@/app/lib/events";
+import { emitter, REDIRECT_TO_LOGIN } from "@/app/login/events";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 

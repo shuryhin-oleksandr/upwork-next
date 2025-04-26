@@ -1,4 +1,4 @@
-import { emitter, REDIRECT_TO_LOGIN } from "@/app/lib/events";
+import { emitter, REDIRECT_TO_LOGIN } from "@/app/login/events";
 import { TokenManager } from "@/app/login/TokenManager";
 import { refresh } from "@/app/login/api";
 import { Mutex } from "async-mutex";
