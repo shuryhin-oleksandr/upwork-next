@@ -2,6 +2,7 @@ import { CreateRoomMetaDto, LoginDto, UpdateRoomMetaDto } from "@/app/interfaces
 import { TokenManager } from "@/app/services/TokenManager";
 import axios from "axios";
 import { Mutex } from "async-mutex";
+import { LogoutError } from "@/app/errors";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
@@ -28,24 +29,23 @@ api.interceptors.response.use(
       throw error;
     }
 
-    if (mutex.isLocked()) {
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire();
+      try {
+        const data = await refresh(refreshToken);
+        TokenManager.setTokens(data);
+      } catch (refreshTokenError) {
+        if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
+          TokenManager.removeTokens();
+          throw refreshTokenError;
+        }
+      } finally {
+        release();
+      }
+    } else {
       await mutex.waitForUnlock();
-      return api.request(error.config);
     }
 
-    const release = await mutex.acquire();
-    try {
-      const data = await refresh(refreshToken);
-      TokenManager.setTokens(data);
-      release();
-    } catch (refreshTokenError) {
-      if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
-        TokenManager.removeTokens();
-        release();
-        throw error;
-      }
-    }
-    
     return api.request(error.config);
   }
 );
