@@ -9,7 +9,8 @@ import { useState } from "react";
 
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
-  const mutation = useMutation({
+
+  const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: redirect to rooms table
@@ -24,7 +25,7 @@ export default function Login() {
   });
 
   const onSubmit = (values: any) => {
-    mutation.mutate(values);
+    loginMutation.mutate(values);
   };
 
   return (
