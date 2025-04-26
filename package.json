@@ -11,12 +11,14 @@
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
-    "@tanstack/react-query": "^5.67.1",
+    "@tanstack/react-query": "^5.74.4",
     "@tanstack/react-query-devtools": "^5.67.1",
     "antd": "^5.24.3",
-    "axios": "^1.8.1",
+    "async-mutex": "^0.5.0",
+    "axios": "^1.9.0",
     "framer-motion": "^12.6.3",
     "lodash": "^4.17.21",
+    "mitt": "^3.0.1",
     "next": "15.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

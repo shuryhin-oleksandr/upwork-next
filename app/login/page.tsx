@@ -1,11 +1,33 @@
 "use client";
 
+import { login } from "@/app/login/api";
+import { TokenManager } from "@/app/login/TokenManager";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Button, Card, Form, Input } from "antd";
+import { useMutation } from "@tanstack/react-query";
+import { Alert, Button, Card, Form, Input } from "antd";
+import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Login() {
-  const onFinish = (values: any) => {
-    console.log("Received values of form: ", values);
+  const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      TokenManager.setTokens(data);
+      router.push("/");
+      setFormError(null);
+    },
+    // TODO: Error handling DRY
+    onError: (error: AxiosError<{ message: string }>) => {
+      setFormError(error?.response?.data.message || error.message);
+    },
+  });
+
+  const onSubmit = (values: any) => {
+    loginMutation.mutate(values);
   };
 
   return (
@@ -19,7 +41,7 @@ export default function Login() {
       }}
     >
       <Card title="Log in" style={{ width: "100%", maxWidth: 400 }}>
-        <Form name="login" onFinish={onFinish}>
+        <Form name="login" onFinish={onSubmit}>
           <Form.Item
             name="username"
             rules={[{ required: true, message: "Please input your Username!" }]}
@@ -32,6 +54,11 @@ export default function Login() {
           >
             <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
           </Form.Item>
+          {formError && (
+            <Form.Item>
+              <Alert type="error" message={formError} showIcon />
+            </Form.Item>
+          )}
 
           <Form.Item>
             <Button block type="primary" htmlType="submit">
