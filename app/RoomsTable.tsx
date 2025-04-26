@@ -1,4 +1,4 @@
-import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
+import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/lib/api";
 import { FollowUpDate, MemoizedBantTag } from "@/app/components";
 import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

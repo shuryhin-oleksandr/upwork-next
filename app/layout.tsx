@@ -1,6 +1,6 @@
 import AntdProvider from "@/app/lib/AntdProvider";
 import LoginRedirectHandler from "@/app/lib/LoginRedirectHandler";
-import ReactQueryClientProvider from "@/app/ReactQueryClientProvider";
+import ReactQueryClientProvider from "@/app/lib/ReactQueryClientProvider";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import type { Metadata } from "next";

@@ -1,7 +1,7 @@
 "use client";
 
-import { login } from "@/app/api";
-import { TokenManager } from "@/app/services/TokenManager";
+import { login } from "@/app/lib/api";
+import { TokenManager } from "@/app/lib/TokenManager";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Card, Form, Input, Alert } from "antd";
