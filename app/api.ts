@@ -37,7 +37,7 @@ api.interceptors.response.use(
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
           TokenManager.removeTokens();
-          throw refreshTokenError;
+          throw error;
         }
       } finally {
         release();
