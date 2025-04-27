@@ -21,3 +21,9 @@ export const refresh = async (refreshToken: string) => {
   );
   return response.data;
 };
+
+export const getProfile = async () => {
+  const url = "/auth/profile";
+  const response = await api.get(url);
+  return response.data;
+};
