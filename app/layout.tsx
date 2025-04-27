@@ -1,6 +1,7 @@
+import AppHeader from "@/app/AppHeader";
 import AntdProvider from "@/app/lib/AntdProvider";
-import LoginRedirectHandler from "@/app/login/LoginRedirectHandler";
 import ReactQueryClientProvider from "@/app/lib/ReactQueryClientProvider";
+import LoginRedirectHandler from "@/app/login/LoginRedirectHandler";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import type { Metadata } from "next";
@@ -34,10 +35,18 @@ export default function RootLayout({
           <AntdProvider>
             <LoginRedirectHandler>
               <Layout style={{ minHeight: "100vh" }}>
+                <AppHeader />
                 <Content
-                  style={{ padding: "30px", maxWidth: "1200px", margin: "auto", width: "100%", display: "flex", flexDirection: "column" }}
-              >
-                {children}
+                  style={{
+                    maxWidth: "1200px",
+                    width: "100%",
+                    margin: "auto",
+                    padding: "30px",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {children}
                 </Content>
               </Layout>
             </LoginRedirectHandler>
