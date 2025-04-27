@@ -17,9 +17,7 @@ export default function AppHeader() {
     queryFn: getProfile,
   });
 
-  const handleLogout = () => {
-    AuthManager.logout();
-  };
+  const handleLogout = () => AuthManager.logout();
 
   return (
     <Header style={{ padding: 0 }}>
