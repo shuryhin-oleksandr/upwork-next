@@ -1,5 +1,5 @@
 import { refresh } from "@/app/login/api";
-import { TokenManager } from "@/app/login/TokenManager";
+import { AuthManager } from "@/app/login/AuthManager";
 import { Mutex } from "async-mutex";
 import axios from "axios";
 
@@ -10,7 +10,7 @@ export const api = axios.create({
 const mutex = new Mutex();
 
 api.interceptors.request.use(async (config) => {
-  const accessToken = TokenManager.getAccessToken();
+  const accessToken = AuthManager.getAccessToken();
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -22,9 +22,9 @@ api.interceptors.response.use(
   async (error) => {
     if (error.response?.status !== 401) throw error;
 
-    const refreshToken = TokenManager.getRefreshToken() || "";
+    const refreshToken = AuthManager.getRefreshToken() || "";
     if (!refreshToken) {
-      TokenManager.logout();
+      AuthManager.logout();
       throw error;
     }
 
@@ -32,10 +32,10 @@ api.interceptors.response.use(
       const release = await mutex.acquire();
       try {
         const data = await refresh(refreshToken);
-        TokenManager.setTokens(data);
+        AuthManager.setTokens(data);
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
-          TokenManager.logout();
+          AuthManager.logout();
           throw error;
         }
       } finally {

@@ -1,7 +1,7 @@
 "use client";
 
 import { getProfile, login, LoginDto } from "@/app/login/api";
-import { TokenManager } from "@/app/login/TokenManager";
+import { AuthManager } from "@/app/login/AuthManager";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input } from "antd";
@@ -22,7 +22,7 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: Rationalize orthogonality
-      TokenManager.login(data);
+      AuthManager.login(data);
 
       setFormError(null);
     },

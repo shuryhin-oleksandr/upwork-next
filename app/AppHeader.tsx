@@ -1,7 +1,7 @@
 "use client";
 
 import { getProfile } from "@/app/login/api";
-import { TokenManager } from "@/app/login/TokenManager";
+import { AuthManager } from "@/app/login/AuthManager";
 import { useQuery } from "@tanstack/react-query";
 import { Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
@@ -19,7 +19,7 @@ export default function AppHeader() {
 
   // TODO: Rationalize orthogonality
   const handleLogout = () => {
-    TokenManager.logout();
+    AuthManager.logout();
   };
 
   return (

@@ -6,7 +6,7 @@ interface JwtResponse {
   refreshToken: string;
 }
 
-export class TokenManager {
+export class AuthManager {
   static accessToken: string | null = null;
   private static readonly REFRESH_TOKEN_KEY = "refreshToken";
   
@@ -38,7 +38,6 @@ export class TokenManager {
     this.removeTokens();
     queryClient.cancelQueries();
     queryClient.clear();
-    // TODO: Rationalize if it should be here
     emitter.emit(REDIRECT_TO_LOGIN);
   }
 }
