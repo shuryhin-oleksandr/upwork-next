@@ -9,7 +9,7 @@ interface JwtResponse {
 export class AuthManager {
   static accessToken: string | null = null;
   private static readonly REFRESH_TOKEN_KEY = "refreshToken";
-  
+
   static setTokens({ accessToken, refreshToken }: JwtResponse) {
     this.accessToken = accessToken;
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
@@ -29,15 +29,15 @@ export class AuthManager {
   }
 
   static login(data: JwtResponse) {
-      this.setTokens(data);
-      queryClient.cancelQueries();
-      queryClient.clear();
+    this.setTokens(data);
+    queryClient.clear();
   }
 
   static logout() {
-    this.removeTokens();
-    queryClient.cancelQueries();
-    queryClient.clear();
     emitter.emit(REDIRECT_TO_LOGIN);
+    if (this.getAccessToken() || this.getRefreshToken()) {
+      this.removeTokens();
+      queryClient.clear();
+    }
   }
 }
