@@ -22,6 +22,7 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
+      // TODO: Rationalize orthogonality
       TokenManager.setTokens(data);
       queryClient.cancelQueries();
       queryClient.clear();

@@ -15,11 +15,12 @@ export default function AppHeader() {
   const { token } = useToken();
   const queryClient = useQueryClient();
 
-  const { isSuccess } = useQuery({
+  const { isSuccess: isUserAuthenticated } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
   });
 
+  // TODO: Rationalize orthogonality
   const handleLogout = () => {
     queryClient.cancelQueries();
     queryClient.clear();
@@ -44,7 +45,7 @@ export default function AppHeader() {
         <Title level={3} style={{ color: token.colorTextLightSolid, margin: 0 }}>
           Upwork CRM
         </Title>
-        {isSuccess && (
+        {isUserAuthenticated && (
           <Button type="primary" onClick={handleLogout}>
             Log out
           </Button>
