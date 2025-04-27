@@ -2,10 +2,10 @@
 
 import { emitter, REDIRECT_TO_LOGIN } from "@/app/login/events";
 import { useQueryClient } from "@tanstack/react-query";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function LoginRedirectHandler({ children }: { children: React.ReactNode }) {
+export default function UserLogoutHandler({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const queryClient = useQueryClient();

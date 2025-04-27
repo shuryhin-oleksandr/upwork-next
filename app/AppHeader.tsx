@@ -1,19 +1,17 @@
 "use client";
 
 import { getProfile } from "@/app/login/api";
+import { emitter, REDIRECT_TO_LOGIN } from "@/app/login/events";
 import { TokenManager } from "@/app/login/TokenManager";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
-import { useRouter } from "next/navigation";
 
 const { Title } = Typography;
 const { useToken } = theme;
 
 export default function AppHeader() {
-  const router = useRouter();
   const { token } = useToken();
-  const queryClient = useQueryClient();
 
   const { isSuccess: isUserAuthenticated } = useQuery({
     queryKey: ["profile"],
@@ -22,10 +20,8 @@ export default function AppHeader() {
 
   // TODO: Rationalize orthogonality
   const handleLogout = () => {
-    queryClient.cancelQueries();
-    queryClient.clear();
+    emitter.emit(REDIRECT_TO_LOGIN);
     TokenManager.removeTokens();
-    router.push("/login");
   };
 
   return (
