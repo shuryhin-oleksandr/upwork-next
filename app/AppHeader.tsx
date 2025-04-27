@@ -1,7 +1,6 @@
 "use client";
 
 import { getProfile } from "@/app/login/api";
-import { emitter, REDIRECT_TO_LOGIN } from "@/app/login/events";
 import { TokenManager } from "@/app/login/TokenManager";
 import { useQuery } from "@tanstack/react-query";
 import { Button, theme, Typography } from "antd";
@@ -20,8 +19,7 @@ export default function AppHeader() {
 
   // TODO: Rationalize orthogonality
   const handleLogout = () => {
-    emitter.emit(REDIRECT_TO_LOGIN);
-    TokenManager.removeTokens();
+    TokenManager.logout();
   };
 
   return (

@@ -12,8 +12,6 @@ export default function UserLogoutHandler({ children }: { children: React.ReactN
 
   useEffect(() => {
     const handler = () => {
-      queryClient.cancelQueries();
-      queryClient.clear();
       if (pathname !== "/login") router.push("/login");
     };
     emitter.on(REDIRECT_TO_LOGIN, handler);

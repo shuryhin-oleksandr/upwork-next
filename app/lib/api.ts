@@ -1,6 +1,5 @@
-import { emitter, REDIRECT_TO_LOGIN } from "@/app/login/events";
-import { TokenManager } from "@/app/login/TokenManager";
 import { refresh } from "@/app/login/api";
+import { TokenManager } from "@/app/login/TokenManager";
 import { Mutex } from "async-mutex";
 import axios from "axios";
 
@@ -25,8 +24,7 @@ api.interceptors.response.use(
 
     const refreshToken = TokenManager.getRefreshToken() || "";
     if (!refreshToken) {
-      TokenManager.removeTokens();
-      emitter.emit(REDIRECT_TO_LOGIN);
+      TokenManager.logout();
       throw error;
     }
 
@@ -37,8 +35,7 @@ api.interceptors.response.use(
         TokenManager.setTokens(data);
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
-          TokenManager.removeTokens();
-          emitter.emit(REDIRECT_TO_LOGIN);
+          TokenManager.logout();
           throw error;
         }
       } finally {

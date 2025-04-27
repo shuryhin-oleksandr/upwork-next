@@ -3,7 +3,7 @@
 import { getProfile, login, LoginDto } from "@/app/login/api";
 import { TokenManager } from "@/app/login/TokenManager";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input } from "antd";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -12,7 +12,6 @@ import { useEffect, useState } from "react";
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const { isSuccess } = useQuery({ queryKey: ["profile"], queryFn: getProfile });
   useEffect(() => {
@@ -23,10 +22,8 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       // TODO: Rationalize orthogonality
-      TokenManager.setTokens(data);
-      queryClient.cancelQueries();
-      queryClient.clear();
-      router.push("/");
+      TokenManager.login(data);
+
       setFormError(null);
     },
     // TODO: Error handling DRY
