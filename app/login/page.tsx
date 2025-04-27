@@ -21,9 +21,7 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      // TODO: Rationalize orthogonality
       AuthManager.login(data);
-
       setFormError(null);
     },
     // TODO: Error handling DRY

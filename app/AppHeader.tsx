@@ -17,7 +17,6 @@ export default function AppHeader() {
     queryFn: getProfile,
   });
 
-  // TODO: Rationalize orthogonality
   const handleLogout = () => {
     AuthManager.logout();
   };
