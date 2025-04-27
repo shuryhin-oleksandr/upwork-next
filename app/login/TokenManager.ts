@@ -4,21 +4,21 @@ interface JwtResponse {
 }
 
 export class TokenManager {
-  private static readonly ACCESS_TOKEN_KEY = "accessToken";
+  static accessToken: string | null = null;
   private static readonly REFRESH_TOKEN_KEY = "refreshToken";
   
-  static setTokens({accessToken, refreshToken}: JwtResponse) {
-    localStorage.setItem(this.ACCESS_TOKEN_KEY, accessToken);
+  static setTokens({ accessToken, refreshToken }: JwtResponse) {
+    this.accessToken = accessToken;
     localStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
   }
 
   static removeTokens() {
-    localStorage.removeItem(this.ACCESS_TOKEN_KEY);
+    this.accessToken = null;
     localStorage.removeItem(this.REFRESH_TOKEN_KEY);
   }
 
   static getAccessToken() {
-    return localStorage.getItem(this.ACCESS_TOKEN_KEY);
+    return this.accessToken;
   }
 
   static getRefreshToken() {
