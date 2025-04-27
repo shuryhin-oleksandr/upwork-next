@@ -1,7 +1,7 @@
 import AppHeader from "@/app/AppHeader";
 import AntdProvider from "@/app/lib/AntdProvider";
 import ReactQueryClientProvider from "@/app/lib/ReactQueryClientProvider";
-import LoginRedirectHandler from "@/app/login/LoginRedirectHandler";
+import UserLogoutHandler from "@/app/login/UserLogoutHandler";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import type { Metadata } from "next";
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ReactQueryClientProvider>
           <AntdProvider>
-            <LoginRedirectHandler>
+            <UserLogoutHandler>
               <Layout style={{ minHeight: "100vh" }}>
                 <AppHeader />
                 <Content
@@ -49,7 +49,7 @@ export default function RootLayout({
                   {children}
                 </Content>
               </Layout>
-            </LoginRedirectHandler>
+            </UserLogoutHandler>
           </AntdProvider>
         </ReactQueryClientProvider>
       </body>
