@@ -12,7 +12,9 @@ export default function UserLogoutHandler({ children }: { children: React.ReactN
 
   useEffect(() => {
     const handler = () => {
-      if (pathname !== "/login") router.push("/login");
+      if (pathname !== "/login") {
+        router.push("/login");
+      }
     };
     emitter.on(REDIRECT_TO_LOGIN, handler);
     return () => {

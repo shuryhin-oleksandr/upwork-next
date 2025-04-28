@@ -30,14 +30,20 @@ export class AuthManager {
 
   static login(data: JwtResponse) {
     this.setTokens(data);
-    queryClient.clear();
+    queryClient.resetQueries();
   }
 
   static logout() {
     emitter.emit(REDIRECT_TO_LOGIN);
+    // [Auth] To prevent infite loop:
+    // - login page queries "profile", it fails
+    // - interceptor tryies to refresh token, it fails
+    // - interceptor calls AuthManager.logout()
+    // - AuthManager.logout() resets "profile" query
+    // - login page sees idle "profile" query, fetches again ...
     if (this.getAccessToken() || this.getRefreshToken()) {
       this.removeTokens();
-      queryClient.clear();
+      queryClient.resetQueries();
     }
   }
 }

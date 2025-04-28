@@ -22,7 +22,6 @@ export default function Login() {
     mutationFn: login,
     onSuccess: (data) => {
       AuthManager.login(data);
-      router.push("/");
     },
     // TODO: Error handling DRY
     onError: (error: AxiosError<{ message: string }>) => {
