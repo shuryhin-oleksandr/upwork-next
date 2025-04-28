@@ -18,3 +18,9 @@ export const createRoomMeta = async (data: CreateRoomMetaDto) => {
   const response = await axios.post(url, data);
   return response.data;
 };
+
+export const getRejectReasons = async () => {
+  const url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/upwork/reject-reasons`;
+  const response = await axios.get(url);
+  return response.data;
+};

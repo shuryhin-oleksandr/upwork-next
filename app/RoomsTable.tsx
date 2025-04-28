@@ -1,9 +1,9 @@
-import { createRoomMeta, getRooms, updateRoomMeta } from "@/app/api";
+import { createRoomMeta, getRejectReasons, getRooms, updateRoomMeta } from "@/app/api";
 import { FollowUpDate, MemoizedBantTag } from "@/app/components";
-import { EditableCellProps, EditableRowProps, Room } from "@/app/interfaces";
+import { EditableCellProps, EditableRowProps, RejectReason, Room } from "@/app/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
+import { DatePicker, Form, Input, InputNumber, message, Select, Table, theme } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
@@ -30,7 +30,7 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
-type EditableType = "text" | "number" | "date";
+type EditableType = "text" | "number" | "date" | "select";
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
@@ -42,6 +42,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   record,
   handleSave,
   editableType = "text",
+  options = [],
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
@@ -112,6 +113,18 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             defaultOpen={true}
           />
         )}
+        {editableType === "select" && (
+          <Select
+            style={{ width: "100%" }}
+            onSelect={save}
+            onChange={save}
+            options={options}
+            popupMatchSelectWidth={false}
+            defaultOpen={true}
+            allowClear={true}
+            placeholder="Select a reason"
+          />
+        )}
         {editableType === "text" && (
           <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
         )}
@@ -138,6 +151,11 @@ const RoomsTable: React.FC = () => {
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
+  });
+
+  const { data: rejectReasons } = useQuery({
+    queryKey: ["rejectReasons"],
+    queryFn: getRejectReasons,
   });
 
   const roomMetaCreateMutation = useMutation({
@@ -194,10 +212,17 @@ const RoomsTable: React.FC = () => {
 
   if (isError) return <span>Error: {error.message}</span>;
 
+  const rejectReasonOptions =
+    rejectReasons?.map((reason: RejectReason) => ({
+      value: reason._id,
+      label: reason.reason,
+    })) || [];
+
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
     editableType?: EditableType;
     dataIndex: NamePath<Room>;
+    options?: Array<{ value: string; label: string }>;
   })[] = [
     {
       title: "Name",
@@ -233,7 +258,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "33%",
+      width: "25%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -244,6 +269,20 @@ const RoomsTable: React.FC = () => {
         },
       },
       sortDirections: ["descend"],
+    },
+    {
+      title: "Reject Reason",
+      dataIndex: ["meta", "rejectReason"],
+      width: "8%",
+      editable: true,
+      editableType: "select",
+      options: rejectReasonOptions,
+      render: (value: string) => {
+        const option = rejectReasonOptions.find(
+          (opt: { value: string; label: string }) => opt.value === value
+        );
+        return option ? option.label : null;
+      },
     },
     {
       title: "FU#",
@@ -310,6 +349,7 @@ const RoomsTable: React.FC = () => {
         title: col.title,
         handleSave,
         editableType: col.editableType,
+        options: col.options,
       }),
     };
   });
