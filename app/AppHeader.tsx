@@ -1,7 +1,6 @@
 "use client";
 
-import { getProfile } from "@/app/login/api";
-import { useQuery } from "@tanstack/react-query";
+import { useIsAuthenticated, useResetTokens } from "@/app/login/auth";
 import { Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
 
@@ -10,13 +9,10 @@ const { useToken } = theme;
 
 export default function AppHeader() {
   const { token } = useToken();
+  const isAuthenticated = useIsAuthenticated();
+  const resetTokens = useResetTokens();
 
-  const { isSuccess: isUserAuthenticated } = useQuery({
-    queryKey: ["profile"],
-    queryFn: getProfile,
-  });
-
-  const handleLogout = () => console.log("Logout");
+  const handleLogout = () => resetTokens();
 
   return (
     <Header style={{ padding: 0 }}>
@@ -35,7 +31,7 @@ export default function AppHeader() {
         <Title level={3} style={{ color: token.colorTextLightSolid, margin: 0 }}>
           Upwork CRM
         </Title>
-        {isUserAuthenticated && (
+        {isAuthenticated && (
           <Button type="primary" onClick={handleLogout}>
             Log out
           </Button>
