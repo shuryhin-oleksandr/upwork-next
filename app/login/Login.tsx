@@ -6,7 +6,6 @@ import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input, Typography } from "antd";
 import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const { Text } = Typography;
@@ -16,15 +15,12 @@ export default function Login() {
   const accessToken = useAccessToken();
   const refreshToken = useRefreshToken();
   const setTokens = useSetTokens();
-  const router = useRouter();
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
       setTokens(data);
       setFormError(null);
-      // TODO: extract to redirect handler
-      router.push("/sandbox/profile");
     },
     // TODO: Error handling DRY
     onError: (error: AxiosError<{ message: string }>) => {
