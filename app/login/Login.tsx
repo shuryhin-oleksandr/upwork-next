@@ -1,24 +1,30 @@
 "use client";
 
 import { login, LoginDto } from "@/app/login/api";
-import { auth, useAuth } from "@/app/login/auth";
+import { useAccessToken, useRefreshToken, useSetTokens } from "@/app/login/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input, Typography } from "antd";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 const { Text } = Typography;
 
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
-  const { accessToken, refreshToken } = useAuth();
+  const accessToken = useAccessToken();
+  const refreshToken = useRefreshToken();
+  const setTokens = useSetTokens();
+  const router = useRouter();
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      auth.setTokens(data);
+      setTokens(data);
       setFormError(null);
+      // TODO: extract to redirect handler
+      router.push("/sandbox/profile");
     },
     // TODO: Error handling DRY
     onError: (error: AxiosError<{ message: string }>) => {

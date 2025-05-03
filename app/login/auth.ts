@@ -25,4 +25,12 @@ export const useAuth = create<AuthState>((set) => ({
   setTokens: (tokens: Tokens) => set(tokens),
 }));
 
+// TODO: rationalise
+export const useAccessToken = () => useAuth((state) => state.accessToken);
+export const useRefreshToken = () => useAuth((state) => state.refreshToken);
+export const useIsAuthenticated = () =>
+  useAuth((state) => !!state.accessToken && !!state.refreshToken);
+
+export const useSetTokens = () => useAuth((state) => state.setTokens);
+
 export const auth = useAuth.getState();
