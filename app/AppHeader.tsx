@@ -1,7 +1,6 @@
 "use client";
 
 import { getProfile } from "@/app/login/api";
-import { AuthManager } from "@/app/login/AuthManager";
 import { useQuery } from "@tanstack/react-query";
 import { Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
@@ -17,7 +16,7 @@ export default function AppHeader() {
     queryFn: getProfile,
   });
 
-  const handleLogout = () => AuthManager.logout();
+  const handleLogout = () => console.log("Logout");
 
   return (
     <Header style={{ padding: 0 }}>

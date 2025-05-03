@@ -1,7 +1,6 @@
 import AppHeader from "@/app/AppHeader";
 import AntdProvider from "@/app/lib/AntdProvider";
 import ReactQueryClientProvider from "@/app/lib/ReactQueryClientProvider";
-import UserLogoutHandler from "@/app/login/UserLogoutHandler";
 import { Layout } from "antd";
 import { Content } from "antd/es/layout/layout";
 import type { Metadata } from "next";
@@ -33,23 +32,21 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ReactQueryClientProvider>
           <AntdProvider>
-            <UserLogoutHandler>
-              <Layout style={{ minHeight: "100vh" }}>
-                <AppHeader />
-                <Content
-                  style={{
-                    maxWidth: "1200px",
-                    width: "100%",
-                    margin: "auto",
-                    padding: "30px",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                >
-                  {children}
-                </Content>
-              </Layout>
-            </UserLogoutHandler>
+            <Layout style={{ minHeight: "100vh" }}>
+              <AppHeader />
+              <Content
+                style={{
+                  maxWidth: "1200px",
+                  width: "100%",
+                  margin: "auto",
+                  padding: "30px",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {children}
+              </Content>
+            </Layout>
           </AntdProvider>
         </ReactQueryClientProvider>
       </body>

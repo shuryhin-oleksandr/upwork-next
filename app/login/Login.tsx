@@ -1,44 +1,15 @@
 "use client";
 
-import { getProfile, login, LoginDto } from "@/app/login/api";
-import { AuthManager } from "@/app/login/AuthManager";
+import { LoginDto } from "@/app/login/api";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input } from "antd";
-import { AxiosError } from "axios";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
-  const router = useRouter();
-
-  // [Auth] Interceptor does not know if that is the first request,
-  // and should not know due to beeing orthogonal.
-  const [isFirstProfileRequest, setIsFirstProfileRequest] = useState(true);
-  const { isSuccess, isError } = useQuery({
-    queryKey: ["profile"],
-    queryFn: getProfile,
-    enabled: isFirstProfileRequest,
-  });
-  useEffect(() => {
-    if (isSuccess) router.push("/");
-    if (isError) setIsFirstProfileRequest(false);
-  }, [isSuccess, isError, router]);
-
-  const loginMutation = useMutation({
-    mutationFn: login,
-    onSuccess: (data) => {
-      AuthManager.login(data);
-    },
-    // TODO: Error handling DRY
-    onError: (error: AxiosError<{ message: string }>) => {
-      setFormError(error?.response?.data.message || error.message);
-    },
-  });
 
   const onSubmit = (values: LoginDto) => {
-    loginMutation.mutate(values);
+    console.log("Login", values);
   };
 
   return (
