@@ -8,7 +8,7 @@ export interface LoginDto {
 
 export const login = async (data: LoginDto) => {
   const url = "/auth/login";
-  const response = await api.post(url, data);
+  const response = await api.post(url, data, { withCredentials: true });
   return response.data;
 };
 
