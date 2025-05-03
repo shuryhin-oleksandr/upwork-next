@@ -1,15 +1,33 @@
 "use client";
 
-import { LoginDto } from "@/app/login/api";
+import { login, LoginDto } from "@/app/login/api";
+import { auth, useAuth } from "@/app/login/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Alert, Button, Card, Form, Input } from "antd";
+import { useMutation } from "@tanstack/react-query";
+import { Alert, Button, Card, Form, Input, Typography } from "antd";
+import { AxiosError } from "axios";
 import { useState } from "react";
+
+const { Text } = Typography;
 
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
+  const { accessToken, refreshToken } = useAuth();
+
+  const loginMutation = useMutation({
+    mutationFn: login,
+    onSuccess: (data) => {
+      auth.setTokens(data);
+      setFormError(null);
+    },
+    // TODO: Error handling DRY
+    onError: (error: AxiosError<{ message: string }>) => {
+      setFormError(error?.response?.data.message || error.message);
+    },
+  });
 
   const onSubmit = (values: LoginDto) => {
-    console.log("Login", values);
+    loginMutation.mutate(values);
   };
 
   return (
@@ -48,6 +66,8 @@ export default function Login() {
             </Button>
           </Form.Item>
         </Form>
+        {/* TODO: remove debug info */}
+        <Text>{JSON.stringify({ accessToken, refreshToken })}</Text>
       </Card>
     </div>
   );
