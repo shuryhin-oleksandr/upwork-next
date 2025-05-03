@@ -13,10 +13,18 @@ export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
 
-  const { isSuccess } = useQuery({ queryKey: ["profile"], queryFn: getProfile });
+  // [Auth] Interceptor does not know if that is the first request,
+  // and should not know due to beeing orthogonal.
+  const [isFirstProfileRequest, setIsFirstProfileRequest] = useState(true);
+  const { isSuccess, isError } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+    enabled: isFirstProfileRequest,
+  });
   useEffect(() => {
     if (isSuccess) router.push("/");
-  }, [isSuccess, router]);
+    if (isError) setIsFirstProfileRequest(false);
+  }, [isSuccess, isError, router]);
 
   const loginMutation = useMutation({
     mutationFn: login,
