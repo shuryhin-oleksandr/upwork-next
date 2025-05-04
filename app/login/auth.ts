@@ -13,7 +13,10 @@ export const useAuth = create<AuthState>((set) => ({
 }));
 
 export const useAccessToken = () => useAuth((state) => state.accessToken);
-export const useIsAuthenticated = () => useAuth((state) => !!state.accessToken);
-
 export const useSetAccessToken = () => useAuth((state) => state.setAccessToken);
 export const useResetAccessToken = () => useAuth((state) => state.resetAccessToken);
+
+export const useIsAuthenticated = () => useAuth((state) => !!state.accessToken);
+
+// TODO: fix naming
+export const getAuth = () => useAuth.getState();
