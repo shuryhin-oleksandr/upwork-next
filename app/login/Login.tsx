@@ -1,7 +1,7 @@
 "use client";
 
 import { login, LoginDto } from "@/app/login/api";
-import { useAccessToken, useRefreshToken, useSetTokens } from "@/app/login/auth";
+import { useAccessToken, useIsAuthenticated, useSetAccessToken } from "@/app/login/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input, Typography } from "antd";
@@ -13,14 +13,15 @@ const { Text } = Typography;
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const accessToken = useAccessToken();
-  const refreshToken = useRefreshToken();
-  const setTokens = useSetTokens();
+  const setAccessToken = useSetAccessToken();
+  // TODO: Rationalise isAuthenticated lifecycle
+  const isAuthenticated = useIsAuthenticated();
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      setTokens(data);
-      setFormError(null);
+      // TODO: Rename to login()
+      setAccessToken(data.accessToken);
     },
     // TODO: Error handling DRY
     onError: (error: AxiosError<{ message: string }>) => {
@@ -69,7 +70,7 @@ export default function Login() {
           </Form.Item>
         </Form>
         {/* TODO: remove debug info */}
-        <Text>{JSON.stringify({ accessToken, refreshToken })}</Text>
+        <Text>{JSON.stringify({ isAuthenticated, accessToken })}</Text>
       </Card>
     </div>
   );

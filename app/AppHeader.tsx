@@ -1,7 +1,9 @@
 "use client";
 
-import { useIsAuthenticated, useResetTokens } from "@/app/login/auth";
-import { Button, theme, Typography } from "antd";
+import { logout } from "@/app/login/api";
+import { useIsAuthenticated, useResetAccessToken } from "@/app/login/auth";
+import { useMutation } from "@tanstack/react-query";
+import { App, Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
 
 const { Title } = Typography;
@@ -9,10 +11,26 @@ const { useToken } = theme;
 
 export default function AppHeader() {
   const { token } = useToken();
+  const { message } = App.useApp();
+  // TODO: Rationalise isAuthenticated lifecycle
   const isAuthenticated = useIsAuthenticated();
-  const resetTokens = useResetTokens();
+  const resetAccessToken = useResetAccessToken();
 
-  const handleLogout = () => resetTokens();
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      // TODO: Rename to login()?
+      resetAccessToken();
+    },
+    onError: (error) => {
+      // TODO: Fix error message
+      message.error("Logout error: " + error.message);
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <Header style={{ padding: 0 }}>

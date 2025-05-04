@@ -12,6 +12,12 @@ export const login = async (data: LoginDto) => {
   return response.data;
 };
 
+export const logout = async () => {
+  const url = "/auth/logout";
+  const response = await api.post(url, {}, { withCredentials: true });
+  return response.data;
+};
+
 export const refresh = async (refreshToken: string) => {
   const url = "/auth/refresh";
   const response = await axios.post(
