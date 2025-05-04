@@ -20,6 +20,7 @@ export default function AppHeader() {
   const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
+    enabled: isAuthenticated !== false,
   });
 
   const logoutMutation = useMutation({
@@ -57,9 +58,7 @@ export default function AppHeader() {
         </Title>
         {isAuthenticated && data?.username && (
           <div>
-            <Text style={{ color: token.colorTextLightSolid }}>
-              {data.username}
-            </Text>
+            <Text style={{ color: token.colorTextLightSolid }}>{data.username}</Text>
             <Button type="primary" onClick={handleLogout} style={{ marginLeft: 20 }}>
               Log out
             </Button>

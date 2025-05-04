@@ -24,7 +24,7 @@ export default function ReactQueryClientProvider({ children }: { children: React
 
   React.useEffect(() => {
     if (isAuthenticated === false) {
-      queryClient.resetQueries();
+      queryClient.clear();
     }
   }, [isAuthenticated]);
 
