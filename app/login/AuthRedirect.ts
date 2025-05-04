@@ -7,14 +7,13 @@ import { useEffect } from "react";
 export default function AuthRedirect({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-
   const isAuthenticated = useIsAuthenticated();
 
   useEffect(() => {
-    if (isAuthenticated && pathname === "/login") {
-      router.push("/sandbox/profile");
+    if (isAuthenticated === true && pathname === "/login") {
+      router.push("/");
     }
-    if (!isAuthenticated && pathname !== "/login") {
+    if (isAuthenticated === false && pathname !== "/login") {
       router.push("/login");
     }
   }, [isAuthenticated, router, pathname]);
