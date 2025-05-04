@@ -6,7 +6,7 @@ import { Content } from "antd/es/layout/layout";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import LogInOutRedirect from "@/app/login/LogInOutRedirect";
+import AuthRedirect from "@/app/login/AuthRedirect";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +33,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ReactQueryClientProvider>
           <AntdProvider>
-            <LogInOutRedirect>
+            <AuthRedirect>
               <Layout style={{ minHeight: "100vh" }}>
                 <AppHeader />
                 <Content
@@ -49,7 +49,7 @@ export default function RootLayout({
                   {children}
                 </Content>
               </Layout>
-            </LogInOutRedirect>
+            </AuthRedirect>
           </AntdProvider>
         </ReactQueryClientProvider>
       </body>

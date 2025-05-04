@@ -4,7 +4,7 @@ import { useIsAuthenticated } from "@/app/login/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export default function LogInOutRedirect({ children }: { children: React.ReactNode }) {
+export default function AuthRedirect({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
