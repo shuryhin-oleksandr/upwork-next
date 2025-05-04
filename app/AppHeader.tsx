@@ -1,12 +1,12 @@
 "use client";
 
-import { logout } from "@/app/login/api";
+import { getProfile, logout } from "@/app/login/api";
 import { useIsAuthenticated, useResetAccessToken } from "@/app/login/auth";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { App, Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { useToken } = theme;
 
 export default function AppHeader() {
@@ -15,6 +15,12 @@ export default function AppHeader() {
   // TODO: Rationalise isAuthenticated lifecycle
   const isAuthenticated = useIsAuthenticated();
   const resetAccessToken = useResetAccessToken();
+
+  // Used to initialize an access token on a first page load
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: getProfile,
+  });
 
   const logoutMutation = useMutation({
     mutationFn: logout,
@@ -49,10 +55,15 @@ export default function AppHeader() {
         <Title level={3} style={{ color: token.colorTextLightSolid, margin: 0 }}>
           Upwork CRM
         </Title>
-        {isAuthenticated && (
-          <Button type="primary" onClick={handleLogout}>
-            Log out
-          </Button>
+        {isAuthenticated && data?.username && (
+          <div>
+            <Text style={{ color: token.colorTextLightSolid }}>
+              {data.username}
+            </Text>
+            <Button type="primary" onClick={handleLogout} style={{ marginLeft: 20 }}>
+              Log out
+            </Button>
+          </div>
         )}
       </div>
     </Header>

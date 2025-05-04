@@ -24,7 +24,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status !== 401) throw error;
-    
+
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
       const auth = getAuth();
@@ -49,7 +49,11 @@ api.interceptors.response.use(
 
 export const login = async (data: LoginDto) => {
   const url = "/auth/login";
-  const response = await api.post(url, data, { withCredentials: true });
+  const response = await axios.post(url, data, {
+    // TODO: DRY
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    withCredentials: true,
+  });
   return response.data;
 };
 
