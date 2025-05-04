@@ -1,7 +1,7 @@
 "use client";
 
 import { login, LoginDto } from "@/app/login/api";
-import { useAccessToken, useIsAuthenticated, useSetAccessToken } from "@/app/login/auth";
+import { useAccessToken, useIsAuthenticated, useSetLoggedIn } from "@/app/login/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input, Typography } from "antd";
@@ -13,15 +13,13 @@ const { Text } = Typography;
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
   const accessToken = useAccessToken();
-  const setAccessToken = useSetAccessToken();
-  // TODO: Rationalise isAuthenticated lifecycle
+  const setLoggedIn = useSetLoggedIn();
   const isAuthenticated = useIsAuthenticated();
 
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      // TODO: Rename to login()
-      setAccessToken(data.accessToken);
+      setLoggedIn(data.accessToken);
     },
     // TODO: Error handling DRY
     onError: (error: AxiosError<{ message: string }>) => {

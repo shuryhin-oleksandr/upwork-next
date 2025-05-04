@@ -3,20 +3,20 @@ import { create } from "zustand";
 interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean | undefined;
-  setAccessToken: (setAccessToken: string) => void;
-  resetAccessToken: () => void;
+  setLoggedIn: (accessToken: string) => void;
+  setLoggedOut: () => void;
 }
 
 export const useAuth = create<AuthState>((set) => ({
   accessToken: null,
   isAuthenticated: undefined,
-  setAccessToken: (accessToken) => set({ accessToken, isAuthenticated: true }),
-  resetAccessToken: () => set({ accessToken: null, isAuthenticated: false }),
+  setLoggedIn: (accessToken) => set({ accessToken, isAuthenticated: true }),
+  setLoggedOut: () => set({ accessToken: null, isAuthenticated: false }),
 }));
 
 export const useAccessToken = () => useAuth((state) => state.accessToken);
-export const useSetAccessToken = () => useAuth((state) => state.setAccessToken);
-export const useResetAccessToken = () => useAuth((state) => state.resetAccessToken);
+export const useSetLoggedIn = () => useAuth((state) => state.setLoggedIn);
+export const useSetLoggedOut = () => useAuth((state) => state.setLoggedOut);
 
 export const useIsAuthenticated = () => useAuth((state) => state.isAuthenticated);
 

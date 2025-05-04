@@ -1,10 +1,11 @@
 "use client";
 
 import { getProfile, logout } from "@/app/login/api";
-import { useIsAuthenticated, useResetAccessToken } from "@/app/login/auth";
+import { useIsAuthenticated, useSetLoggedOut } from "@/app/login/auth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { App, Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
+import Link from "next/link";
 
 const { Title, Text } = Typography;
 const { useToken } = theme;
@@ -12,9 +13,8 @@ const { useToken } = theme;
 export default function AppHeader() {
   const { token } = useToken();
   const { message } = App.useApp();
-  // TODO: Rationalise isAuthenticated lifecycle
   const isAuthenticated = useIsAuthenticated();
-  const resetAccessToken = useResetAccessToken();
+  const setLoggedOut = useSetLoggedOut();
 
   // Used to initialize an access token on a first page load
   const { data } = useQuery({
@@ -26,8 +26,7 @@ export default function AppHeader() {
   const logoutMutation = useMutation({
     mutationFn: logout,
     onSuccess: () => {
-      // TODO: Rename to login()?
-      resetAccessToken();
+      setLoggedOut();
     },
     onError: (error) => {
       // TODO: Fix error message

@@ -30,10 +30,10 @@ api.interceptors.response.use(
       const auth = getAuth();
       try {
         const data = await refresh();
-        auth.setAccessToken(data.accessToken);
+        auth.setLoggedIn(data.accessToken);
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
-          auth.resetAccessToken();
+          auth.setLoggedOut();
           throw error;
         }
       } finally {
