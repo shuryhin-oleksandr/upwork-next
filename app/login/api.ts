@@ -50,7 +50,6 @@ api.interceptors.response.use(
 export const login = async (data: LoginDto) => {
   const url = "/auth/login";
   const response = await axios.post(url, data, {
-    // TODO: DRY
     baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
     withCredentials: true,
   });
@@ -68,7 +67,10 @@ export const refresh = async () => {
   const response = await axios.post(
     url,
     {},
-    { baseURL: process.env.NEXT_PUBLIC_BACKEND_URL, withCredentials: true }
+    {
+      baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+      withCredentials: true,
+    }
   );
   return response.data;
 };
