@@ -11,9 +11,7 @@ export interface LoginDto {
 const mutex = new Mutex();
 
 api.interceptors.request.use(async (config) => {
-  // TODO:Rationalise store up to date import value
-  const auth = getAuth();
-  const accessToken = auth.accessToken;
+  const accessToken = getAuth().accessToken;
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -27,13 +25,12 @@ api.interceptors.response.use(
 
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
-      const auth = getAuth();
       try {
         const data = await refresh();
-        auth.setLoggedIn(data.accessToken);
+        getAuth().setLoggedIn(data.accessToken);
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
-          auth.setLoggedOut();
+          getAuth().setLoggedOut();
           throw error;
         }
       } finally {
