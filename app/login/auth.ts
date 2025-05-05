@@ -25,14 +25,14 @@ const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(_store: S) =
   return store;
 };
 
-export const useAuthBase = create<AuthState & AuthAction>((set) => ({
+export const useAuthStoreBase = create<AuthState & AuthAction>((set) => ({
   accessToken: null,
   isAuthenticated: undefined,
   setLoggedIn: (accessToken) => set({ accessToken, isAuthenticated: true }),
   setLoggedOut: () => set({ accessToken: null, isAuthenticated: false }),
 }));
 
-export const useAuth = createSelectors(useAuthBase);
+export const useAuthStore = createSelectors(useAuthStoreBase);
 
 // TODO: fix naming
-export const getAuth = () => useAuth.getState();
+export const getAuthState = () => useAuthStore.getState();

@@ -1,5 +1,5 @@
 import { api } from "@/app/lib/api";
-import { getAuth } from "@/app/login/auth";
+import { getAuthState } from "@/app/login/auth";
 import { Mutex } from "async-mutex";
 import axios from "axios";
 
@@ -11,7 +11,7 @@ export interface LoginDto {
 const mutex = new Mutex();
 
 api.interceptors.request.use(async (config) => {
-  const accessToken = getAuth().accessToken;
+  const accessToken = getAuthState().accessToken;
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
@@ -27,10 +27,10 @@ api.interceptors.response.use(
       const release = await mutex.acquire();
       try {
         const data = await refresh();
-        getAuth().setLoggedIn(data.accessToken);
+        getAuthState().setLoggedIn(data.accessToken);
       } catch (refreshTokenError) {
         if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
-          getAuth().setLoggedOut();
+          getAuthState().setLoggedOut();
           throw error;
         }
       } finally {

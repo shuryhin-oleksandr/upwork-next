@@ -1,13 +1,13 @@
 "use client";
 
-import { useAuth } from "@/app/login/auth";
+import { useAuthStore } from "@/app/login/auth";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function AuthRedirect({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const isAuthenticated = useAuth.use.isAuthenticated();
+  const isAuthenticated = useAuthStore.use.isAuthenticated();
 
   useEffect(() => {
     if (isAuthenticated === true && pathname === "/login") {
