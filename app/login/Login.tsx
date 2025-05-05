@@ -1,7 +1,7 @@
 "use client";
 
 import { login, LoginDto } from "@/app/login/api";
-import { useSetLoggedIn } from "@/app/login/auth";
+import { useAuth } from "@/app/login/auth";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { useMutation } from "@tanstack/react-query";
 import { Alert, Button, Card, Form, Input } from "antd";
@@ -11,7 +11,7 @@ import { useState } from "react";
 
 export default function Login() {
   const [formError, setFormError] = useState<string | null>(null);
-  const setLoggedIn = useSetLoggedIn();
+  const setLoggedIn = useAuth.use.setLoggedIn();
 
   const loginMutation = useMutation({
     mutationFn: login,
