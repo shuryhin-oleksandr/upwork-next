@@ -1,6 +1,6 @@
-// ClientProviders.tsx
 "use client";
 
+import { useAuthStore } from "@/app/login/auth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AxiosError } from "axios";
@@ -20,6 +20,14 @@ export const queryClient = new QueryClient({
 });
 
 export default function ReactQueryClientProvider({ children }: { children: React.ReactNode }) {
+  const isAuthenticated = useAuthStore.use.isAuthenticated();
+
+  React.useEffect(() => {
+    if (isAuthenticated === false) {
+      queryClient.clear();
+    }
+  }, [isAuthenticated]);
+
   return (
     <QueryClientProvider client={queryClient}>
       {children}

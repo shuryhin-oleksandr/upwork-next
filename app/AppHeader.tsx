@@ -1,23 +1,40 @@
 "use client";
 
-import { getProfile } from "@/app/login/api";
-import { AuthManager } from "@/app/login/AuthManager";
-import { useQuery } from "@tanstack/react-query";
-import { Button, theme, Typography } from "antd";
+import { getProfile, logout } from "@/app/login/api";
+import { useAuthStore } from "@/app/login/auth";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { App, Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
+import { AxiosError } from "axios";
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { useToken } = theme;
 
 export default function AppHeader() {
   const { token } = useToken();
+  const { message } = App.useApp();
+  const isAuthenticated = useAuthStore.use.isAuthenticated();
+  const setLoggedOut = useAuthStore.use.setLoggedOut();
 
-  const { isSuccess: isUserAuthenticated } = useQuery({
+  // Used to initialize an access token on a first page load
+  const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
   });
 
-  const handleLogout = () => AuthManager.logout();
+  const logoutMutation = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      setLoggedOut();
+    },
+    onError: (error: AxiosError) => {
+      message.error("Logout error: " + error.message);
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <Header style={{ padding: 0 }}>
@@ -36,10 +53,13 @@ export default function AppHeader() {
         <Title level={3} style={{ color: token.colorTextLightSolid, margin: 0 }}>
           Upwork CRM
         </Title>
-        {isUserAuthenticated && (
-          <Button type="primary" onClick={handleLogout}>
-            Log out
-          </Button>
+        {isAuthenticated && data?.username && (
+          <div>
+            <Text style={{ color: token.colorTextLightSolid }}>{data.username}</Text>
+            <Button type="primary" onClick={handleLogout} style={{ marginLeft: 20 }}>
+              Log out
+            </Button>
+          </div>
         )}
       </div>
     </Header>
