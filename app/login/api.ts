@@ -22,7 +22,8 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status !== 401) throw error;
-
+    if (getAuthState().isAuthenticated === false) throw error;
+    
     if (!mutex.isLocked()) {
       const release = await mutex.acquire();
       try {

@@ -6,7 +6,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { App, Button, theme, Typography } from "antd";
 import { Header } from "antd/es/layout/layout";
 import { AxiosError } from "axios";
-import Link from "next/link";
 
 const { Title, Text } = Typography;
 const { useToken } = theme;
@@ -21,7 +20,6 @@ export default function AppHeader() {
   const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
-    enabled: isAuthenticated !== false,
   });
 
   const logoutMutation = useMutation({
