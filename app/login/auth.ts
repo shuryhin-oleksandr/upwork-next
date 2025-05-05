@@ -34,5 +34,4 @@ export const useAuthStoreBase = create<AuthState & AuthAction>((set) => ({
 
 export const useAuthStore = createSelectors(useAuthStoreBase);
 
-// TODO: fix naming
 export const getAuthState = () => useAuthStore.getState();
