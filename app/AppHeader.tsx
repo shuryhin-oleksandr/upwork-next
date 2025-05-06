@@ -20,6 +20,7 @@ export default function AppHeader() {
   const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: getProfile,
+    enabled: isAuthenticated,
   });
 
   const logoutMutation = useMutation({
