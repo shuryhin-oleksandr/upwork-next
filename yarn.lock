@@ -746,6 +746,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/cookie-parser@npm:^1.4.8":
+  version: 1.4.8
+  resolution: "@types/cookie-parser@npm:1.4.8"
+  peerDependencies:
+    "@types/express": "*"
+  checksum: b26ace5560adce1a746c059a75f18227ee3e3614a49c70dd29b8af204696079ced22eaa9d6cb084e3433ec433bff845cb47ffb890ae9af96a4aab2ff85e40da7
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:^1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -4447,6 +4456,7 @@ __metadata:
     "@tanstack/eslint-plugin-query": ^5.66.1
     "@tanstack/react-query": ^5.74.4
     "@tanstack/react-query-devtools": ^5.67.1
+    "@types/cookie-parser": ^1.4.8
     "@types/lodash": ^4.17.16
     "@types/node": ^20
     "@types/react": ^19
