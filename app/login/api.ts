@@ -1,4 +1,6 @@
 import { api } from "@/app/lib/api";
+import { getAuthState } from "@/app/login/auth";
+import { Mutex } from "async-mutex";
 import axios from "axios";
 
 export interface LoginDto {
@@ -6,18 +8,67 @@ export interface LoginDto {
   password: string;
 }
 
+const mutex = new Mutex();
+
+api.interceptors.request.use(async (config) => {
+  const accessToken = getAuthState().accessToken;
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status !== 401) throw error;
+    if (getAuthState().isAuthenticated === false) throw error;
+    
+    if (!mutex.isLocked()) {
+      const release = await mutex.acquire();
+      try {
+        const data = await refresh();
+        getAuthState().setLoggedIn(data.accessToken);
+      } catch (refreshTokenError) {
+        if (axios.isAxiosError(refreshTokenError) && refreshTokenError.response?.status === 401) {
+          getAuthState().setLoggedOut();
+          throw error;
+        }
+      } finally {
+        release();
+      }
+    } else {
+      await mutex.waitForUnlock();
+    }
+
+    return api.request(error.config);
+  }
+);
+
 export const login = async (data: LoginDto) => {
   const url = "/auth/login";
-  const response = await api.post(url, data);
+  const response = await axios.post(url, data, {
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    withCredentials: true,
+  });
   return response.data;
 };
 
-export const refresh = async (refreshToken: string) => {
+export const logout = async () => {
+  const url = "/auth/logout";
+  const response = await api.post(url, {}, { withCredentials: true });
+  return response.data;
+};
+
+export const refresh = async () => {
   const url = "/auth/refresh";
   const response = await axios.post(
     url,
-    { refreshToken },
-    { baseURL: process.env.NEXT_PUBLIC_BACKEND_URL }
+    {},
+    {
+      baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+      withCredentials: true,
+    }
   );
   return response.data;
 };
