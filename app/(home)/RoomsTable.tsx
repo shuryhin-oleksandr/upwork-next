@@ -7,12 +7,7 @@ import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import {
-  createRoomMeta,
-  getRooms,
-  updateRoomMeta,
-  getRejectReasons,
-} from "./api";
+import { createRoomMeta, getRooms, updateRoomMeta, getRejectReasons } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
 import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
 
@@ -36,7 +31,7 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
-type EditableType = "text" | "number" | "date";
+type EditableType = "text" | "number" | "date" | "select";
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
@@ -53,6 +48,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const form = useContext(EditableContext)!;
+  const { data: rejectReasonsData = [] } = useQuery({
+    queryKey: ["reject-reasons"],
+    queryFn: getRejectReasons,
+    initialData: [],
+  });
 
   useEffect(() => {
     if (editing) {
@@ -121,6 +121,22 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         {editableType === "text" && (
           <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
         )}
+        {editableType === "select" && (
+          <Select
+            ref={inputRef}
+            onChange={() => save()}
+            onBlur={() => save()}
+            style={{ width: "100%" }}
+            defaultOpen={true}
+          >
+            <Select.Option value="">None</Select.Option>
+            {rejectReasonsData.map((reason) => (
+              <Select.Option key={reason._id} value={reason._id}>
+                {reason.name}
+              </Select.Option>
+            ))}
+          </Select>
+        )}
       </Form.Item>
     ) : (
       <div
@@ -140,7 +156,7 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const { data: rejectReasonsData } = useQuery({
+  const { data: rejectReasonsData = [] } = useQuery({
     queryKey: ["reject-reasons"],
     queryFn: getRejectReasons,
     initialData: [],
@@ -201,24 +217,6 @@ const RoomsTable: React.FC = () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
   });
-
-
-  const handleRejectReasonChange = async (roomId: string, reasonId: string) => {
-    try {
-      const meta = data?.find((room) => room.id === roomId)?.meta;
-      if (!meta) return;
-
-      roomMetaUpdateMutation.mutate({
-        _id: meta._id,
-        comment: meta.comment,
-        bant: meta.bant,
-        rejectReason: reasonId,
-      });
-    } catch (error) {
-      console.error(error);
-      messageApi.error("Failed to update reject reason");
-    }
-  };
 
   if (isError) return <span>Error: {error.message}</span>;
 
@@ -284,20 +282,12 @@ const RoomsTable: React.FC = () => {
       title: "Reject Reason",
       dataIndex: ["meta", "rejectReason"],
       width: "5%",
-      render: (value: string, record: Room) => (
-        <Select
-          value={value || ""}
-          onChange={(newValue) => handleRejectReasonChange(record.id, newValue)}
-          style={{ width: "100%" }}
-        >
-          <Select.Option value="">None</Select.Option>
-          {rejectReasonsData.map((reason) => (
-            <Select.Option key={reason._id} value={reason._id}>
-              {reason.reason}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
+      editable: true,
+      editableType: "select",
+      render: (value: string) => {
+        const reason = rejectReasonsData.find((reason) => reason._id === value);
+        return reason ? reason.name : "";
+      },
     },
     {
       title: "FU date",

@@ -15,13 +15,18 @@ export interface Room {
   meta: RoomMeta;
 }
 
+export interface RejectReason {
+  _id: string;
+  name: string;
+}
+
 export interface RoomMeta {
   _id: string;
   roomId: string;
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  rejectReason?: string;
+  rejectReason?: RejectReason | string;
 }
 
 export interface CreateRoomMetaDto {
@@ -49,10 +54,5 @@ export interface EditableCellProps {
   dataIndex: NamePath<Room>;
   record: Room;
   handleSave: (record: Room) => void;
-  editableType?: "text" | "number" | "date";
-}
-
-export interface RejectReason {
-  _id: string;
-  reason: string;
+  editableType?: "text" | "number" | "date" | "select";
 }
