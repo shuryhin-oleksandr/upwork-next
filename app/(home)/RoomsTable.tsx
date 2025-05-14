@@ -82,6 +82,18 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       }
 
       toggleEdit();
+
+      if (
+        editableType === "date" &&
+        dataIndex?.[0] === "meta" &&
+        dataIndex?.[1] === "nextFollowUpDateCustom"
+      ) {
+        values.meta = {
+          ...values.meta,
+          nextFollowUpDateCustomCreatedAt: new Date().toISOString(),
+        };
+      }
+
       handleSave(_.merge({}, record, values));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
@@ -264,13 +276,16 @@ const RoomsTable: React.FC = () => {
         if (record.isContract) return null;
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
-        else
+        else {
+          const asterixOrCircumflex = record.nextFollowUpDateIsCustom === "after_client_message" ? " ^" : " *";
           return (
             <FollowUpDate
               date={dayjs(record.nextFollowUpDate)}
-              asterix={!!record.nextFollowUpDateIsCustom}
+              symbol={asterixOrCircumflex}
             />
           );
+          
+        }
       },
       sorter: {
         multiple: 1,
