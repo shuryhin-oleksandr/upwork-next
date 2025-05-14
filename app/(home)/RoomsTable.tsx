@@ -263,7 +263,7 @@ const RoomsTable: React.FC = () => {
       render: (value: string, record: Room) => {
         if (record.isContract) return null;
         if (record.hideFuDate) {
-          return <span style={{ fontWeight: "bold", color: token.colorPrimary }}>Hide</span>;
+          return <TypographyText style={{ fontWeight: "bold", color: "purple" }}>HIDE</TypographyText>;
         }
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
