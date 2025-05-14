@@ -262,6 +262,9 @@ const RoomsTable: React.FC = () => {
       editableType: "date",
       render: (value: string, record: Room) => {
         if (record.isContract) return null;
+        if (record.hideFuDate) {
+          return <span style={{ fontWeight: "bold", color: token.colorPrimary }}>Hide</span>;
+        }
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
         else
@@ -275,8 +278,8 @@ const RoomsTable: React.FC = () => {
       sorter: {
         multiple: 1,
         compare: (a, b) => {
-          if (a.isContract) return 1;
-          if (b.isContract) return -1;
+          if (a.isContract || a.meta?.hideFuDate) return 1;
+          if (b.isContract || b.meta?.hideFuDate) return -1;
           if (!a.nextFollowUpDate) return -1;
           if (!b.nextFollowUpDate) return 1;
           return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
