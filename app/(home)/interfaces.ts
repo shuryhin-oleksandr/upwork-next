@@ -12,7 +12,7 @@ export interface Room {
   nextFollowUpDate: string;
   nextFollowUpDateIsCustom: boolean | null;
   isContract: boolean;
-  hideFuDate?: boolean;
+  isFollowUpLimitExceeded?: boolean;
   meta: RoomMeta;
 }
 

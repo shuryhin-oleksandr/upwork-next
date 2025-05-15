@@ -262,8 +262,10 @@ const RoomsTable: React.FC = () => {
       editableType: "date",
       render: (value: string, record: Room) => {
         if (record.isContract) return null;
-        if (record.hideFuDate) {
-          return <TypographyText style={{ fontWeight: "bold", color: "purple" }}>HIDE</TypographyText>;
+        if (record.isFollowUpLimitExceeded) {
+          return (
+            <TypographyText style={{ fontWeight: "bold", color: "purple" }}>HIDE</TypographyText>
+          );
         }
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
