@@ -16,7 +16,7 @@ export interface Room {
 }
 
 export interface RejectReason {
-  _id: string;
+  id: string;
   name: string;
 }
 
