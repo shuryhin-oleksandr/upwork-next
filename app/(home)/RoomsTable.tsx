@@ -90,7 +90,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       ) {
         values.meta = {
           ...values.meta,
-          nextFollowUpDateCustomCreatedAt: new Date().toISOString(),
+          nextFollowUpDateCustomUpdatedAt: new Date().toISOString(),
         };
       }
 
@@ -277,14 +277,14 @@ const RoomsTable: React.FC = () => {
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
         else {
-          const asterixOrCircumflex = record.nextFollowUpDateIsCustom === "after_client_message" ? " ^" : " *";
+          const asterixOrCircumflex =
+            record.followUpDateType === "after_client_message" ? " ^" : " *";
           return (
             <FollowUpDate
               date={dayjs(record.nextFollowUpDate)}
-              symbol={asterixOrCircumflex}
+              asterixOrCircumflex={asterixOrCircumflex}
             />
           );
-          
         }
       },
       sorter: {
