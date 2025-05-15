@@ -83,15 +83,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
       toggleEdit();
 
-      if (
-        editableType === "date" &&
-        dataIndex?.[0] === "meta" &&
-        dataIndex?.[1] === "nextFollowUpDateCustom"
-      ) {
-        values.meta = {
-          ...values.meta,
-          nextFollowUpDateCustomUpdatedAt: new Date().toISOString(),
-        };
+      if (_.isEqual(dataIndex, ["meta", "nextFollowUpDateCustom"])) {
+        // TODO: Check form allows mutating in place
+        values.meta.nextFollowUpDateCustomUpdatedAt = new Date().toISOString();
       }
 
       handleSave(_.merge({}, record, values));
@@ -277,12 +271,12 @@ const RoomsTable: React.FC = () => {
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
         else {
-          const followUpIndicator =
-            record.followUpDateType === "customUpdatedAfterClientMessage" ? " ^" : " *";
+          const followUpTypeSuffix =
+            record.followUpDateType === "updated_after_client_message" ? " ^" : " *";
           return (
             <FollowUpDate
               date={dayjs(record.nextFollowUpDate)}
-              followUpIndicator={followUpIndicator}
+              followUpIndicator={followUpTypeSuffix}
             />
           );
         }
