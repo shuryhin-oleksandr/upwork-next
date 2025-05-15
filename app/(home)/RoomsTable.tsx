@@ -277,12 +277,12 @@ const RoomsTable: React.FC = () => {
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
         else {
-          const asterixOrCircumflex =
-            record.followUpDateType === "after_client_message" ? " ^" : " *";
+          const followUpIndicator =
+            record.followUpDateType === "updated_after_client_message" ? " ^" : " *";
           return (
             <FollowUpDate
               date={dayjs(record.nextFollowUpDate)}
-              asterixOrCircumflex={asterixOrCircumflex}
+              followUpIndicator={followUpIndicator}
             />
           );
         }

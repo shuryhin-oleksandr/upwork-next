@@ -22,13 +22,19 @@ export function BantTag({ value }: { value: number }) {
 
 export const MemoizedBantTag = React.memo(BantTag, (prev, next) => prev.value === next.value);
 
-export function FollowUpDate({ date, asterixOrCircumflex }: { date: dayjs.Dayjs; asterixOrCircumflex: string }) {
+export function FollowUpDate({
+  date,
+  followUpIndicator,
+}: {
+  date: dayjs.Dayjs;
+  followUpIndicator: string;
+}) {
   const isOverdueOrToday = !date.isAfter(dayjs(), "day");
 
   return (
     <TypographyText type={isOverdueOrToday ? "danger" : undefined}>
       {date.format("D MMM YY")}
-      {asterixOrCircumflex && <span>{asterixOrCircumflex}</span>}
+      {followUpIndicator && <span>{followUpIndicator}</span>}
     </TypographyText>
   );
 }
