@@ -83,15 +83,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
       toggleEdit();
 
-      if (
-        editableType === "date" &&
-        dataIndex?.[0] === "meta" &&
-        dataIndex?.[1] === "nextFollowUpDateCustom"
-      ) {
-        values.meta = {
-          ...values.meta,
-          nextFollowUpDateCustomUpdatedAt: new Date().toISOString(),
-        };
+      if (_.isEqual(dataIndex, ["meta", "nextFollowUpDateCustom"])) {
+        // TODO: Check form allows mutating in place
+        values.meta.nextFollowUpDateCustomUpdatedAt = new Date().toISOString();
       }
 
       handleSave(_.merge({}, record, values));
