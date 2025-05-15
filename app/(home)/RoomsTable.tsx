@@ -128,14 +128,14 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             onBlur={() => save()}
             style={{ width: "100%" }}
             defaultOpen={true}
-          >
-            <Select.Option value="">None</Select.Option>
-            {rejectReasonsData.map((reason) => (
-              <Select.Option key={reason._id} value={reason._id}>
-                {reason.name}
-              </Select.Option>
-            ))}
-          </Select>
+            options={[
+              { value: "", label: "None" },
+              ...rejectReasonsData.map((reason) => ({
+                value: reason._id,
+                label: reason.name,
+              })),
+            ]}
+          />
         )}
       </Form.Item>
     ) : (
