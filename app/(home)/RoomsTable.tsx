@@ -278,8 +278,8 @@ const RoomsTable: React.FC = () => {
       sorter: {
         multiple: 1,
         compare: (a, b) => {
-          if (a.isContract || a.meta?.hideFuDate) return 1;
-          if (b.isContract || b.meta?.hideFuDate) return -1;
+          if (a.isContract) return 1;
+          if (b.isContract) return -1;
           if (!a.nextFollowUpDate) return -1;
           if (!b.nextFollowUpDate) return 1;
           return dayjs(a.nextFollowUpDate).diff(dayjs(b.nextFollowUpDate));
