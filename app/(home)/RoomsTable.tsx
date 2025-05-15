@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
+import { DatePicker, Form, Input, InputNumber, message, Table, theme, Segmented } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
@@ -135,10 +135,11 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
+  const [filterType, setFilterType] = useState<string | number>("All");
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["rooms"],
-    queryFn: getRooms,
+    queryKey: ["rooms", filterType],
+    queryFn: () => getRooms(filterType === "Leads" ? "Leads" : undefined),
   });
 
   const roomMetaCreateMutation = useMutation({
@@ -318,6 +319,9 @@ const RoomsTable: React.FC = () => {
   return (
     <div>
       {contextHolder}
+      <div style={{ marginBottom: 16 }}>
+        <Segmented options={["Leads", "All"]} value={filterType} onChange={setFilterType} />
+      </div>
       <Table<Room>
         components={components}
         rowClassName={() => "editable-row"}
