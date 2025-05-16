@@ -271,7 +271,7 @@ const RoomsTable: React.FC = () => {
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
         else {
           const followUpTypeSuffix =
-            record.followUpDateType === "customUpdatedAfterClientMessage" ? " ^" : " *";
+            record.nextFollowUpDateType === "customUpdatedBeforeClientMessage" ? " ^" : " *";
           return (
             <FollowUpDate
               date={dayjs(record.nextFollowUpDate)}

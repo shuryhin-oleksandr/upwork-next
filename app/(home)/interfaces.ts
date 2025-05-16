@@ -11,7 +11,7 @@ export interface Room {
   //  TODO: Rationalise
   nextFollowUpNumber: number;
   nextFollowUpDate: string;
-  followUpDateType: string | boolean | null;
+  nextFollowUpDateType: string | boolean | null;
   isContract: boolean;
   meta: RoomMeta;
 }
