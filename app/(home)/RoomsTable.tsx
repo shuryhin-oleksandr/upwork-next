@@ -264,7 +264,7 @@ const RoomsTable: React.FC = () => {
         if (record.isContract) return null;
         if (record.isFollowUpLimitExceeded) {
           return (
-            <TypographyText style={{ fontWeight: "bold", color: "purple" }}>HIDE</TypographyText>
+            <TypographyText style={{ color: token.purple }}>HIDE</TypographyText>
           );
         }
         if (!record.nextFollowUpDate)
