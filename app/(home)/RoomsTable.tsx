@@ -269,16 +269,15 @@ const RoomsTable: React.FC = () => {
         if (record.isContract) return null;
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
-        else {
-          const followUpTypeSuffix =
-            record.nextFollowUpDateType === "customUpdatedBeforeClientMessage" ? " ^" : " *";
-          return (
-            <FollowUpDate
-              date={dayjs(record.nextFollowUpDate)}
-              nextFollowUpDateType={followUpTypeSuffix}
-            />
-          );
-        }
+        
+        const followUpTypeSuffix =
+          record.nextFollowUpDateType === "customUpdatedBeforeClientMessage" ? " ^" : " *";
+        return (
+          <FollowUpDate
+            date={dayjs(record.nextFollowUpDate)}
+            nextFollowUpDateType={followUpTypeSuffix}
+          />
+        );
       },
       sorter: {
         multiple: 1,
