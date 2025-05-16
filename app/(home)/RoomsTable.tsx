@@ -83,11 +83,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
       toggleEdit();
 
-      const updatedValues = _.cloneDeep(values);
-      if (_.isEqual(dataIndex, ["meta", "nextFollowUpDateCustom"])) {
-        _.set(updatedValues, ["meta", "nextFollowUpDateCustomUpdatedAt"], new Date().toISOString());
-      }
-      handleSave(_.merge({}, record, updatedValues));
+      handleSave(_.merge({}, record, values));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -269,7 +265,7 @@ const RoomsTable: React.FC = () => {
         if (record.isContract) return null;
         if (!record.nextFollowUpDate)
           return <TypographyText style={{ color: token.colorPrimary }}>NEW</TypographyText>;
-        
+
         const followUpTypeSuffix =
           record.nextFollowUpDateType === "customUpdatedBeforeClientMessage" ? " ^" : " *";
         return (
@@ -294,8 +290,16 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    if (!row.meta?._id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
-    else roomMetaUpdateMutation.mutate(row.meta);
+    const metaToSave = { ...row.meta };
+
+    if (metaToSave.nextFollowUpDateCustom) {
+      metaToSave.nextFollowUpDateCustomUpdatedAt = dayjs(new Date());
+    }
+    const updatedRow = { ...row, meta: metaToSave };
+
+    if (!updatedRow.meta?._id)
+      roomMetaCreateMutation.mutate({ ...updatedRow.meta, roomId: updatedRow.id });
+    else roomMetaUpdateMutation.mutate(updatedRow.meta);
   };
 
   const components = {
