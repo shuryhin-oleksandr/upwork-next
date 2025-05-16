@@ -70,7 +70,7 @@ function BidStatystics() {
           />
         </Card>
       </Col>
-      <Col span={3}>
+      <Col span={3} offset={12}>
         <Card>
           <Statistic
             title="Hired"
