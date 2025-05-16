@@ -83,7 +83,8 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
       toggleEdit();
 
-      handleSave(_.merge({}, record, values));
+      const updatedValues = _.cloneDeep(values);
+      handleSave(_.merge({}, record, updatedValues));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
