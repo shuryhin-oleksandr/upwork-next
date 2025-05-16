@@ -83,12 +83,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
       toggleEdit();
 
+      const updatedValues = _.cloneDeep(values);
       if (_.isEqual(dataIndex, ["meta", "nextFollowUpDateCustom"])) {
-        // TODO: Check form allows mutating in place
-        values.meta.nextFollowUpDateCustomUpdatedAt = new Date().toISOString();
+        _.set(updatedValues, ["meta", "nextFollowUpDateCustomUpdatedAt"], new Date().toISOString());
       }
-
-      handleSave(_.merge({}, record, values));
+      handleSave(_.merge({}, record, updatedValues));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
