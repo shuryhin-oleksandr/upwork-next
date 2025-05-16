@@ -135,7 +135,7 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const [filter, setFilter] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string | null>(FilterType.ALL);
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms", filter],
@@ -315,9 +315,10 @@ const RoomsTable: React.FC = () => {
       }),
     };
   });
+
   const filterOptions = [
-    { value: "leads", label: "Leads" },
-    { value: null, label: "All" },
+    { value: FilterType.LEADS, label: FilterLabel.LEADS },
+    { value: FilterType.ALL, label: FilterLabel.ALL },
   ];
   return (
     <div>
@@ -343,5 +344,15 @@ const RoomsTable: React.FC = () => {
     </div>
   );
 };
+
+const FilterType = {
+  LEADS: "leads",
+  ALL: null,
+} as const;
+
+const FilterLabel = {
+  LEADS: "Leads",
+  ALL: "All",
+} as const;
 
 export default RoomsTable;
