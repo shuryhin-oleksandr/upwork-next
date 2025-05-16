@@ -6,25 +6,6 @@ import { Card, Col, Row, Statistic, Table, Typography } from "antd";
 
 const { Text } = Typography;
 
-const columns = [
-  {
-    title: "Job",
-    dataIndex: "title",
-  },
-  {
-    title: "Interviewing",
-    dataIndex: "interviewing",
-    sorter: { compare: (a, b) => a.interviewing - b.interviewing, multiple: 1 },
-    sortDirections: ["descend"],
-  },
-  {
-    title: "Hired",
-    dataIndex: "hired",
-    sorter: { compare: (a, b) => a.hired - b.hired, multiple: 2 },
-    sortDirections: ["descend"],
-  },
-];
-
 function BidStatystics() {
   const { data: jobs } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
 
@@ -90,7 +71,27 @@ function BidsTable() {
     error,
   } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
 
+  const columns = [
+    {
+      title: "Job",
+      dataIndex: "title",
+    },
+    {
+      title: "Interviewing",
+      dataIndex: "interviewing",
+      sorter: { compare: (a, b) => a.interviewing - b.interviewing, multiple: 1 },
+      sortDirections: ["descend"],
+    },
+    {
+      title: "Hired",
+      dataIndex: "hired",
+      sorter: { compare: (a, b) => a.hired - b.hired, multiple: 2 },
+      sortDirections: ["descend"],
+    },
+  ];
+
   if (isError) return <Text>Error: {error.message}</Text>;
+
   return (
     <Card style={jobs && { marginTop: "2rem" }}>
       <Table
