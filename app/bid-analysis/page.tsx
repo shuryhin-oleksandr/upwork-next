@@ -26,9 +26,7 @@ const columns = [
 ];
 
 function BidStatystics() {
-  const {
-    data: jobs,
-  } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
+  const { data: jobs } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
 
   if (!jobs) return null;
 
@@ -84,7 +82,7 @@ function BidStatystics() {
   );
 }
 
-export default function BidAnalysis() {
+function BidsTable() {
   const {
     data: jobs,
     isPending,
@@ -93,24 +91,29 @@ export default function BidAnalysis() {
   } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
 
   if (isError) return <Text>Error: {error.message}</Text>;
+  return (
+    <Card style={jobs && { marginTop: "2rem" }}>
+      <Table
+        dataSource={jobs}
+        columns={columns}
+        size="small"
+        rowKey="id"
+        loading={isPending}
+        pagination={{
+          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          showSizeChanger: true,
+          defaultPageSize: 50,
+        }}
+      />
+    </Card>
+  );
+}
 
+export default function BidAnalysis() {
   return (
     <>
       <BidStatystics />
-      <Card style={jobs && { marginTop: "2rem" }}>
-        <Table
-          dataSource={jobs}
-          columns={columns}
-          size="small"
-          rowKey="id"
-          loading={isPending}
-          pagination={{
-            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-            showSizeChanger: true,
-            defaultPageSize: 50,
-          }}
-        />
-      </Card>
+      <BidsTable />
     </>
   );
 }
