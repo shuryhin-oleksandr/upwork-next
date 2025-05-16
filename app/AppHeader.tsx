@@ -13,8 +13,8 @@ const { Title, Text } = Typography;
 const { useToken } = theme;
 
 const LINKS = [
-  { key: "1", label: "Rooms", href: "/" },
-  { key: "2", label: "Bid Analysis", href: "/bid-analysis" },
+  { href: "/", label: "Rooms" },
+  { href: "/bid-analysis", label: "Bid Analysis" },
 ];
 
 export default function AppHeader() {
@@ -24,7 +24,7 @@ export default function AppHeader() {
   const setLoggedOut = useAuthStore.use.setLoggedOut();
 
   const pathname = usePathname();
-  const selectedKey = LINKS.find((link) => link.href === pathname)?.key || ""
+  const selectedKey = LINKS.find((link) => link.href === pathname)?.href || "";
 
   // Used to initialize an access token on a first page load
   const { data } = useQuery({
@@ -65,23 +65,25 @@ export default function AppHeader() {
         <Title level={3} style={{ color: token.colorTextLightSolid, margin: 0 }}>
           Upwork CRM
         </Title>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          selectedKeys={[selectedKey]}
-          items={LINKS.map(({ key, label, href }) => ({
-            key,
-            label: <Link href={href}>{label}</Link>,
-          }))}
-          style={{ flex: 1, minWidth: 0 }}
-        />
         {isAuthenticated && data?.username && (
-          <div>
-            <Text style={{ color: token.colorTextLightSolid }}>{data.username}</Text>
-            <Button type="primary" onClick={handleLogout} style={{ marginLeft: 20 }}>
-              Log out
-            </Button>
-          </div>
+          <>
+            <Menu
+              theme="dark"
+              mode="horizontal"
+              selectedKeys={[selectedKey]}
+              items={LINKS.map(({ label, href }) => ({
+                key: href,
+                label: <Link href={href}>{label}</Link>,
+              }))}
+              style={{ flex: 1, minWidth: 0 }}
+            />
+            <div>
+              <Text style={{ color: token.colorTextLightSolid }}>{data.username}</Text>
+              <Button type="primary" onClick={handleLogout} style={{ marginLeft: 20 }}>
+                Log out
+              </Button>
+            </div>
+          </>
         )}
       </div>
     </Header>
