@@ -135,11 +135,11 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const [filterType, setFilterType] = useState<string | number>("All");
+  const [filter, setFilter] = useState<string>("all");
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["rooms", filterType],
-    queryFn: () => getRooms(filterType === "Leads" ? "Leads" : undefined),
+    queryKey: ["rooms", filter],
+    queryFn: () => getRooms(filter),
   });
 
   const roomMetaCreateMutation = useMutation({
@@ -315,12 +315,15 @@ const RoomsTable: React.FC = () => {
       }),
     };
   });
-
+  const filterOptions = [
+    { value: "leads", label: "Leads" },
+    { value: "all", label: "All" },
+  ];
   return (
     <div>
       {contextHolder}
       <div style={{ marginBottom: 16 }}>
-        <Segmented options={["Leads", "All"]} value={filterType} onChange={setFilterType} />
+        <Segmented options={filterOptions} value={filter} onChange={setFilter} />
       </div>
       <Table<Room>
         components={components}
