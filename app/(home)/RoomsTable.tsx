@@ -275,7 +275,7 @@ const RoomsTable: React.FC = () => {
           return (
             <FollowUpDate
               date={dayjs(record.nextFollowUpDate)}
-              followUpIndicator={followUpTypeSuffix}
+              nextFollowUpDateType={followUpTypeSuffix}
             />
           );
         }

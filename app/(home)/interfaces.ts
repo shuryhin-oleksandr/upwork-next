@@ -11,7 +11,7 @@ export interface Room {
   //  TODO: Rationalise
   nextFollowUpNumber: number;
   nextFollowUpDate: string;
-  nextFollowUpDateType: string | boolean | null;
+  nextFollowUpDateType: string | null;
   isContract: boolean;
   meta: RoomMeta;
 }
@@ -22,7 +22,7 @@ export interface RoomMeta {
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: Dayjs;
-  nextFollowUpDateCustomUpdatedAt?: string;
+  nextFollowUpDateCustomUpdatedAt?: Dayjs;
 }
 
 export interface CreateRoomMetaDto {
@@ -30,7 +30,7 @@ export interface CreateRoomMetaDto {
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: Dayjs;
-  nextFollowUpDateCustomUpdatedAt?: string;
+  nextFollowUpDateCustomUpdatedAt?: Dayjs;
 }
 
 export interface UpdateRoomMetaDto {
@@ -39,7 +39,7 @@ export interface UpdateRoomMetaDto {
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: Dayjs;
-  nextFollowUpDateCustomUpdatedAt?: string;
+  nextFollowUpDateCustomUpdatedAt?: Dayjs;
 }
 
 export interface EditableRowProps {

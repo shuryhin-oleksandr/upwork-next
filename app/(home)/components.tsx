@@ -24,17 +24,17 @@ export const MemoizedBantTag = React.memo(BantTag, (prev, next) => prev.value ==
 
 export function FollowUpDate({
   date,
-  followUpIndicator,
+  nextFollowUpDateType,
 }: {
   date: dayjs.Dayjs;
-  followUpIndicator: string;
+  nextFollowUpDateType: string;
 }) {
   const isOverdueOrToday = !date.isAfter(dayjs(), "day");
 
   return (
     <TypographyText type={isOverdueOrToday ? "danger" : undefined}>
       {date.format("D MMM YY")}
-      {followUpIndicator && <span>{followUpIndicator}</span>}
+      {nextFollowUpDateType && <span>{nextFollowUpDateType}</span>}
     </TypographyText>
   );
 }
