@@ -1,13 +1,13 @@
 "use client";
 
-import { getBidStatistics } from "@/app/bid-analysis/api";
+import { getBidStats } from "@/app/bid-analysis/api";
 import { useQuery } from "@tanstack/react-query";
 import { Card, Col, Row, Statistic, Table, Typography } from "antd";
 
 const { Text } = Typography;
 
-function BidStatystics() {
-  const { data: jobs } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
+function BidStats() {
+  const { data: jobs } = useQuery({ queryKey: ["bid-stats"], queryFn: getBidStats });
 
   if (!jobs) return null;
 
@@ -69,7 +69,7 @@ function BidsTable() {
     isPending,
     isError,
     error,
-  } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStatistics });
+  } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStats });
 
   const columns = [
     {
@@ -118,7 +118,7 @@ function BidsTable() {
 export default function BidAnalysis() {
   return (
     <>
-      <BidStatystics />
+      <BidStats />
       <BidsTable />
     </>
   );
