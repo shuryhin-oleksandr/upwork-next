@@ -1,5 +1,6 @@
 import { NamePath } from "antd/es/form/interface";
 import React from "react";
+import { Dayjs } from "dayjs";
 
 export interface Room {
   id: string;
@@ -10,7 +11,7 @@ export interface Room {
   //  TODO: Rationalise
   nextFollowUpNumber: number;
   nextFollowUpDate: string;
-  nextFollowUpDateIsCustom: boolean | null;
+  nextFollowUpDateType: string | null;
   isContract: boolean;
   isFollowUpLimitExceeded: boolean;
   meta: RoomMeta;
@@ -21,13 +22,16 @@ export interface RoomMeta {
   roomId: string;
   comment: string;
   bant?: number;
-  nextFollowUpDateCustom?: string;
+  nextFollowUpDateCustom?: Dayjs;
+  nextFollowUpDateCustomUpdatedAt?: Dayjs;
 }
 
 export interface CreateRoomMetaDto {
   roomId: string;
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: Dayjs;
+  nextFollowUpDateCustomUpdatedAt?: Dayjs;
 }
 
 export interface UpdateRoomMetaDto {
@@ -35,6 +39,8 @@ export interface UpdateRoomMetaDto {
   // TODO: roomId
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: Dayjs;
+  nextFollowUpDateCustomUpdatedAt?: Dayjs;
 }
 
 export interface EditableRowProps {
