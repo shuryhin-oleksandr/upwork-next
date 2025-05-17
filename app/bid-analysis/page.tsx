@@ -11,6 +11,7 @@ function BidStats() {
 
   if (!jobs) return null;
 
+  // TODO: Refactor calculations to happen in the backend
   const zeroRepliesJobsCount = jobs.filter((job) => job.interviewing === 0).length;
   const oneTwoRepliesJobsCount = jobs.filter(
     (job) => job.interviewing > 0 && job.interviewing <= 2
