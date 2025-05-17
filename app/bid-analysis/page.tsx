@@ -75,6 +75,11 @@ function BidsTable() {
     {
       title: "Job",
       dataIndex: "title",
+      render: (jobTitle: string, record: { jobUrl: string }) => (
+        <a href={record.jobUrl} target="_blank" rel="noopener noreferrer">
+          {jobTitle}
+        </a>
+      ),
     },
     {
       title: "Interviewing",
