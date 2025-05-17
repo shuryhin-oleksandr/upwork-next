@@ -69,7 +69,7 @@ function BidsTable() {
     isPending,
     isError,
     error,
-  } = useQuery({ queryKey: ["bid-statistics"], queryFn: getBidStats });
+  } = useQuery({ queryKey: ["bid-stats"], queryFn: getBidStats });
 
   const columns = [
     {
