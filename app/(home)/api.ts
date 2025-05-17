@@ -1,8 +1,9 @@
 import { CreateRoomMetaDto, UpdateRoomMetaDto } from "@/app/(home)/interfaces";
 import { api } from "@/app/lib/api";
 
-export const getRooms = async () => {
-  const url = "/upwork/rooms";
+export const getRooms = async (filter?: string | null) => {
+  const filterStr = filter && `?filter=${filter}`
+  const url = `/upwork/rooms${filterStr}`;
   const response = await api.get(url);
   return response.data;
 };
