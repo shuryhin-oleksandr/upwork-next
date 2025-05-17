@@ -16,18 +16,25 @@ export interface Room {
   meta: RoomMeta;
 }
 
+export interface RejectReason {
+  _id: string;
+  name: string;
+}
+
 export interface RoomMeta {
   _id: string;
   roomId: string;
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
+  rejectReason?: RejectReason | string;
 }
 
 export interface CreateRoomMetaDto {
   roomId: string;
   comment: string;
   bant?: number;
+  rejectReason?: string;
 }
 
 export interface UpdateRoomMetaDto {
@@ -35,6 +42,7 @@ export interface UpdateRoomMetaDto {
   // TODO: roomId
   comment: string;
   bant?: number;
+  rejectReason?: string;
 }
 
 export interface EditableRowProps {
@@ -47,5 +55,5 @@ export interface EditableCellProps {
   dataIndex: NamePath<Room>;
   record: Room;
   handleSave: (record: Room) => void;
-  editableType?: "text" | "number" | "date";
+  editableType?: "text" | "number" | "date" | "select";
 }

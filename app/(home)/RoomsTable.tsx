@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
+import { DatePicker, Form, Input, InputNumber, message, Select, Table, theme } from "antd";
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { createRoomMeta, getRooms, updateRoomMeta } from "./api";
+import { createRoomMeta, getRooms, updateRoomMeta, getRejectReasons } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
 import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
 
@@ -31,7 +31,7 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
-type EditableType = "text" | "number" | "date";
+type EditableType = "text" | "number" | "date" | "select";
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
@@ -48,6 +48,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const [editing, setEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const form = useContext(EditableContext)!;
+  const { data: rejectReasonsData = [] } = useQuery({
+    queryKey: ["reject-reasons"],
+    queryFn: getRejectReasons,
+    initialData: [],
+  });
 
   useEffect(() => {
     if (editing) {
@@ -116,6 +121,22 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         {editableType === "text" && (
           <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
         )}
+        {editableType === "select" && (
+          <Select
+            ref={inputRef}
+            onChange={() => save()}
+            onBlur={() => save()}
+            style={{ width: "100%" }}
+            defaultOpen={true}
+            options={[
+              { value: "", label: "None" },
+              ...rejectReasonsData.map((reason) => ({
+                value: reason._id,
+                label: reason.name,
+              })),
+            ]}
+          />
+        )}
       </Form.Item>
     ) : (
       <div
@@ -135,7 +156,11 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-
+  const { data: rejectReasonsData = [] } = useQuery({
+    queryKey: ["reject-reasons"],
+    queryFn: getRejectReasons,
+    initialData: [],
+  });
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms"],
     queryFn: getRooms,
@@ -213,7 +238,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Topic",
       dataIndex: "topic",
-      width: "30%",
+      width: "25%",
       render: (topic: string, room: Room) =>
         room.jobUrl && (
           <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
@@ -252,6 +277,17 @@ const RoomsTable: React.FC = () => {
       width: "2%",
       align: "center",
       render: (value: number, record: Room) => (record.isContract ? null : value || null),
+    },
+    {
+      title: "Reject Reason",
+      dataIndex: ["meta", "rejectReason"],
+      width: "5%",
+      editable: true,
+      editableType: "select",
+      render: (value: string) => {
+        const reason = rejectReasonsData.find((reason) => reason._id === value);
+        return reason ? reason.name : "";
+      },
     },
     {
       title: "FU date",
