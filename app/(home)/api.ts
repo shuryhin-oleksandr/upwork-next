@@ -1,9 +1,9 @@
 import { CreateRoomMetaDto, UpdateRoomMetaDto } from "@/app/(home)/interfaces";
 import { api } from "@/app/lib/api";
 
-export const getRooms = async () => {
+export const getRooms = async ({ excludeContracts }: { excludeContracts?: boolean }) => {
   const url = "/upwork/rooms";
-  const response = await api.get(url);
+  const response = await api.get(url, { params: { excludeContracts } });
   return response.data;
 };
 

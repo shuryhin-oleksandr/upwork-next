@@ -135,10 +135,11 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
+  const [excludeContracts, setExcludeContracts] = useState(false);
 
   const { isPending, isError, data, error } = useQuery({
     queryKey: ["rooms"],
-    queryFn: getRooms,
+    queryFn: () => getRooms({ excludeContracts }),
   });
 
   const roomMetaCreateMutation = useMutation({
