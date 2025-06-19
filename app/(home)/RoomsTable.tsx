@@ -1,6 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { GetRef, TableProps } from "antd";
-import { DatePicker, Form, Input, InputNumber, message, Table, theme } from "antd";
+import {
+  DatePicker,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Switch,
+  Table,
+  theme,
+  Typography,
+} from "antd";
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
@@ -12,6 +22,7 @@ import { FollowUpDate, MemoizedBantTag } from "./components";
 import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
 
 const { TextArea } = Input;
+const { Text } = Typography;
 
 type FormInstance<T> = GetRef<typeof Form<T>>;
 
@@ -135,10 +146,10 @@ const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
   const [messageApi, contextHolder] = message.useMessage();
-  const [excludeContracts, setExcludeContracts] = useState(false);
+  const [excludeContracts, setExcludeContracts] = useState(true);
 
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["rooms"],
+    queryKey: ["rooms", excludeContracts],
     queryFn: () => getRooms({ excludeContracts }),
   });
 
@@ -322,6 +333,14 @@ const RoomsTable: React.FC = () => {
   return (
     <div>
       {contextHolder}
+      {/* TODO: Fix custom styles */}
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <Switch
+          checked={excludeContracts}
+          onChange={() => setExcludeContracts(!excludeContracts)}
+        />
+        <Text style={{ marginLeft: "1rem" }}>Exclude contracts</Text>
+      </div>
       <Table<Room>
         components={components}
         rowClassName={() => "editable-row"}
@@ -336,6 +355,7 @@ const RoomsTable: React.FC = () => {
         }}
         size="small"
         loading={isPending}
+        style={{ marginTop: "1.5rem" }}
       />
     </div>
   );
