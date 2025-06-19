@@ -167,11 +167,11 @@ const RoomsTable: React.FC = () => {
       return { previousRooms };
     },
     onSuccess: () => {
-      messageApi.success("Data saved successfully!");
+      messageApi.success("Room created successfully!");
     },
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
-      messageApi.error(`Data save failed: ${errorMessage} !`);
+      messageApi.error(`Room creation failed: ${errorMessage} !`);
       queryClient.setQueryData(["rooms"], context?.previousRooms);
     },
     onSettled: () => {
@@ -185,7 +185,7 @@ const RoomsTable: React.FC = () => {
       queryClient.cancelQueries({ queryKey: ["rooms"] });
       const previousRooms = queryClient.getQueryData(["rooms"]);
 
-      queryClient.setQueryData(["rooms"], (oldRooms: Room[]) =>
+      queryClient.setQueryData(["rooms", excludeContracts], (oldRooms: Room[]) =>
         oldRooms.map((room: Room) =>
           room.meta?._id === data._id ? _.merge({}, room, { meta: data }) : room
         )
@@ -193,11 +193,11 @@ const RoomsTable: React.FC = () => {
       return { previousRooms };
     },
     onSuccess: () => {
-      messageApi.success("Data saved successfully!");
+      messageApi.success("Room updated successfully!");
     },
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
-      messageApi.error(`Data save failed: ${errorMessage} !`);
+      messageApi.error(`Room update failed: ${errorMessage} !`);
       queryClient.setQueryData(["rooms"], context?.previousRooms);
     },
     onSettled: () => {
