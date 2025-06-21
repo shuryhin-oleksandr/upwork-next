@@ -14,12 +14,15 @@ import {
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { createRoomMeta, getRooms, updateRoomMeta } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
 import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
+
+dayjs.extend(isSameOrAfter);
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -265,6 +268,22 @@ const RoomsTable: React.FC = () => {
       width: "2%",
       align: "center",
       render: (value: number, record: Room) => (record.isContract ? null : value || null),
+      sorter: {
+        multiple: 4,
+        compare: (a, b) => {
+          const aDate = dayjs(a.nextFollowUpDate);
+          const bDate = dayjs(b.nextFollowUpDate);
+          const aShouldFollowUp = !aDate.isAfter(dayjs(), "day");
+          const bShouldFollowUp = !bDate.isAfter(dayjs(), "day");
+
+          if ((aShouldFollowUp && bShouldFollowUp) || (!aShouldFollowUp && !bShouldFollowUp)) {
+            return a.nextFollowUpNumber - b.nextFollowUpNumber;
+          } else if (aShouldFollowUp && !bShouldFollowUp) return -1;
+          else if (!aShouldFollowUp && bShouldFollowUp) return 1;
+          throw new Error("Unexpected state in FU# sorter");
+        },
+      },
+      sortDirections: ["ascend"],
     },
     {
       title: "FU date",
@@ -299,6 +318,7 @@ const RoomsTable: React.FC = () => {
         },
       },
       defaultSortOrder: "ascend",
+      sortDirections: ["ascend"],
     },
   ];
 
