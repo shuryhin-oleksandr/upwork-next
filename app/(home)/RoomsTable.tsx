@@ -148,18 +148,19 @@ const RoomsTable: React.FC = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [excludeContracts, setExcludeContracts] = useState(true);
 
+  const queryKey = ["rooms", excludeContracts];
   const { isPending, isError, data, error } = useQuery({
-    queryKey: ["rooms", excludeContracts],
+    queryKey,
     queryFn: () => getRooms({ excludeContracts }),
   });
 
   const roomMetaCreateMutation = useMutation({
     mutationFn: createRoomMeta,
     onMutate: (data) => {
-      queryClient.cancelQueries({ queryKey: ["rooms"] });
-      const previousRooms = queryClient.getQueryData(["rooms"]);
+      queryClient.cancelQueries(["rooms"]);
+      const previousRooms = queryClient.getQueryData(queryKey);
 
-      queryClient.setQueryData(["rooms"], (oldRooms: Room[]) =>
+      queryClient.setQueryData(queryKey, (oldRooms: Room[]) =>
         oldRooms.map((room: Room) =>
           room.id === data.roomId ? _.merge({}, room, { meta: data }) : room
         )
@@ -172,7 +173,7 @@ const RoomsTable: React.FC = () => {
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
       messageApi.error(`Room creation failed: ${errorMessage} !`);
-      queryClient.setQueryData(["rooms"], context?.previousRooms);
+      queryClient.setQueryData(queryKey, context?.previousRooms);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
@@ -183,9 +184,9 @@ const RoomsTable: React.FC = () => {
     mutationFn: updateRoomMeta,
     onMutate: (data) => {
       queryClient.cancelQueries({ queryKey: ["rooms"] });
-      const previousRooms = queryClient.getQueryData(["rooms"]);
+      const previousRooms = queryClient.getQueryData(queryKey);
 
-      queryClient.setQueryData(["rooms", excludeContracts], (oldRooms: Room[]) =>
+      queryClient.setQueryData(queryKey, (oldRooms: Room[]) =>
         oldRooms.map((room: Room) =>
           room.meta?._id === data._id ? _.merge({}, room, { meta: data }) : room
         )
@@ -198,7 +199,7 @@ const RoomsTable: React.FC = () => {
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
       messageApi.error(`Room update failed: ${errorMessage} !`);
-      queryClient.setQueryData(["rooms"], context?.previousRooms);
+      queryClient.setQueryData(queryKey, context?.previousRooms);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
