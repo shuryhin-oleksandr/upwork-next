@@ -271,6 +271,9 @@ const RoomsTable: React.FC = () => {
       sorter: {
         multiple: 4,
         compare: (a, b) => {
+          if (a.isContract) return 1;
+          if (b.isContract) return -1;
+          
           const aDate = dayjs(a.nextFollowUpDate);
           const bDate = dayjs(b.nextFollowUpDate);
           const aShouldFollowUp = !aDate.isAfter(dayjs(), "day");
