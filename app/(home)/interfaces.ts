@@ -26,6 +26,7 @@ export interface RoomMeta {
 }
 
 export interface RejectionReason {
+  // TODO: use id instead of _id
   _id: string;
   name: string;
 }
