@@ -250,7 +250,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "33%",
+      width: "28%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -273,7 +273,7 @@ const RoomsTable: React.FC = () => {
         compare: (a, b) => {
           if (a.isContract) return 1;
           if (b.isContract) return -1;
-          
+
           const aDate = dayjs(a.nextFollowUpDate);
           const bDate = dayjs(b.nextFollowUpDate);
           const aShouldFollowUp = !aDate.isAfter(dayjs(), "day");
@@ -322,6 +322,12 @@ const RoomsTable: React.FC = () => {
       },
       defaultSortOrder: "ascend",
       sortDirections: ["ascend"],
+    },
+    {
+      title: "Rejection",
+      dataIndex: ["meta", "rejectionReason", "name"],
+      width: "5%",
+      align: "center",
     },
   ];
 

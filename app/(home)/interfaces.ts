@@ -22,6 +22,12 @@ export interface RoomMeta {
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
+  rejectionReason?: RejectionReason;
+}
+
+export interface RejectionReason {
+  _id: string;
+  name: string;
 }
 
 export interface CreateRoomMetaDto {
