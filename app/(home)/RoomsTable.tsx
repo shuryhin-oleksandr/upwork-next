@@ -18,9 +18,15 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { createRoomMeta, getRooms, updateRoomMeta } from "./api";
+import { createRoomMeta, getRejectionReasons, getRooms, updateRoomMeta } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
-import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
+import {
+  EditableCellProps,
+  EditableRowProps,
+  EditableType,
+  RejectionReason,
+  Room,
+} from "./interfaces";
 
 dayjs.extend(isSameOrAfter);
 
@@ -44,8 +50,6 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 };
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
-
-type EditableType = "text" | "number" | "date";
 
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
@@ -90,12 +94,12 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
           ? _.get(values, dataIndex)?.toISOString()
           : _.get(values, dataIndex);
       const originalValue = _.get(record, dataIndex);
+
+      toggleEdit();
       if (_.isEqual(originalValue, newValue)) {
-        toggleEdit();
         return;
       }
 
-      toggleEdit();
       handleSave(_.merge({}, record, values));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
@@ -157,6 +161,17 @@ const RoomsTable: React.FC = () => {
     queryFn: () => getRooms({ excludeContracts }),
   });
 
+  const {
+    data: rejectionReasons,
+    isError: isRejectionReasonsError,
+    error: rejectionReasonsError,
+    isPending: isRejectionReasonsPending,
+  } = useQuery<RejectionReason[]>({
+    queryKey: ["rejection-reasons"],
+    queryFn: getRejectionReasons,
+  });
+  console.log("Rejection reasons:", rejectionReasons);
+
   const roomMetaCreateMutation = useMutation({
     mutationFn: createRoomMeta,
     onMutate: (data) => {
@@ -210,6 +225,8 @@ const RoomsTable: React.FC = () => {
   });
 
   if (isError) return <span>Error: {error.message}</span>;
+  if (isRejectionReasonsError)
+    return <span>Rejection reasons error: {rejectionReasonsError.message}</span>;
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
@@ -384,7 +401,7 @@ const RoomsTable: React.FC = () => {
           defaultPageSize: 50,
         }}
         size="small"
-        loading={isPending}
+        loading={isPending || isRejectionReasonsPending}
         style={{ marginTop: "1.5rem" }}
       />
     </div>
