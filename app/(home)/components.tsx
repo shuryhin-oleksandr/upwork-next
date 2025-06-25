@@ -26,7 +26,7 @@ export function FollowUpDate({ date, asterix: ansterix }: { date: dayjs.Dayjs; a
   const isOverdueOrToday = !date.isAfter(dayjs(), "day");
 
   return (
-    <TypographyText type={isOverdueOrToday ? "danger" : undefined}>
+    <TypographyText type={isOverdueOrToday ? "danger" : undefined} style={{ textWrap: "nowrap" }}>
       {date.format("D MMM YY")}
       {ansterix && <span> *</span>}
     </TypographyText>

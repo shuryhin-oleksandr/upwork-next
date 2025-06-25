@@ -120,8 +120,6 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             onChange={save}
             onDropdownVisibleChange={toggleEdit}
             defaultOpen={true}
-            // TODO: fix width jumping
-            style={{ width: 120 }}
           />
         )}
         {editableType === "number" && (
@@ -149,12 +147,8 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         )}
       </Form.Item>
     ) : (
-      <div
-        className="editable-cell-value-wrap"
-        // style={{ paddingInlineEnd: 24 }}
-        onClick={toggleEdit}
-      >
-        {children}
+      <div className="editable-cell-value-wrap" onClick={toggleEdit}>
+        <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
       </div>
     );
   }
@@ -366,7 +360,9 @@ const RoomsTable: React.FC = () => {
         value: reason._id,
       })),
       render: (value) => (
-        <Text>{rejectionReasons?.find((reason) => reason._id === value)?.name}</Text>
+        <Text style={{ textWrap: "nowrap" }}>
+          {rejectionReasons?.find((reason) => reason._id === value)?.name}
+        </Text>
       ),
     },
   ];
