@@ -6,6 +6,7 @@ import {
   Input,
   InputNumber,
   message,
+  Select,
   Switch,
   Table,
   theme,
@@ -61,6 +62,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   record,
   handleSave,
   editableType = "text",
+  selectOptions,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
@@ -75,11 +77,13 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    if (!editing) {
+    if (!editing && dataIndex) {
       const value = _.get(record, dataIndex);
       // TODO: Ratinalise conversion to Dayjs
       if (value && editableType === "date") {
         form.setFieldValue(dataIndex, dayjs(value));
+      } else if (editableType === "select" && value) {
+        form.setFieldValue(dataIndex, (value)._id);
       } else {
         form.setFieldValue(dataIndex, value);
       }
@@ -134,11 +138,25 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         {editableType === "text" && (
           <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
         )}
+        {editableType === "select" && (
+          <Select
+            onChange={() => save()}
+            style={{ width: "100%" }}
+            options={selectOptions}
+            placeholder="Select..."
+            size="small"
+            defaultOpen
+          />
+        )}
       </Form.Item>
     ) : (
       <div
         className="editable-cell-value-wrap"
-        // style={{ paddingInlineEnd: 24 }}
+        style={{
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+          whiteSpace: "nowrap",
+        }}
         onClick={toggleEdit}
       >
         {children}
@@ -203,11 +221,20 @@ const RoomsTable: React.FC = () => {
     onMutate: (data) => {
       queryClient.cancelQueries({ queryKey: ["rooms"] });
       const previousRooms = queryClient.getQueryData(queryKey);
-
       queryClient.setQueryData(queryKey, (oldRooms: Room[]) =>
-        oldRooms.map((room: Room) =>
-          room.meta?._id === data._id ? _.merge({}, room, { meta: data }) : room
-        )
+        oldRooms.map((room: Room) => {
+          if (room.meta?._id === data._id) {
+            const updatedData = { ...data };
+            if (updatedData.rejectionReason && typeof updatedData.rejectionReason === 'string') {
+              const rejectionReason = rejectionReasons?.find(rejectionReason => rejectionReason._id === updatedData.rejectionReason as unknown as string);
+              if (rejectionReason) {
+                updatedData.rejectionReason = rejectionReason;
+              }
+            }
+            return _.merge({}, room, { meta: updatedData });
+          }
+          return room;
+        })
       );
       return { previousRooms };
     },
@@ -232,6 +259,7 @@ const RoomsTable: React.FC = () => {
     editable?: boolean;
     editableType?: EditableType;
     dataIndex: NamePath<Room>;
+    selectOptions?: { label: string; value: string }[];
   })[] = [
     {
       title: "Name",
@@ -342,9 +370,16 @@ const RoomsTable: React.FC = () => {
     },
     {
       title: "Rejection",
-      dataIndex: ["meta", "rejectionReason", "name"],
+      dataIndex: ["meta", "rejectionReason"],
       width: "5%",
       align: "center",
+      editable: true,
+      editableType: "select",
+      selectOptions: rejectionReasons?.map((reason) => ({
+        label: reason.name,
+        value: reason._id,
+      })) || [],
+      render: (rejectionReason: RejectionReason) => rejectionReason?.name || "",
     },
   ];
 
@@ -373,6 +408,7 @@ const RoomsTable: React.FC = () => {
         title: col.title,
         handleSave,
         editableType: col.editableType,
+        selectOptions: col.selectOptions,
       }),
     };
   });
