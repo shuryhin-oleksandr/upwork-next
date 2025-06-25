@@ -116,12 +116,12 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
         {editableType === "select" && (
           <Select
-          options={selectOptions}
-          onChange={save}
-          onDropdownVisibleChange={toggleEdit}
-          defaultOpen={true}
-          // TODO: fix width jumping
-          style={{ width: 120 }}
+            options={selectOptions}
+            onChange={save}
+            onDropdownVisibleChange={toggleEdit}
+            defaultOpen={true}
+            // TODO: fix width jumping
+            style={{ width: 120 }}
           />
         )}
         {editableType === "number" && (
@@ -356,7 +356,7 @@ const RoomsTable: React.FC = () => {
     },
     {
       title: "Rejection",
-      dataIndex: ["meta", "rejectionReason", "name"],
+      dataIndex: ["meta", "rejectionReason"],
       width: "5%",
       align: "center",
       editable: true,
@@ -365,6 +365,9 @@ const RoomsTable: React.FC = () => {
         label: reason.name,
         value: reason._id,
       })),
+      render: (value) => (
+        <Text>{rejectionReasons?.find((reason) => reason._id === value)?.name}</Text>
+      ),
     },
   ];
 
