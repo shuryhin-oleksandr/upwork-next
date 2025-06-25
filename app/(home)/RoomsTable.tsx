@@ -6,6 +6,7 @@ import {
   Input,
   InputNumber,
   message,
+  Select,
   Switch,
   Table,
   theme,
@@ -26,6 +27,7 @@ import {
   EditableType,
   RejectionReason,
   Room,
+  SelectOption,
 } from "./interfaces";
 
 dayjs.extend(isSameOrAfter);
@@ -61,6 +63,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   record,
   handleSave,
   editableType = "text",
+  selectOptions,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
@@ -111,6 +114,16 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        {editableType === "select" && (
+          <Select
+          options={selectOptions}
+          onChange={save}
+          onDropdownVisibleChange={toggleEdit}
+          defaultOpen={true}
+          // TODO: fix width jumping
+          style={{ width: 120 }}
+          />
+        )}
         {editableType === "number" && (
           <InputNumber
             ref={inputRef}
@@ -232,6 +245,7 @@ const RoomsTable: React.FC = () => {
     editable?: boolean;
     editableType?: EditableType;
     dataIndex: NamePath<Room>;
+    selectOptions?: SelectOption[];
   })[] = [
     {
       title: "Name",
@@ -345,6 +359,12 @@ const RoomsTable: React.FC = () => {
       dataIndex: ["meta", "rejectionReason", "name"],
       width: "5%",
       align: "center",
+      editable: true,
+      editableType: "select",
+      selectOptions: rejectionReasons?.map((reason) => ({
+        label: reason.name,
+        value: reason._id,
+      })),
     },
   ];
 
@@ -373,6 +393,7 @@ const RoomsTable: React.FC = () => {
         title: col.title,
         handleSave,
         editableType: col.editableType,
+        selectOptions: col.selectOptions,
       }),
     };
   });
