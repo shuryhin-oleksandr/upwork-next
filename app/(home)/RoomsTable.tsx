@@ -147,8 +147,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         )}
       </Form.Item>
     ) : (
-      <div className="editable-cell-value-wrap" onClick={toggleEdit}>
-        <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
+        <div className="editable-cell-value-wrap" onClick={toggleEdit}>
+          {/* Padding here needed to avoid jumping of select column (see select arrow width) */}
+          <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
       </div>
     );
   }
