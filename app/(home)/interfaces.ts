@@ -42,6 +42,7 @@ export interface UpdateRoomMetaDto {
   // TODO: roomId
   comment: string;
   bant?: number;
+  rejectionReason?: RejectionReason;
 }
 
 export interface EditableRowProps {
@@ -56,6 +57,7 @@ export interface EditableCellProps {
   handleSave: (record: Room) => void;
   editableType?: EditableType;
   selectOptions?: { label: string; value: string }[];
+  rejectionReasons?: RejectionReason[];
 }
 
 export type EditableType = "text" | "number" | "date" | "select";
