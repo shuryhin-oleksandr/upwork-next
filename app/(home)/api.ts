@@ -19,8 +19,8 @@ export const createRoomMeta = async (data: CreateRoomMetaDto) => {
   return response.data;
 };
 
-export const getRejectionReasons = async () => {
-  const url = "/upwork/rejection-reasons";
+export const getLossReasons = async () => {
+  const url = "/upwork/loss-reasons";
   const response = await api.get(url);
   return response.data;
 };

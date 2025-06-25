@@ -22,10 +22,10 @@ export interface RoomMeta {
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  rejectionReason?: RejectionReason;
+  lossReason?: LossReason;
 }
 
-export interface RejectionReason {
+export interface LossReason {
   // TODO: use id instead of _id
   _id: string;
   name: string;

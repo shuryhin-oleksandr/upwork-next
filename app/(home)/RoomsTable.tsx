@@ -19,13 +19,13 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { createRoomMeta, getRejectionReasons, getRooms, updateRoomMeta } from "./api";
+import { createRoomMeta, getLossReasons, getRooms, updateRoomMeta } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
 import {
   EditableCellProps,
   EditableRowProps,
   EditableType,
-  RejectionReason,
+  LossReason,
   Room,
   SelectOption,
 } from "./interfaces";
@@ -170,15 +170,15 @@ const RoomsTable: React.FC = () => {
   });
 
   const {
-    data: rejectionReasons,
-    isError: isRejectionReasonsError,
-    error: rejectionReasonsError,
-    isPending: isRejectionReasonsPending,
-  } = useQuery<RejectionReason[]>({
-    queryKey: ["rejection-reasons"],
-    queryFn: getRejectionReasons,
+    data: lossReasons,
+    isError: isLossReasonsError,
+    error: lossReasonsError,
+    isPending: isLossReasonsPending,
+  } = useQuery<LossReason[]>({
+    queryKey: ["loss-reasons"],
+    queryFn: getLossReasons,
   });
-  console.log("Rejection reasons:", rejectionReasons);
+  console.log("Loss reasons:", lossReasons);
 
   const roomMetaCreateMutation = useMutation({
     mutationFn: createRoomMeta,
@@ -233,8 +233,8 @@ const RoomsTable: React.FC = () => {
   });
 
   if (isError) return <span>Error: {error.message}</span>;
-  if (isRejectionReasonsError)
-    return <span>Rejection reasons error: {rejectionReasonsError.message}</span>;
+  if (isLossReasonsError)
+    return <span>Loss reasons error: {lossReasonsError.message}</span>;
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
@@ -350,19 +350,19 @@ const RoomsTable: React.FC = () => {
       sortDirections: ["ascend"],
     },
     {
-      title: "Rejection",
-      dataIndex: ["meta", "rejectionReason"],
+      title: "Loss",
+      dataIndex: ["meta", "lossReason"],
       width: "5%",
       align: "center",
       editable: true,
       editableType: "select",
-      selectOptions: rejectionReasons?.map((reason) => ({
+      selectOptions: lossReasons?.map((reason) => ({
         label: reason.name,
         value: reason._id,
       })),
       render: (value) => (
         <Text style={{ textWrap: "nowrap" }}>
-          {rejectionReasons?.find((reason) => reason._id === value)?.name}
+          {lossReasons?.find((reason) => reason._id === value)?.name}
         </Text>
       ),
     },
@@ -422,7 +422,7 @@ const RoomsTable: React.FC = () => {
           defaultPageSize: 50,
         }}
         size="small"
-        loading={isPending || isRejectionReasonsPending}
+        loading={isPending || isLossReasonsPending}
         style={{ marginTop: "1.5rem" }}
       />
     </div>
