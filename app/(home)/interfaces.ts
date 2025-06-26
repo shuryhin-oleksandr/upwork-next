@@ -22,12 +22,21 @@ export interface RoomMeta {
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
+  lossReason?: LossReason;
+}
+
+export interface LossReason {
+  // TODO: use id instead of _id
+  _id: string;
+  name: string;
 }
 
 export interface CreateRoomMetaDto {
   roomId: string;
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: LossReason;
 }
 
 export interface UpdateRoomMetaDto {
@@ -35,6 +44,8 @@ export interface UpdateRoomMetaDto {
   // TODO: roomId
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: LossReason;
 }
 
 export interface EditableRowProps {
@@ -47,5 +58,13 @@ export interface EditableCellProps {
   dataIndex: NamePath<Room>;
   record: Room;
   handleSave: (record: Room) => void;
-  editableType?: "text" | "number" | "date";
+  editableType?: EditableType;
+  selectOptions?: { label: string; value: string }[];
+}
+
+export type EditableType = "text" | "number" | "date" | "select";
+
+export interface SelectOption {
+  label: string;
+  value: string;
 }

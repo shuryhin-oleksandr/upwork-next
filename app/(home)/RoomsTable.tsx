@@ -6,6 +6,7 @@ import {
   Input,
   InputNumber,
   message,
+  Select,
   Switch,
   Table,
   theme,
@@ -18,9 +19,16 @@ import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import { motion } from "framer-motion";
 import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { createRoomMeta, getRooms, updateRoomMeta } from "./api";
+import { createRoomMeta, getLossReasons, getRooms, updateRoomMeta } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
-import { EditableCellProps, EditableRowProps, Room } from "./interfaces";
+import {
+  EditableCellProps,
+  EditableRowProps,
+  EditableType,
+  LossReason,
+  Room,
+  SelectOption,
+} from "./interfaces";
 
 dayjs.extend(isSameOrAfter);
 
@@ -45,8 +53,6 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
-type EditableType = "text" | "number" | "date";
-
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -57,6 +63,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   record,
   handleSave,
   editableType = "text",
+  selectOptions,
   ...restProps
 }) => {
   const [editing, setEditing] = useState(false);
@@ -90,12 +97,12 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
           ? _.get(values, dataIndex)?.toISOString()
           : _.get(values, dataIndex);
       const originalValue = _.get(record, dataIndex);
+
+      toggleEdit();
       if (_.isEqual(originalValue, newValue)) {
-        toggleEdit();
         return;
       }
 
-      toggleEdit();
       handleSave(_.merge({}, record, values));
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
@@ -107,6 +114,20 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   if (editable) {
     childNode = editing ? (
       <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        {editableType === "select" && (
+          <Select
+            options={selectOptions}
+            onChange={(value) => {
+              if (value === undefined) {
+                form.setFieldValue(dataIndex, null);
+              }
+              save();
+            }}
+            onDropdownVisibleChange={toggleEdit}
+            defaultOpen={true}
+            allowClear
+          />
+        )}
         {editableType === "number" && (
           <InputNumber
             ref={inputRef}
@@ -132,12 +153,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         )}
       </Form.Item>
     ) : (
-      <div
-        className="editable-cell-value-wrap"
-        // style={{ paddingInlineEnd: 24 }}
-        onClick={toggleEdit}
-      >
-        {children}
+      <div className="editable-cell-value-wrap" onClick={toggleEdit}>
+        {/* Padding here needed to avoid jumping of select column (see select arrow width) */}
+        <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
       </div>
     );
   }
@@ -155,6 +173,16 @@ const RoomsTable: React.FC = () => {
   const { isPending, isError, data, error } = useQuery({
     queryKey,
     queryFn: () => getRooms({ excludeContracts }),
+  });
+
+  const {
+    data: lossReasons,
+    isError: isLossReasonsError,
+    error: lossReasonsError,
+    isPending: isLossReasonsPending,
+  } = useQuery<LossReason[]>({
+    queryKey: ["loss-reasons"],
+    queryFn: getLossReasons,
   });
 
   const roomMetaCreateMutation = useMutation({
@@ -210,11 +238,13 @@ const RoomsTable: React.FC = () => {
   });
 
   if (isError) return <span>Error: {error.message}</span>;
+  if (isLossReasonsError) return <span>Loss reasons error: {lossReasonsError.message}</span>;
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
     editableType?: EditableType;
     dataIndex: NamePath<Room>;
+    selectOptions?: SelectOption[];
   })[] = [
     {
       title: "Name",
@@ -250,7 +280,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "33%",
+      width: "28%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -273,7 +303,7 @@ const RoomsTable: React.FC = () => {
         compare: (a, b) => {
           if (a.isContract) return 1;
           if (b.isContract) return -1;
-          
+
           const aDate = dayjs(a.nextFollowUpDate);
           const bDate = dayjs(b.nextFollowUpDate);
           const aShouldFollowUp = !aDate.isAfter(dayjs(), "day");
@@ -323,6 +353,23 @@ const RoomsTable: React.FC = () => {
       defaultSortOrder: "ascend",
       sortDirections: ["ascend"],
     },
+    {
+      title: "Loss",
+      dataIndex: ["meta", "lossReason"],
+      width: "5%",
+      align: "center",
+      editable: true,
+      editableType: "select",
+      selectOptions: lossReasons?.map((reason) => ({
+        label: reason.name,
+        value: reason._id,
+      })),
+      render: (value) => (
+        <Text style={{ textWrap: "nowrap" }}>
+          {lossReasons?.find((reason) => reason._id === value)?.name}
+        </Text>
+      ),
+    },
   ];
 
   const handleSave = (row: Room) => {
@@ -350,6 +397,7 @@ const RoomsTable: React.FC = () => {
         title: col.title,
         handleSave,
         editableType: col.editableType,
+        selectOptions: col.selectOptions,
       }),
     };
   });
@@ -378,7 +426,7 @@ const RoomsTable: React.FC = () => {
           defaultPageSize: 50,
         }}
         size="small"
-        loading={isPending}
+        loading={isPending || isLossReasonsPending}
         style={{ marginTop: "1.5rem" }}
       />
     </div>
