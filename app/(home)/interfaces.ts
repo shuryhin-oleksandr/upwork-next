@@ -35,6 +35,8 @@ export interface CreateRoomMetaDto {
   roomId: string;
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: LossReason;
 }
 
 export interface UpdateRoomMetaDto {
@@ -42,6 +44,8 @@ export interface UpdateRoomMetaDto {
   // TODO: roomId
   comment: string;
   bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: LossReason;
 }
 
 export interface EditableRowProps {

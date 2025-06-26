@@ -184,7 +184,6 @@ const RoomsTable: React.FC = () => {
     queryKey: ["loss-reasons"],
     queryFn: getLossReasons,
   });
-  console.log("Loss reasons:", lossReasons);
 
   const roomMetaCreateMutation = useMutation({
     mutationFn: createRoomMeta,
