@@ -117,9 +117,15 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         {editableType === "select" && (
           <Select
             options={selectOptions}
-            onChange={save}
+            onChange={(value) => {
+              if (value === undefined) {
+                form.setFieldValue(dataIndex, null);
+              }
+              save();
+            }}
             onDropdownVisibleChange={toggleEdit}
             defaultOpen={true}
+            allowClear
           />
         )}
         {editableType === "number" && (
@@ -147,9 +153,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         )}
       </Form.Item>
     ) : (
-        <div className="editable-cell-value-wrap" onClick={toggleEdit}>
-          {/* Padding here needed to avoid jumping of select column (see select arrow width) */}
-          <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
+      <div className="editable-cell-value-wrap" onClick={toggleEdit}>
+        {/* Padding here needed to avoid jumping of select column (see select arrow width) */}
+        <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
       </div>
     );
   }
@@ -233,8 +239,7 @@ const RoomsTable: React.FC = () => {
   });
 
   if (isError) return <span>Error: {error.message}</span>;
-  if (isLossReasonsError)
-    return <span>Loss reasons error: {lossReasonsError.message}</span>;
+  if (isLossReasonsError) return <span>Loss reasons error: {lossReasonsError.message}</span>;
 
   const defaultColumns: (ColumnTypes[number] & {
     editable?: boolean;
