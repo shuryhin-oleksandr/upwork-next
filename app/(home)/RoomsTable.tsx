@@ -92,10 +92,9 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   const save = async () => {
     try {
       const values = await form.validateFields();
-      const newValue =
-        editableType === "date"
-          ? _.get(values, dataIndex)?.toISOString()
-          : _.get(values, dataIndex);
+      let newValue = _.get(values, dataIndex);
+      if (editableType === "date") newValue = newValue?.toISOString();
+      if (editableType === "select") newValue = newValue ?? null;
       const originalValue = _.get(record, dataIndex);
 
       toggleEdit();
@@ -103,7 +102,8 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         return;
       }
 
-      handleSave(_.merge({}, record, values));
+      const updatedRecord = _.set({ ...record }, dataIndex, newValue);
+      handleSave(updatedRecord);
     } catch (errInfo) {
       console.log("Save failed:", errInfo);
     }
@@ -117,12 +117,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         {editableType === "select" && (
           <Select
             options={selectOptions}
-            onChange={(value) => {
-              if (value === undefined) {
-                form.setFieldValue(dataIndex, null);
-              }
-              save();
-            }}
+            onChange={save}
             onDropdownVisibleChange={toggleEdit}
             defaultOpen={true}
             allowClear
