@@ -93,7 +93,7 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     try {
       const values = await form.validateFields();
       let newValue = _.get(values, dataIndex);
-      if (editableType === "date") newValue = newValue?.toISOString();
+      if (editableType === "date") newValue = newValue?.toISOString() ?? null;
       if (editableType === "select") newValue = newValue ?? null;
       const originalValue = _.get(record, dataIndex);
 
