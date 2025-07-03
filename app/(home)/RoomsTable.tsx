@@ -137,10 +137,11 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
             // TODO: Fix ref type
             ref={inputRef}
             onChange={() => save()}
-            onBlur={() => save()}
+            // onBlue fires before onChange, so it toggles input and prevents onChange 
+            onOpenChange={(open) => !open && toggleEdit()}
             style={{ width: "100%" }}
             format="D MMM YY"
-            defaultOpen={true}
+            defaultOpen
           />
         )}
         {editableType === "text" && (
