@@ -2,7 +2,7 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Table } from "antd";
+import { Card, Table } from "antd";
 import dayjs from "dayjs";
 import TypographyText from "antd/es/typography/Text";
 
@@ -17,7 +17,11 @@ interface Proposal {
 }
 
 export default function Proposals() {
-  const { data, error, isLoading } = useQuery({
+  const {
+    data: proposals,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["proposals"],
     queryFn: getProposals,
   });
@@ -59,17 +63,29 @@ export default function Proposals() {
       title: "Interview",
       dataIndex: "totalInvitedToInterview",
       key: "totalInvitedToInterview",
+      render: (value: number) => (
+        <TypographyText style={{ opacity: value ? 1 : 0.1 }}>{value}</TypographyText>
+      ),
     },
-    { title: "Hired", dataIndex: "totalHired", key: "totalHired" },
+    {
+      title: "Hired",
+      dataIndex: "totalHired",
+      key: "totalHired",
+      render: (value: number) => (
+        <TypographyText style={{ opacity: value ? 1 : 0.1 }}>{value}</TypographyText>
+      ),
+    },
   ];
 
   return (
-    <Table
-      rowKey="id"
-      columns={columns}
-      dataSource={data || []}
-      pagination={false}
-      loading={isLoading}
-    />
+    <Card>
+      <Table
+        rowKey="id"
+        columns={columns}
+        dataSource={proposals || []}
+        pagination={false}
+        loading={isLoading}
+      />
+    </Card>
   );
 }
