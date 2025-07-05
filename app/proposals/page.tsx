@@ -6,6 +6,11 @@ import { Card, Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import TypographyText from "antd/es/typography/Text";
 
+enum JobStatus {
+  Active = "ACTIVE",
+  Closed = "CLOSED",
+}
+
 interface Proposal {
   id: string;
   jobUrl: string;
@@ -79,6 +84,13 @@ export default function Proposals() {
       render: (value: number) => (
         <TypographyText style={{ opacity: value ? 1 : 0.1 }}>{value}</TypographyText>
       ),
+    },
+    {
+      title: "Available",
+      dataIndex: "workFlowStatus",
+      key: "workFlowStatus",
+      align: "center",
+      render: (value) => (value == JobStatus.Active ? null : "X"),
     },
   ];
 
