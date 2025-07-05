@@ -3,6 +3,18 @@
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
 import { Table } from "antd";
+import dayjs from "dayjs";
+import TypographyText from "antd/es/typography/Text";
+
+interface Proposal {
+  id: string;
+  jobUrl: string;
+  jobTitle: string;
+  status: string;
+  createdDateTime: string;
+  totalInvitedToInterview: number;
+  totalHired: number;
+}
 
 export default function Proposals() {
   const { data, error, isLoading } = useQuery({
@@ -12,11 +24,37 @@ export default function Proposals() {
   if (error) return <div>Error loading proposals</div>;
 
   const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Job ID", dataIndex: "jobId", key: "jobId" },
-    { title: "Title", dataIndex: "jobTitle", key: "jobTitle" },
+    {
+      title: "Title",
+      dataIndex: "jobTitle",
+      key: "jobTitle",
+      render: (text: string, record: Proposal) => (
+        <a href={record.jobUrl} target="_blank" rel="noopener noreferrer">
+          {text}
+        </a>
+      ),
+    },
     { title: "Status", dataIndex: "status", key: "status" },
-    { title: "Created Date", dataIndex: "createdDateTime", key: "createdDateTime" },
+    {
+      title: "Date",
+      dataIndex: "createdDateTime",
+      key: "createdDateTime",
+      render: (value: string) => (
+        <TypographyText style={{ textWrap: "nowrap" }}>
+          {dayjs(value).format("D MMM YY")}
+        </TypographyText>
+      ),
+    },
+    {
+      title: "Time",
+      dataIndex: "createdDateTime",
+      key: "createdTime",
+      render: (value: string) => (
+        <TypographyText style={{ textWrap: "nowrap" }}>
+          {dayjs(value).format("HH:mm")}
+        </TypographyText>
+      ),
+    },
     {
       title: "Interview",
       dataIndex: "totalInvitedToInterview",
