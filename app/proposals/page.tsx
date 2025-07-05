@@ -2,7 +2,7 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Table } from "antd";
+import { Card, Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import TypographyText from "antd/es/typography/Text";
 
@@ -16,6 +16,8 @@ interface Proposal {
   totalHired: number;
 }
 
+type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
+
 export default function Proposals() {
   const {
     data: proposals,
@@ -27,7 +29,7 @@ export default function Proposals() {
   });
   if (error) return <div>Error loading proposals</div>;
 
-  const columns = [
+  const columns: ColumnTypes = [
     {
       title: "Title",
       dataIndex: "jobTitle",
@@ -63,6 +65,7 @@ export default function Proposals() {
       title: "Interview",
       dataIndex: "totalInvitedToInterview",
       key: "totalInvitedToInterview",
+      align: "center",
       render: (value: number) => (
         <TypographyText style={{ opacity: value ? 1 : 0.1 }}>{value}</TypographyText>
       ),
@@ -71,6 +74,7 @@ export default function Proposals() {
       title: "Hired",
       dataIndex: "totalHired",
       key: "totalHired",
+      align: "center",
       render: (value: number) => (
         <TypographyText style={{ opacity: value ? 1 : 0.1 }}>{value}</TypographyText>
       ),
