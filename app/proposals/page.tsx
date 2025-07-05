@@ -19,13 +19,14 @@ interface Proposal {
 type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
 
 export default function Proposals() {
+  const startDate = "2025-06-01";
   const {
     data: proposals,
     error,
     isLoading,
   } = useQuery({
     queryKey: ["proposals"],
-    queryFn: getProposals,
+    queryFn: () => getProposals(startDate),
   });
   if (error) return <div>Error loading proposals</div>;
 
