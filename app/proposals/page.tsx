@@ -23,18 +23,7 @@ interface Proposal {
 
 type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
 
-export default function Proposals() {
-  const startDate = "2025-06-01";
-  const {
-    data: proposals,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey: ["proposals"],
-    queryFn: () => getProposals(startDate),
-  });
-  if (error) return <div>Error loading proposals</div>;
-
+function ProposalsTable({ proposals, isLoading }: { proposals: Proposal[]; isLoading: boolean }) {
   const columns: ColumnTypes = [
     {
       title: "Title",
@@ -106,16 +95,32 @@ export default function Proposals() {
       align: "center",
     },
   ];
+  return (
+    <Table
+      rowKey="id"
+      columns={columns}
+      dataSource={proposals || []}
+      pagination={false}
+      loading={isLoading}
+    />
+  );
+}
+
+export default function Proposals() {
+  const startDate = "2025-06-01";
+  const {
+    data: proposals,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["proposals"],
+    queryFn: () => getProposals(startDate),
+  });
+  if (error) return <div>Error loading proposals</div>;
 
   return (
     <Card>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={proposals || []}
-        pagination={false}
-        loading={isLoading}
-      />
+      <ProposalsTable {...{ proposals, isLoading }} />
     </Card>
   );
 }
