@@ -99,6 +99,12 @@ export default function Proposals() {
       align: "center",
       render: (value) => value && "+",
     },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      align: "center",
+    },
   ];
 
   return (
