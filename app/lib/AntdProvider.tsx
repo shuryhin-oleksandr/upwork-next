@@ -2,12 +2,19 @@
 
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@ant-design/v5-patch-for-react-19";
-import { App } from "antd";
+import { App, ConfigProvider, theme } from "antd";
 
 export default function AntdProvider({ children }: { children: React.ReactNode }) {
+  const isDark = true;
   return (
     <AntdRegistry>
-      <App>{children}</App>
+      <ConfigProvider
+        theme={{
+          algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        }}
+      >
+        <App>{children}</App>
+      </ConfigProvider>
     </AntdRegistry>
   );
 }

@@ -90,7 +90,14 @@ export default function Proposals() {
       dataIndex: "workFlowStatus",
       key: "workFlowStatus",
       align: "center",
-      render: (value) => (value == JobStatus.Active ? null : "X"),
+      render: (value) => value != JobStatus.Active && "X",
+    },
+    {
+      title: "Lead",
+      dataIndex: "isLead",
+      key: "isLead",
+      align: "center",
+      render: (value) => value && "+",
     },
   ];
 
