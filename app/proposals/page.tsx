@@ -46,7 +46,7 @@ export default function Proposals() {
         </a>
       ),
     },
-    { title: "Status", dataIndex: "status", key: "status" },
+    { title: "Upw status", dataIndex: "upworkStatus", key: "upworkStatus" },
     {
       title: "Date",
       dataIndex: "createdDateTime",
