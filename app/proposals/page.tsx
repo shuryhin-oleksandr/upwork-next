@@ -2,7 +2,7 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Table, TableProps } from "antd";
+import { Card, Col, Row, Statistic, Table, TableProps } from "antd";
 import dayjs from "dayjs";
 import TypographyText from "antd/es/typography/Text";
 
@@ -15,15 +15,62 @@ interface Proposal {
   id: string;
   jobUrl: string;
   jobTitle: string;
-  status: string;
+  jobAvailability: string;
   createdDateTime: string;
   totalInvitedToInterview: number;
   totalHired: number;
+  status: ProposalStatus;
+}
+
+export enum ProposalStatus {
+  HIRED = "Hired",
+  NO_LONGER_AVAILABLE = "No longer available",
+  LEAD = "Lead",
+  COMMUNICATED_WITH_THREE_PLUS = "Communicated with >= 3",
+  COMMUNICATED_WITH_LESS_THAN_THREE = "Communicated with 1-2",
+  NO_INTERVIEW = "No interview",
+}
+
+function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
+  if (!proposals) return null;
+
+  const totalCount = proposals.length;
+
+  const statusCounts: Partial<Record<ProposalStatus, number>> = {};
+  for (const status of Object.values(ProposalStatus)) {
+    statusCounts[status] = proposals.filter((p) => p.status === status).length;
+  }
+
+  return (
+    <Row gutter={16} style={{ marginBottom: "2rem" }}>
+      {Object.entries(statusCounts).map(([status, count]) => (
+        <Col span={4} key={status}>
+          <Card style={{ height: "100%", textAlign: "center" }}>
+            <Statistic
+              title={status}
+              value={`${count} (${Math.round((count / totalCount) * 100)}%)`}
+            />
+          </Card>
+        </Col>
+      ))}
+      <Col span={3} key="total">
+        <Card style={{ height: "100%", textAlign: "center" }}>
+          <Statistic title="Total" value={totalCount} />
+        </Card>
+      </Col>
+    </Row>
+  );
 }
 
 type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
 
-function ProposalsTable({ proposals, isLoading }: { proposals: Proposal[]; isLoading: boolean }) {
+function ProposalsTable({
+  proposals,
+  isLoading,
+}: {
+  proposals: Proposal[] | undefined;
+  isLoading: boolean;
+}) {
   const columns: ColumnTypes = [
     {
       title: "Title",
@@ -76,8 +123,8 @@ function ProposalsTable({ proposals, isLoading }: { proposals: Proposal[]; isLoa
     },
     {
       title: "Available",
-      dataIndex: "workFlowStatus",
-      key: "workFlowStatus",
+      dataIndex: "jobAvailability",
+      key: "jobAvailability",
       align: "center",
       render: (value) => value != JobStatus.Active && "X",
     },
@@ -112,7 +159,7 @@ export default function Proposals() {
     data: proposals,
     error,
     isLoading,
-  } = useQuery({
+  } = useQuery<Proposal[]>({
     queryKey: ["proposals"],
     queryFn: () => getProposals(startDate),
   });
@@ -120,6 +167,7 @@ export default function Proposals() {
 
   return (
     <Card>
+      <BidStats {...{ proposals }} />
       <ProposalsTable {...{ proposals, isLoading }} />
     </Card>
   );
