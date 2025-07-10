@@ -47,7 +47,7 @@ function BidStats({
   statusCounts["Total"] = totalCount;
 
   return (
-    <Flex gap="large" justify="space-between" style={{ marginBottom: "2rem" }}>
+    <Flex gap="large" justify="space-between">
       {Object.entries(statusCounts).map(([status, count]: [string, number]) => (
         <Statistic
           key={status}
