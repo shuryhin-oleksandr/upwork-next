@@ -2,7 +2,7 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Col, Row, Statistic, Table, TableProps } from "antd";
+import { Card, Table, TableProps } from "antd";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 
@@ -42,20 +42,12 @@ function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
   }
   statusCounts["Total"] = totalCount;
 
-  return (
-    <Row gutter={16} style={{ marginBottom: "2rem" }}>
-      {Object.entries(statusCounts).map(([status, count]) => (
-        <Col span={4} key={status}>
-          <Card style={{ height: "100%", textAlign: "center" }}>
-            <Statistic
-              title={status}
-              value={`${count} (${Math.round((count / totalCount) * 100)}%)`}
-            />
-          </Card>
-        </Col>
-      ))}
-    </Row>
-  );
+  return Object.entries(statusCounts).map(([status, count]: [string, number]) => (
+    <div key={status}>
+      {status}
+      {`${count} - ${Math.round((count / totalCount) * 100)}%`}
+    </div>
+  ));
 }
 
 type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
