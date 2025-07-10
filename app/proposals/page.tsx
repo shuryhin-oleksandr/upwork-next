@@ -2,7 +2,7 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Table, TableProps } from "antd";
+import { Card, Flex, Statistic, Table, TableProps } from "antd";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 
@@ -31,9 +31,13 @@ export enum ProposalStatus {
   NO_LONGER_AVAILABLE = "No longer available",
 }
 
-function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
-  if (!proposals) return null;
-
+function BidStats({
+  proposals = [],
+  isLoading,
+}: {
+  proposals: Proposal[] | undefined;
+  isLoading: boolean;
+}) {
   const totalCount = proposals.length;
 
   const statusCounts: Record<string, number> = {};
@@ -42,12 +46,19 @@ function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
   }
   statusCounts["Total"] = totalCount;
 
-  return Object.entries(statusCounts).map(([status, count]: [string, number]) => (
-    <div key={status}>
-      {status}
-      {`${count} - ${Math.round((count / totalCount) * 100)}%`}
-    </div>
-  ));
+  return (
+    <Flex gap="large" justify="space-between" style={{ marginBottom: "2rem" }}>
+      {Object.entries(statusCounts).map(([status, count]: [string, number]) => (
+        <Statistic
+          key={status}
+          title={status}
+          value={`${count} - ${Math.round((count / totalCount) * 100)}%`}
+          style={{ textAlign: "center" }}
+          loading={isLoading}
+        />
+      ))}
+    </Flex>
+  );
 }
 
 type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
@@ -154,9 +165,13 @@ export default function Proposals() {
   if (error) return <div>Error loading proposals</div>;
 
   return (
-    <Card>
-      <BidStats {...{ proposals }} />
-      <ProposalsTable {...{ proposals, isLoading }} />
-    </Card>
+    <div>
+      <Card>
+        <BidStats {...{ proposals, isLoading }} />
+      </Card>
+      <Card style={{ marginTop: "2rem" }}>
+        <ProposalsTable {...{ proposals, isLoading }} />
+      </Card>
+    </div>
   );
 }
