@@ -3,8 +3,8 @@
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
 import { Card, Col, Row, Statistic, Table, TableProps } from "antd";
-import dayjs from "dayjs";
 import TypographyText from "antd/es/typography/Text";
+import dayjs from "dayjs";
 
 enum JobStatus {
   Active = "ACTIVE",
@@ -23,12 +23,12 @@ interface Proposal {
 }
 
 export enum ProposalStatus {
+  NO_INTERVIEW = "No interview",
+  COMMUNICATED_WITH_LESS_THAN_THREE = "Communicated with 1-2",
+  COMMUNICATED_WITH_THREE_PLUS = "Communicated with >= 3",
+  LEAD = "Lead",
   HIRED = "Hired",
   NO_LONGER_AVAILABLE = "No longer available",
-  LEAD = "Lead",
-  COMMUNICATED_WITH_THREE_PLUS = "Communicated with >= 3",
-  COMMUNICATED_WITH_LESS_THAN_THREE = "Communicated with 1-2",
-  NO_INTERVIEW = "No interview",
 }
 
 function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
@@ -36,10 +36,11 @@ function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
 
   const totalCount = proposals.length;
 
-  const statusCounts: Partial<Record<ProposalStatus, number>> = {};
+  const statusCounts: Record<string, number> = {};
   for (const status of Object.values(ProposalStatus)) {
     statusCounts[status] = proposals.filter((p) => p.status === status).length;
   }
+  statusCounts["Total"] = totalCount;
 
   return (
     <Row gutter={16} style={{ marginBottom: "2rem" }}>
@@ -53,11 +54,6 @@ function BidStats({ proposals }: { proposals: Proposal[] | undefined }) {
           </Card>
         </Col>
       ))}
-      <Col span={3} key="total">
-        <Card style={{ height: "100%", textAlign: "center" }}>
-          <Statistic title="Total" value={totalCount} />
-        </Card>
-      </Col>
     </Row>
   );
 }
