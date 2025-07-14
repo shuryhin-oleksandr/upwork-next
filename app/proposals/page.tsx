@@ -2,9 +2,12 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Card, Flex, Statistic, Table, TableProps } from "antd";
+import { Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
+import { useState } from "react";
+
+const { RangePicker } = DatePicker;
 
 enum JobStatus {
   Active = "ACTIVE",
@@ -52,7 +55,7 @@ function BidStats({
         <Statistic
           key={status}
           title={status}
-          value={`${count} - ${Math.round((count / totalCount) * 100)}%`}
+          value={totalCount ? `${count} - ${Math.round((count / totalCount) * 100)}%` : "-"}
           style={{ textAlign: "center" }}
           loading={isLoading}
         />
@@ -153,20 +156,22 @@ function ProposalsTable({
 }
 
 export default function Proposals() {
-  const startDate = "2025-06-01";
+  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
   const {
     data: proposals,
     error,
     isLoading,
   } = useQuery<Proposal[]>({
     queryKey: ["proposals"],
-    queryFn: () => getProposals(startDate),
+    queryFn: () => getProposals({startDate: dateRange![0], endDate: dateRange![1]}),
+    enabled: Boolean(dateRange && dateRange[0] && dateRange[1]),
   });
   if (error) return <div>Error loading proposals</div>;
 
   return (
     <div>
-      <Card>
+      <RangePicker value={dateRange} onChange={(dates) => setDateRange(dates)} />
+      <Card style={{ marginTop: "2rem" }}>
         <BidStats {...{ proposals, isLoading }} />
       </Card>
       <Card style={{ marginTop: "2rem" }}>
