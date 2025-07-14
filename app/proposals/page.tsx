@@ -2,7 +2,7 @@
 
 import { getProposals } from "@/app/proposals/api";
 import { useQuery } from "@tanstack/react-query";
-import { Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
+import { Button, Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 import { useState } from "react";
@@ -161,16 +161,25 @@ export default function Proposals() {
     data: proposals,
     error,
     isLoading,
+    refetch,
   } = useQuery<Proposal[]>({
     queryKey: ["proposals"],
-    queryFn: () => getProposals({startDate: dateRange![0], endDate: dateRange![1]}),
-    enabled: Boolean(dateRange && dateRange[0] && dateRange[1]),
+    queryFn: () => getProposals({ startDate: dateRange![0], endDate: dateRange![1] }),
+    enabled: false,
   });
   if (error) return <div>Error loading proposals</div>;
 
   return (
     <div>
       <RangePicker value={dateRange} onChange={(dates) => setDateRange(dates)} />
+      <Button
+        type="primary"
+        onClick={() => refetch()}
+        style={{ marginLeft: "1rem" }}
+        disabled={!dateRange || !dateRange[0] || !dateRange[1]}
+      >
+        Analyze
+      </Button>
       <Card style={{ marginTop: "2rem" }}>
         <BidStats {...{ proposals, isLoading }} />
       </Card>
