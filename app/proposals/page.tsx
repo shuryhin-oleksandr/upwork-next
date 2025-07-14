@@ -163,7 +163,7 @@ export default function Proposals() {
     isLoading,
     refetch,
   } = useQuery<Proposal[]>({
-    queryKey: ["proposals"],
+    queryKey: ["proposals", dateRange],
     queryFn: () => getProposals({ startDate: dateRange![0], endDate: dateRange![1] }),
     enabled: false,
   });
