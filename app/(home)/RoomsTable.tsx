@@ -40,7 +40,7 @@ type FormInstance<T> = GetRef<typeof Form<T>>;
 const EditableContext = React.createContext<FormInstance<Room> | null>(null);
 // Index needed for compatibility with Antd Table public API
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
+export const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
   const [form] = Form.useForm();
   return (
     <Form form={form} component={false}>
@@ -53,7 +53,7 @@ const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
 
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 
-const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
+export const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
   // Index needed for compatibility with Antd Table public API
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   title,
@@ -184,7 +184,7 @@ const RoomsTable: React.FC = () => {
   const roomMetaCreateMutation = useMutation({
     mutationFn: createRoomMeta,
     onMutate: (data) => {
-      queryClient.cancelQueries(["rooms"]);
+      queryClient.cancelQueries({ queryKey: ["rooms"] });
       const previousRooms = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(queryKey, (oldRooms: Room[]) =>

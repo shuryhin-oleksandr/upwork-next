@@ -1,10 +1,15 @@
 "use client";
 
-import { getProposals } from "@/app/proposals/api";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
+import { EditableType, SelectOption } from "@/app/(home)/interfaces";
+import { EditableCell, EditableRow } from "@/app/(home)/RoomsTable";
+import { createProposalMeta, getProposals, updateProposalMeta } from "@/app/proposals/api";
+import { Proposal, ProposalStatus } from "@/app/proposals/interfaces";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { App, Button, Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
+import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
+import _ from "lodash";
 import { useState } from "react";
 
 const { RangePicker } = DatePicker;
@@ -12,26 +17,6 @@ const { RangePicker } = DatePicker;
 enum JobStatus {
   Active = "ACTIVE",
   Closed = "CLOSED",
-}
-
-interface Proposal {
-  id: string;
-  jobUrl: string;
-  jobTitle: string;
-  jobAvailability: string;
-  createdDateTime: string;
-  totalInvitedToInterview: number;
-  totalHired: number;
-  status: ProposalStatus;
-}
-
-export enum ProposalStatus {
-  NO_INTERVIEW = "No interview",
-  COMMUNICATED_WITH_LESS_THAN_THREE = "Communicated with 1-2",
-  COMMUNICATED_WITH_THREE_PLUS = "Communicated with >= 3",
-  LEAD = "Lead",
-  HIRED = "Hired",
-  NO_LONGER_AVAILABLE = "No longer available",
 }
 
 function BidStats({
@@ -69,11 +54,18 @@ type ColumnTypes = Exclude<TableProps<Proposal>["columns"], undefined>;
 function ProposalsTable({
   proposals,
   isLoading,
+  queryKey,
 }: {
   proposals: Proposal[] | undefined;
   isLoading: boolean;
+  queryKey: string[] | string;
 }) {
-  const columns: ColumnTypes = [
+  const defaultColumns: (ColumnTypes[number] & {
+    editable?: boolean;
+    editableType?: EditableType;
+    dataIndex: NamePath<Proposal>;
+    selectOptions?: SelectOption[];
+  })[] = [
     {
       title: "Title",
       dataIndex: "jobTitle",
@@ -148,10 +140,104 @@ function ProposalsTable({
       dataIndex: ["meta", "hiredRate"],
       key: "hiredRate",
       align: "center",
+      editable: true,
+      editableType: "number",
+      width: "7%",
     },
   ];
+
+  const queryClient = useQueryClient();
+  const { message } = App.useApp();
+
+  const proposalMetaCreateMutation = useMutation({
+    mutationFn: createProposalMeta,
+    onMutate: (data) => {
+      queryClient.cancelQueries({ queryKey: ["proposals"] });
+      const previousProposals = queryClient.getQueryData(queryKey);
+
+      queryClient.setQueryData(queryKey, (oldProposals: Proposal[]) =>
+        oldProposals.map((oldProposal: Proposal) =>
+          oldProposal.proposalId === data.proposalId
+            ? _.merge({}, oldProposal, { meta: data })
+            : oldProposal
+        )
+      );
+      return { previousProposals };
+    },
+    onSuccess: () => {
+      message.success("Room created successfully!");
+    },
+    onError: (error, _, context) => {
+      const errorMessage = error?.response?.data?.message || error.message;
+      message.error(`Room creation failed: ${errorMessage} !`);
+      queryClient.setQueryData(queryKey, context?.previousProposals);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
+    },
+  });
+
+  const proposalMetaUpdateMutation = useMutation({
+    mutationFn: updateProposalMeta,
+    onMutate: (data) => {
+      queryClient.cancelQueries({ queryKey: ["proposals"] });
+      const previousProposals = queryClient.getQueryData(queryKey);
+
+      queryClient.setQueryData(queryKey, (oldProposals: Proposal[]) =>
+        oldProposals.map((proposal: Proposal) =>
+          proposal.meta?._id === data._id ? _.merge({}, proposal, { meta: data }) : proposal
+        )
+      );
+      return { previousProposals };
+    },
+    onSuccess: () => {
+      message.success("Room updated successfully!");
+    },
+    onError: (error, _, context) => {
+      const errorMessage = error?.response?.data?.message || error.message;
+      message.error(`Room update failed: ${errorMessage} !`);
+      queryClient.setQueryData(queryKey, context?.previousProposals);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
+    },
+  });
+
+  const handleSave = (row: Proposal) => {
+    if (!row.meta?._id)
+      proposalMetaCreateMutation.mutate({ ...row.meta, proposalId: row.proposalId });
+    else proposalMetaUpdateMutation.mutate(row.meta);
+  };
+
+  const columns = defaultColumns.map((col) => {
+    if (!col.editable) {
+      return col;
+    }
+    return {
+      ...col,
+      onCell: (record: Proposal) => ({
+        record,
+        editable: col.editable,
+        dataIndex: col.dataIndex,
+        title: col.title,
+        handleSave,
+        editableType: col.editableType,
+        selectOptions: col.selectOptions,
+      }),
+    };
+  });
+
+  const components = {
+    body: {
+      row: EditableRow,
+      cell: EditableCell,
+    },
+  };
+
   return (
-    <Table
+    <Table<Proposal>
+      components={components}
+      rowClassName={() => "editable-row"}
       rowKey="proposalId"
       columns={columns}
       dataSource={proposals || []}
@@ -163,13 +249,14 @@ function ProposalsTable({
 
 export default function Proposals() {
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
+  const queryKey = ["proposals", dateRange];
   const {
     data: proposals,
     error,
     isLoading,
     refetch,
   } = useQuery<Proposal[]>({
-    queryKey: ["proposals", dateRange],
+    queryKey,
     queryFn: () => getProposals({ startDate: dateRange![0], endDate: dateRange![1] }),
     enabled: false,
   });
@@ -190,7 +277,7 @@ export default function Proposals() {
         <BidStats {...{ proposals, isLoading }} />
       </Card>
       <Card style={{ marginTop: "2rem" }}>
-        <ProposalsTable {...{ proposals, isLoading }} />
+        <ProposalsTable {...{ proposals, isLoading, queryKey }} />
       </Card>
     </div>
   );
