@@ -143,10 +143,16 @@ function ProposalsTable({
       key: "status",
       align: "center",
     },
+    {
+      title: "Hired rate",
+      dataIndex: ["meta", "hiredRate"],
+      key: "hiredRate",
+      align: "center",
+    },
   ];
   return (
     <Table
-      rowKey="id"
+      rowKey="proposalId"
       columns={columns}
       dataSource={proposals || []}
       pagination={false}
