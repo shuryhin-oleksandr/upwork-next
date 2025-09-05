@@ -1,5 +1,10 @@
+import IndustryAnalysisTable from "./IndustryAnalysisTable";
 import { Card } from "antd";
 
-export default function IndustryAnalysis(params) {
-  return <Card>Industry Analysis Page</Card>;
-};
+export default function IndustryAnalysis() {
+  return (
+    <Card>
+      <IndustryAnalysisTable />
+    </Card>
+  );
+}
