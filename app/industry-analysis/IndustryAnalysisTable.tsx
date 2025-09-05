@@ -50,29 +50,31 @@ export default function IndustryAnalysisTable() {
     <Table<DataType>
       columns={columns}
       expandable={{
-        expandedRowRender: (record) => (
-          <Flex gap={"large"}>
-            <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{record.description}</p>
-            <Flex vertical gap={"large"}>
-              <Flex vertical>
-                <Text strong>Industry Keywords</Text>
-                {record.meta.industryKeywords.map((keyword, index) => (
-                  <Text key={index} style={{ whiteSpace: "nowrap" }}>
-                    {keyword}
-                  </Text>
-                ))}
-              </Flex>
-              <Flex vertical>
-                <Text strong>Tech Stack</Text>
-                {record.meta.techStack.map((keyword, index) => (
-                  <Text key={index} style={{ whiteSpace: "nowrap" }}>
-                    {keyword}
-                  </Text>
-                ))}
+        expandedRowRender: (record) => {
+          return (
+            <Flex gap={"large"}>
+              <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{record.description}</p>
+              <Flex vertical gap={"large"}>
+                <Flex vertical>
+                  <Text strong>Industry Keywords</Text>
+                  {record.meta.industryKeywords.map((keyword, index) => (
+                    <Text key={index} style={{ whiteSpace: "nowrap" }}>
+                      {keyword}
+                    </Text>
+                  ))}
+                </Flex>
+                <Flex vertical>
+                  <Text strong>Tech Stack</Text>
+                  {record.meta.techStack.map((keyword, index) => (
+                    <Text key={index} style={{ whiteSpace: "nowrap" }}>
+                      {keyword}
+                    </Text>
+                  ))}
+                </Flex>
               </Flex>
             </Flex>
-          </Flex>
-        ),
+          );
+        },
         rowExpandable: (record) => !!record.description,
       }}
       dataSource={jobsWithMeta}
