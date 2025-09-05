@@ -5,6 +5,7 @@ import type { TableProps } from "antd";
 import { Flex, Table, Tag, Typography } from "antd";
 import { getJobsWithMeta } from "./api";
 import JobUrl from "@/app/components/JobUrl";
+import { useState } from "react";
 
 const { Text } = Typography;
 
@@ -41,15 +42,28 @@ const columns: TableProps<DataType>["columns"] = [
 ];
 
 export default function IndustryAnalysisTable() {
+  const [expandedRowKeys, setExpandedRowKeys] = useState<readonly string[]>([]);
+
   const { data: jobsWithMeta } = useQuery({
     queryKey: ["jobsWithMeta"],
     queryFn: getJobsWithMeta,
   });
 
+  const handleExpand = (expanded: boolean, record: DataType) => {
+    if (expanded) {
+      setExpandedRowKeys([record.id]);
+    } else {
+      setExpandedRowKeys([]);
+    }
+  };
+
   return (
     <Table<DataType>
       columns={columns}
       expandable={{
+        expandRowByClick: true,
+        expandedRowKeys: expandedRowKeys,
+        onExpand: handleExpand,
         expandedRowRender: (record) => {
           const industryKeywordsInDescription = record.meta.industryKeywords.filter((keyword) =>
             record.description.toLowerCase().includes(keyword.toLowerCase())
@@ -134,7 +148,6 @@ function highlightKeywords(text: string, industryKeywords: string[], techKeyword
    return (
      <Text
        key={index}
-       mark
        style={{
          backgroundColor: "#f6ffed",
          border: "1px solid #52c41a",
@@ -149,7 +162,6 @@ function highlightKeywords(text: string, industryKeywords: string[], techKeyword
    return (
      <Text
        key={index}
-       mark
        style={{
          backgroundColor: "#e6f7ff",
          border: "1px solid #1890ff",
