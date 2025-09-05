@@ -63,7 +63,13 @@ export default function IndustryAnalysisTable() {
             <Flex gap={"large"} justify="space-between">
               <Flex vertical gap={"small"}>
                 <Text strong>Job description</Text>
-                <Text style={{ whiteSpace: "pre-wrap" }}>{record.description}</Text>
+                <Text style={{ whiteSpace: "pre-wrap" }}>
+                  {highlightKeywords(
+                    record.description,
+                    industryKeywordsInDescription,
+                    techKeywordsInDescription
+                  )}
+                </Text>
               </Flex>
               <Flex vertical gap={"large"}>
                 <Flex vertical gap={"small"}>
@@ -99,4 +105,63 @@ export default function IndustryAnalysisTable() {
       tableLayout="fixed"
     />
   );
+}
+
+// Helper function to highlight keyword combinations in text
+function highlightKeywords(text: string, industryKeywords: string[], techKeywords: string[]) {
+  if (!industryKeywords.length && !techKeywords.length) return text;
+
+  // Combine all keywords and sort by length descending to match longer phrases first
+  const allKeywords = [...industryKeywords, ...techKeywords].sort((a, b) => b.length - a.length);
+
+  // Escape special regex characters
+  const escapedKeywords = allKeywords.map((keyword) =>
+    keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  );
+
+  const regex = new RegExp(`(${escapedKeywords.join("|")})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    const isIndustryKeyword = industryKeywords.some(
+      (keyword) => keyword.toLowerCase() === part.toLowerCase()
+    );
+    const isTechKeyword = techKeywords.some(
+      (keyword) => keyword.toLowerCase() === part.toLowerCase()
+    );
+
+ if (isIndustryKeyword) {
+   return (
+     <Text
+       key={index}
+       mark
+       style={{
+         backgroundColor: "#f6ffed",
+         border: "1px solid #52c41a",
+         borderRadius: "4px",
+         padding: "0 2px",
+       }}
+     >
+       {part}
+     </Text>
+   );
+ } else if (isTechKeyword) {
+   return (
+     <Text
+       key={index}
+       mark
+       style={{
+         backgroundColor: "#e6f7ff",
+         border: "1px solid #1890ff",
+         borderRadius: "4px",
+         padding: "0 2px",
+       }}
+     >
+       {part}
+     </Text>
+   );
+ }
+
+    return part;
+  });
 }
