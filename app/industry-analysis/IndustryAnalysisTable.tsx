@@ -51,24 +51,41 @@ export default function IndustryAnalysisTable() {
       columns={columns}
       expandable={{
         expandedRowRender: (record) => {
+          const industryKeywordsInDescription = record.meta.industryKeywords.filter((keyword) =>
+            record.description.toLowerCase().includes(keyword.toLowerCase())
+          );
+
+          const techKeywordsInDescription = record.meta.techStack.filter((keyword) =>
+            record.description.toLowerCase().includes(keyword.toLowerCase())
+          );
+
           return (
-            <Flex gap={"large"}>
-              <p style={{ margin: 0, whiteSpace: "pre-wrap" }}>{record.description}</p>
+            <Flex gap={"large"} justify="space-between">
+              <Flex vertical gap={"small"}>
+                <Text strong>Job description</Text>
+                <Text style={{ whiteSpace: "pre-wrap" }}>{record.description}</Text>
+              </Flex>
               <Flex vertical gap={"large"}>
-                <Flex vertical>
+                <Flex vertical gap={"small"}>
                   <Text strong>Industry Keywords</Text>
                   {record.meta.industryKeywords.map((keyword, index) => (
-                    <Text key={index} style={{ whiteSpace: "nowrap" }}>
+                    <Tag
+                      key={index}
+                      color={industryKeywordsInDescription.includes(keyword) ? "green" : "default"}
+                    >
                       {keyword}
-                    </Text>
+                    </Tag>
                   ))}
                 </Flex>
-                <Flex vertical>
+                <Flex vertical gap="small">
                   <Text strong>Tech Stack</Text>
                   {record.meta.techStack.map((keyword, index) => (
-                    <Text key={index} style={{ whiteSpace: "nowrap" }}>
+                    <Tag
+                      key={index}
+                      color={techKeywordsInDescription.includes(keyword) ? "blue" : "default"}
+                    >
                       {keyword}
-                    </Text>
+                    </Tag>
                   ))}
                 </Flex>
               </Flex>
