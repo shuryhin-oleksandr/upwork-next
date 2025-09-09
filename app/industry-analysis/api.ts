@@ -5,3 +5,15 @@ export const getJobsWithMeta = async () => {
   const response = await api.get(url);
   return response.data;
 };
+
+export const getAndSaveUpworkJobs = async () => {
+  const url = "/upwork/jobs/fetch";
+  const response = await api.get(url);
+  return response.data;
+};
+
+export const analyzeJobs = async () => {
+  const url = "/upwork/jobs/analyze";
+  const response = await api.get(url);
+  return response.data;
+};
