@@ -1,7 +1,7 @@
 import { api } from "@/app/lib/api";
 
-export const getJobsWithMeta = async () => {
-  const url = "/upwork/jobs-with-metas";
+export const getJobsFull = async () => {
+  const url = "/upwork/jobs/full";
   const response = await api.get(url);
   return response.data;
 };

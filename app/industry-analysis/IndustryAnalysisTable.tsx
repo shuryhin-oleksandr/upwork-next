@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { TableProps } from "antd";
 import { Flex, Table, Tag, theme, Typography } from "antd";
-import { getJobsWithMeta } from "./api";
+import { getJobsFull } from "./api";
 import JobUrl from "@/app/components/JobUrl";
 import { useState } from "react";
 
@@ -18,6 +18,7 @@ interface DataType {
     industryRaw: string[];
     industryKeywords: string[];
     techStack: string[];
+    canonicalIndustry: string[];
   };
 }
 
@@ -26,6 +27,17 @@ const columns: TableProps<DataType>["columns"] = [
     title: "Title",
     dataIndex: "title",
     render: (text, record) => <JobUrl title={text} upworkId={record.upworkId} />,
+  },
+  {
+    title: "Canonical industry",
+    dataIndex: ["meta", "canonicalIndustry"],
+    render: (industries) => (
+      <Flex wrap="wrap" gap="small">
+        {industries?.map((industry: string, index: number) => (
+          <Tag key={index}>{industry}</Tag>
+        ))}
+      </Flex>
+    ),
   },
   {
     title: "Industry",
@@ -45,7 +57,7 @@ export default function IndustryAnalysisTable() {
 
   const { data: jobsWithMeta } = useQuery({
     queryKey: ["jobsWithMeta"],
-    queryFn: getJobsWithMeta,
+    queryFn: getJobsFull,
   });
 
   const handleExpand = (expanded: boolean, record: DataType) => {
