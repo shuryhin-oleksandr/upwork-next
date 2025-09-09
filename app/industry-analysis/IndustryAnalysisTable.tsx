@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { TableProps } from "antd";
-import { Flex, Table, Tag, Typography } from "antd";
+import { Flex, Table, Tag, theme, Typography } from "antd";
 import { getJobsWithMeta } from "./api";
 import JobUrl from "@/app/components/JobUrl";
 import { useState } from "react";
@@ -123,6 +123,9 @@ export default function IndustryAnalysisTable() {
 
 // Helper function to highlight keyword combinations in text
 function highlightKeywords(text: string, industryKeywords: string[], techKeywords: string[]) {
+  const { getDesignToken } = theme;
+  const globalToken = getDesignToken();
+
   if (!industryKeywords.length && !techKeywords.length) return text;
 
   // Combine all keywords and sort by length descending to match longer phrases first
@@ -144,35 +147,36 @@ function highlightKeywords(text: string, industryKeywords: string[], techKeyword
       (keyword) => keyword.toLowerCase() === part.toLowerCase()
     );
 
- if (isIndustryKeyword) {
-   return (
-     <Text
-       key={index}
-       style={{
-         backgroundColor: "#f6ffed",
-         border: "1px solid #52c41a",
-         borderRadius: "4px",
-         padding: "0 2px",
-       }}
-     >
-       {part}
-     </Text>
-   );
- } else if (isTechKeyword) {
-   return (
-     <Text
-       key={index}
-       style={{
-         backgroundColor: "#e6f7ff",
-         border: "1px solid #1890ff",
-         borderRadius: "4px",
-         padding: "0 2px",
-       }}
-     >
-       {part}
-     </Text>
-   );
- }
+    // TODO: Fix by best practices
+    if (isIndustryKeyword) {
+      return (
+        <Tag
+          key={index}
+          color="green"
+          style={{
+            padding: `0 ${globalToken?.paddingXXS / 2}px`,
+            margin: 0,
+            fontSize: globalToken?.fontSize,
+          }}
+        >
+          {part}
+        </Tag>
+      );
+    } else if (isTechKeyword) {
+      return (
+        <Text
+          key={index}
+          style={{
+            backgroundColor: "#e6f7ff",
+            border: "1px solid #1890ff",
+            borderRadius: "4px",
+            padding: "0 2px",
+          }}
+        >
+          {part}
+        </Text>
+      );
+    }
 
     return part;
   });
