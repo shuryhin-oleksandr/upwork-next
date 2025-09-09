@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 export default function IndustryAnalysis() {
   const { message } = App.useApp();
 
-  const fetchJobsMutation = useMutation({
+  const fetchMutation = useMutation({
     mutationFn: getAndSaveUpworkJobs,
     onSuccess: () => {
       message.success("Jobs fetched and saved successfully");
@@ -17,22 +17,31 @@ export default function IndustryAnalysis() {
       message.error(`Failed to fetch jobs: ${error}`);
     },
   });
+
+  const aynalyzeMutation = useMutation({
+    mutationFn: analyzeJobs,
+    onSuccess: () => {
+      message.success("Jobs analyzed successfully");
+    },
+    onError: (error) => {
+      message.error(`Failed to analyze jobs: ${error}`);
+    },
+  });
+
   return (
     <>
       <Flex gap={16}>
         <Button
           type="primary"
-          loading={fetchJobsMutation.isPending}
-          onClick={() => fetchJobsMutation.mutate()}
+          loading={fetchMutation.isPending}
+          onClick={() => fetchMutation.mutate()}
         >
           Fetch jobs
         </Button>
         <Button
           type="primary"
-          onClick={async () => {
-            await analyzeJobs();
-            message.success("Jobs analyzed successfully");
-          }}
+          loading={aynalyzeMutation.isPending}
+          onClick={() => aynalyzeMutation.mutate()}
         >
           Analyze jobs
         </Button>
