@@ -14,9 +14,8 @@ interface DataType {
   upworkId: string;
   title: string;
   description: string;
-  industry: number;
   meta: {
-    industry: string[];
+    industryRaw: string[];
     industryKeywords: string[];
     techStack: string[];
   };
@@ -30,11 +29,11 @@ const columns: TableProps<DataType>["columns"] = [
   },
   {
     title: "Industry",
-    dataIndex: ["meta", "industry"],
+    dataIndex: ["meta", "industryRaw"],
     render: (industries) => (
       <Flex wrap="wrap" gap="small">
-        {industries.map((industry: string, index: number) => (
-          <Tag key={index}>{industry}</Tag>
+        {industries.map((industryRaw: string, index: number) => (
+          <Tag key={index}>{industryRaw}</Tag>
         ))}
       </Flex>
     ),
