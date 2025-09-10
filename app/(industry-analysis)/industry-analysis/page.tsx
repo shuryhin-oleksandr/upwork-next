@@ -1,6 +1,6 @@
 "use client";
 
-import { analyzeJobs, getAndSaveUpworkJobs } from "@/app/industry-analysis/api";
+import { analyzeJobs, getAndSaveUpworkJobs } from "@/app/(industry-analysis)/industry-analysis/api";
 import IndustryAnalysisTable from "./IndustryAnalysisTable";
 import { App, Button, Card, Flex } from "antd";
 import { useMutation } from "@tanstack/react-query";
