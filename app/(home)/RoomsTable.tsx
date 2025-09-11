@@ -137,7 +137,7 @@ export const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> 
             // TODO: Fix ref type
             ref={inputRef}
             onChange={() => save()}
-            // onBlue fires before onChange, so it toggles input and prevents onChange 
+            // onBlue fires before onChange, so it toggles input and prevents onChange
             onOpenChange={(open) => !open && toggleEdit()}
             style={{ width: "100%" }}
             format="D MMM YY"
@@ -358,11 +358,11 @@ const RoomsTable: React.FC = () => {
       editableType: "select",
       selectOptions: lossReasons?.map((reason) => ({
         label: reason.name,
-        value: reason._id,
+        value: reason.id,
       })),
       render: (value) => (
         <Text style={{ textWrap: "nowrap" }}>
-          {lossReasons?.find((reason) => reason._id === value)?.name}
+          {lossReasons?.find((reason) => reason.id === value)?.name}
         </Text>
       ),
     },
