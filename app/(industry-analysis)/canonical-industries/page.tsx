@@ -3,6 +3,7 @@
 import { getCanonicalIndustries } from "@/app/(industry-analysis)/api";
 import { useQuery } from "@tanstack/react-query";
 import { Card } from "antd";
+import Link from "next/link";
 
 interface CanonicalIndustry {
   id: string;
@@ -23,9 +24,11 @@ export default function CanonicalIndustries() {
         .sort((a, b) => b.jobCount - a.jobCount)
         .map((canonicalIndustry) => (
           <div key={canonicalIndustry.id} style={{ marginBottom: 8 }}>
-            <strong>
-              {canonicalIndustry.jobCount} - {canonicalIndustry.name}:
-            </strong>{" "}
+            <Link href={`/industry-analysis?canonicalIndustryId=${canonicalIndustry.id}`}>
+              <strong>
+                {canonicalIndustry.jobCount} - {canonicalIndustry.name}:
+              </strong>
+            </Link>
             {canonicalIndustry.aliases.join(", ")}
           </div>
         ))}

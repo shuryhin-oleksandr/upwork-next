@@ -4,6 +4,7 @@ import { getCanonicalIndustries } from "@/app/(industry-analysis)/api";
 import { analyzeJobs, getAndSaveUpworkJobs } from "@/app/(industry-analysis)/industry-analysis/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { App, Button, Card, Flex, Select } from "antd";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import IndustryAnalysisTable from "./IndustryAnalysisTable";
 
@@ -14,7 +15,10 @@ interface CanonicalIndustry {
 
 export default function IndustryAnalysis() {
   const { message } = App.useApp();
-  const [selectedIndustryId, setSelectedIndustryId] = useState<string | undefined>();
+
+  const searchParams = useSearchParams();
+  const initialIndustryId = searchParams.get("canonicalIndustryId");
+  const [selectedIndustryId, setSelectedIndustryId] = useState<string | null>(initialIndustryId);
 
   const { data: canonicalIndustries } = useQuery<CanonicalIndustry[]>({
     queryKey: ["canonicalIndustries"],
