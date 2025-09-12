@@ -1,12 +1,28 @@
 "use client";
 
+import { getCanonicalIndustries } from "@/app/(industry-analysis)/api";
 import { analyzeJobs, getAndSaveUpworkJobs } from "@/app/(industry-analysis)/industry-analysis/api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { App, AutoComplete, Button, Card, Flex } from "antd";
 import IndustryAnalysisTable from "./IndustryAnalysisTable";
-import { App, Button, Card, Flex } from "antd";
-import { useMutation } from "@tanstack/react-query";
+
+interface CanonicalIndustry {
+  id: string;
+  name: string;
+}
 
 export default function IndustryAnalysis() {
   const { message } = App.useApp();
+
+  const { data: canonicalIndustries } = useQuery<CanonicalIndustry[]>({
+    queryKey: ["canonicalIndustries"],
+    queryFn: getCanonicalIndustries,
+  });
+  const canonicalIndustriesOptions =
+    canonicalIndustries?.map((industry) => ({
+      label: industry.name,
+      value: industry.id,
+    })) || [];
 
   const fetchMutation = useMutation({
     mutationFn: getAndSaveUpworkJobs,
@@ -18,7 +34,7 @@ export default function IndustryAnalysis() {
     },
   });
 
-  const aynalyzeMutation = useMutation({
+  const analyzeMutation = useMutation({
     mutationFn: analyzeJobs,
     onSuccess: () => {
       message.success("Jobs analyzed successfully");
@@ -40,8 +56,8 @@ export default function IndustryAnalysis() {
         </Button>
         <Button
           type="primary"
-          loading={aynalyzeMutation.isPending}
-          onClick={() => aynalyzeMutation.mutate()}
+          loading={analyzeMutation.isPending}
+          onClick={() => analyzeMutation.mutate()}
         >
           Analyze jobs
         </Button>
