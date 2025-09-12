@@ -3,7 +3,7 @@
 import { getCanonicalIndustries } from "@/app/(industry-analysis)/api";
 import { analyzeJobs, getAndSaveUpworkJobs } from "@/app/(industry-analysis)/industry-analysis/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { App, AutoComplete, Button, Card, Flex } from "antd";
+import { App, Button, Card, Flex, Select } from "antd";
 import IndustryAnalysisTable from "./IndustryAnalysisTable";
 
 interface CanonicalIndustry {
@@ -47,6 +47,16 @@ export default function IndustryAnalysis() {
   return (
     <>
       <Flex gap={16}>
+        <Select
+          showSearch
+          filterOption={(input, option) =>
+            (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+          }
+          options={canonicalIndustriesOptions}
+          placeholder="Select industry"
+          style={{ width: "20rem" }}
+          listHeight={768}
+        />
         <Button
           type="primary"
           loading={fetchMutation.isPending}
