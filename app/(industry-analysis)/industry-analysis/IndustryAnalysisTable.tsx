@@ -52,12 +52,16 @@ const columns: TableProps<DataType>["columns"] = [
   },
 ];
 
-export default function IndustryAnalysisTable() {
+export default function IndustryAnalysisTable({
+  selectedIndustryId,
+}: {
+  selectedIndustryId?: string;
+}) {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly string[]>([]);
 
-  const { data: jobsWithMeta } = useQuery({
-    queryKey: ["jobsWithMeta"],
-    queryFn: getJobsFull,
+  const { data: jobs } = useQuery({
+    queryKey: ["jobs", selectedIndustryId],
+    queryFn: () => getJobsFull(selectedIndustryId),
   });
 
   const handleExpand = (expanded: boolean, record: DataType) => {
@@ -125,7 +129,7 @@ export default function IndustryAnalysisTable() {
         },
         rowExpandable: (record) => !!record.description,
       }}
-      dataSource={jobsWithMeta}
+      dataSource={jobs}
       rowKey="id"
       tableLayout="fixed"
       pagination={{

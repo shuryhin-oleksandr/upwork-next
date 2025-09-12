@@ -4,6 +4,7 @@ import { getCanonicalIndustries } from "@/app/(industry-analysis)/api";
 import { analyzeJobs, getAndSaveUpworkJobs } from "@/app/(industry-analysis)/industry-analysis/api";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { App, Button, Card, Flex, Select } from "antd";
+import { useState } from "react";
 import IndustryAnalysisTable from "./IndustryAnalysisTable";
 
 interface CanonicalIndustry {
@@ -13,6 +14,7 @@ interface CanonicalIndustry {
 
 export default function IndustryAnalysis() {
   const { message } = App.useApp();
+  const [selectedIndustryId, setSelectedIndustryId] = useState<string | undefined>();
 
   const { data: canonicalIndustries } = useQuery<CanonicalIndustry[]>({
     queryKey: ["canonicalIndustries"],
@@ -56,6 +58,9 @@ export default function IndustryAnalysis() {
           placeholder="Select industry"
           style={{ width: "20rem" }}
           listHeight={768}
+          value={selectedIndustryId}
+          onChange={setSelectedIndustryId}
+          allowClear
         />
         <Button
           type="primary"
@@ -73,7 +78,7 @@ export default function IndustryAnalysis() {
         </Button>
       </Flex>
       <Card style={{ marginTop: 16 }}>
-        <IndustryAnalysisTable />
+        <IndustryAnalysisTable selectedIndustryId={selectedIndustryId} />
       </Card>
     </>
   );
