@@ -118,7 +118,7 @@ export const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> 
           <Select
             options={selectOptions}
             onChange={save}
-            onDropdownVisibleChange={toggleEdit}
+            onOpenChange={toggleEdit}
             defaultOpen={true}
             allowClear
           />
@@ -255,7 +255,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Topic",
       dataIndex: "topic",
-      width: "30%",
+      width: "27%",
       render: (topic: string, room: Room) =>
         room.jobUrl && (
           <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
@@ -276,7 +276,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "28%",
+      width: "26%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -352,7 +352,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Loss",
       dataIndex: ["meta", "lossReason"],
-      width: "5%",
+      width: "10%",
       align: "center",
       editable: true,
       editableType: "select",

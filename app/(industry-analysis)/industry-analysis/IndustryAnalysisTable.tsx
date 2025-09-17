@@ -59,7 +59,7 @@ export default function IndustryAnalysisTable({
 }) {
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly string[]>([]);
 
-  const { data: jobs } = useQuery({
+  const { data: jobs, isLoading } = useQuery({
     queryKey: ["jobs", selectedIndustryId],
     queryFn: () => getJobsFull(selectedIndustryId),
   });
@@ -137,6 +137,7 @@ export default function IndustryAnalysisTable({
         showSizeChanger: true,
         defaultPageSize: 50,
       }}
+      loading={isLoading}
     />
   );
 }
