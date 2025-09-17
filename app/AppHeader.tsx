@@ -15,6 +15,7 @@ const { useToken } = theme;
 const LINKS = [
   { href: "/", label: "Follow ups" },
   { href: "/proposals", label: "Bid analysis" },
+  { href: "/leads", label: "Lead analysis" },
 ];
 
 export default function AppHeader() {
