@@ -13,9 +13,8 @@ const { Title, Text } = Typography;
 const { useToken } = theme;
 
 const LINKS = [
-  { href: "/", label: "Rooms" },
-  { href: "/bid-analysis", label: "Bid Analysis" },
-  { href: "/proposals", label: "Proposals" },
+  { href: "/", label: "Follow ups" },
+  { href: "/proposals", label: "Bid analysis" },
 ];
 
 export default function AppHeader() {
