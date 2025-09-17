@@ -27,7 +27,7 @@ export interface RoomMeta {
 
 export interface LossReason {
   // TODO: use id instead of _id
-  _id: string;
+  id: string;
   name: string;
 }
 

@@ -118,7 +118,7 @@ export const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> 
           <Select
             options={selectOptions}
             onChange={save}
-            onDropdownVisibleChange={toggleEdit}
+            onOpenChange={toggleEdit}
             defaultOpen={true}
             allowClear
           />
@@ -137,7 +137,7 @@ export const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> 
             // TODO: Fix ref type
             ref={inputRef}
             onChange={() => save()}
-            // onBlue fires before onChange, so it toggles input and prevents onChange 
+            // onBlue fires before onChange, so it toggles input and prevents onChange
             onOpenChange={(open) => !open && toggleEdit()}
             style={{ width: "100%" }}
             format="D MMM YY"
@@ -255,7 +255,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Topic",
       dataIndex: "topic",
-      width: "30%",
+      width: "27%",
       render: (topic: string, room: Room) =>
         room.jobUrl && (
           <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
@@ -276,7 +276,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "28%",
+      width: "26%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -352,17 +352,17 @@ const RoomsTable: React.FC = () => {
     {
       title: "Loss",
       dataIndex: ["meta", "lossReason"],
-      width: "5%",
+      width: "10%",
       align: "center",
       editable: true,
       editableType: "select",
       selectOptions: lossReasons?.map((reason) => ({
         label: reason.name,
-        value: reason._id,
+        value: reason.id,
       })),
       render: (value) => (
         <Text style={{ textWrap: "nowrap" }}>
-          {lossReasons?.find((reason) => reason._id === value)?.name}
+          {lossReasons?.find((reason) => reason.id === value)?.name}
         </Text>
       ),
     },
