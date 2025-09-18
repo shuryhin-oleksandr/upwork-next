@@ -7,13 +7,16 @@ import { Button, Card, DatePicker, Table, Typography } from "antd";
 import { RangePickerProps } from "antd/es/date-picker";
 import { useState } from "react";
 import { getLeads } from "./api";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 export default function Leads() {
   type RangePickerValue = RangePickerProps["value"];
-  const [dateRange, setDateRange] = useState<RangePickerValue>();
+  const initialEndDate = dayjs()
+  const initialStartDate = initialEndDate.subtract(4, "week").add(1, "day");
+  const [dateRange, setDateRange] = useState<RangePickerValue>([initialStartDate, initialEndDate]);
 
   const {
     data: leads,
