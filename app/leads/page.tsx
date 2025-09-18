@@ -1,22 +1,28 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { Card, Table, Typography } from "antd";
-import { getLeads } from "./api";
-import { LossReason } from "@/app/(home)/interfaces";
 import { getLossReasons } from "@/app/(home)/api";
+import { LossReason } from "@/app/(home)/interfaces";
+import { useQuery } from "@tanstack/react-query";
+import { Button, Card, DatePicker, Table, Typography } from "antd";
+import { RangePickerProps } from "antd/es/date-picker";
+import { useState } from "react";
+import { getLeads } from "./api";
 
 const { Text } = Typography;
-
+const { RangePicker } = DatePicker;
 
 export default function Leads() {
+  type RangePickerValue = RangePickerProps["value"];
+  const [dateRange, setDateRange] = useState<RangePickerValue>();
+
   const {
     data: leads,
-    error,
-    isPending,
+    error: leadsError,
+    isFetching: isLeadsFetching,
+    refetch: refetchLeads,
   } = useQuery({
     queryKey: ["leads"],
-    queryFn: getLeads,
+    queryFn: () => getLeads(dateRange?.[0], dateRange?.[1]),
   });
 
   const {
@@ -29,7 +35,7 @@ export default function Leads() {
     queryFn: getLossReasons,
   });
 
-  if (error) return <div>Error loading proposals</div>;
+  if (leadsError) return <div>Error loading leads</div>;
   if (isLossReasonsError) return <div>Loss reasons error: {lossReasonsError.message}</div>;
 
   const columns = [
@@ -48,19 +54,31 @@ export default function Leads() {
     },
   ];
   return (
-    <Card>
-      <Table
-        dataSource={leads}
-        columns={columns}
-        loading={isPending || isLossReasonsPending}
-        rowKey="id"
-        size="small"
-        pagination={{
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
-          showSizeChanger: true,
-          defaultPageSize: 50,
-        }}
-      />
-    </Card>
+    <div>
+      <RangePicker value={dateRange} onChange={(dates) => setDateRange(dates)} />
+      <Button
+        type="primary"
+        onClick={() => refetchLeads()}
+        style={{ marginLeft: "1rem" }}
+        disabled={!dateRange || !dateRange[0] || !dateRange[1]}
+        loading={isLeadsFetching}
+      >
+        Analyze
+      </Button>
+      <Card style={{ marginTop: "2rem" }}>
+        <Table
+          dataSource={leads}
+          columns={columns}
+          loading={isLeadsFetching || isLossReasonsPending}
+          rowKey="id"
+          size="small"
+          pagination={{
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            showSizeChanger: true,
+            defaultPageSize: 50,
+          }}
+        />
+      </Card>
+    </div>
   );
 }

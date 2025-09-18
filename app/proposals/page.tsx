@@ -6,6 +6,7 @@ import { createProposalMeta, getProposals, updateProposalMeta } from "@/app/prop
 import { Proposal, ProposalStatus } from "@/app/proposals/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App, Button, Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
+import { RangePickerProps } from "antd/es/date-picker";
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
@@ -248,7 +249,8 @@ function ProposalsTable({
 }
 
 export default function Proposals() {
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
+  type RangePickerValue = RangePickerProps["value"];
+  const [dateRange, setDateRange] = useState<RangePickerValue>();
   const queryKey = ["proposals", dateRange];
   const {
     data: proposals,
