@@ -1,9 +1,6 @@
-import { Form, GetRef } from "antd";
+import { EditableContext } from "./EditableContext";
+import { Form } from "antd";
 import React from "react";
-
-type FormInstance<T> = GetRef<typeof Form<T>>;
-
-const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
 interface EditableRowProps {
   index: number;
