@@ -1,7 +1,8 @@
 "use client";
 
 import { EditableType, SelectOption } from "@/app/(home)/interfaces";
-import { EditableCell, EditableRow } from "@/app/(home)/RoomsTable";
+import { EditableCell } from "@/app/components/EditableCell";
+import { EditableRow } from "@/app/components/EditableRow";
 import { DATE_FORMAT } from "@/app/lib/constants";
 import { createProposalMeta, getProposals, updateProposalMeta } from "@/app/proposals/api";
 import { Proposal, ProposalStatus } from "@/app/proposals/interfaces";
@@ -232,7 +233,7 @@ function ProposalsTable({
   const components = {
     body: {
       row: EditableRow,
-      cell: EditableCell,
+      cell: EditableCell<Proposal>,
     },
   };
 

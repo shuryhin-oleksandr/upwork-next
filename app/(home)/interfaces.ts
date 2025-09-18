@@ -48,10 +48,6 @@ export interface UpdateRoomMetaDto {
   lossReason?: LossReason;
 }
 
-export interface EditableRowProps {
-  index: number;
-}
-
 export interface EditableCellProps {
   title: React.ReactNode;
   editable: boolean;
