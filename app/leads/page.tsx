@@ -2,19 +2,23 @@
 
 import { getLossReasons } from "@/app/(home)/api";
 import { LossReason } from "@/app/(home)/interfaces";
+import { Lead } from "@/app/leads/interfaces";
+import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
-import { Button, Card, DatePicker, Table, Typography } from "antd";
+import { Button, Card, DatePicker, Table, theme, Typography } from "antd";
 import { RangePickerProps } from "antd/es/date-picker";
+import dayjs from "dayjs";
 import { useState } from "react";
 import { getLeads } from "./api";
-import dayjs from "dayjs";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 export default function Leads() {
+  const { token } = theme.useToken();
+
   type RangePickerValue = RangePickerProps["value"];
-  const initialEndDate = dayjs()
+  const initialEndDate = dayjs();
   const initialStartDate = initialEndDate.subtract(4, "week").add(1, "day");
   const [dateRange, setDateRange] = useState<RangePickerValue>([initialStartDate, initialEndDate]);
 
@@ -23,7 +27,7 @@ export default function Leads() {
     error: leadsError,
     isFetching: isLeadsFetching,
     refetch: refetchLeads,
-  } = useQuery({
+  } = useQuery<Lead[]>({
     queryKey: ["leads"],
     queryFn: () => getLeads(dateRange?.[0], dateRange?.[1]),
   });
@@ -45,6 +49,13 @@ export default function Leads() {
     {
       title: "Room Name",
       dataIndex: "roomName",
+    },
+    {
+      title: "Status",
+      dataIndex: "hidden",
+      align: "center",
+      render: (hidden: boolean) =>
+        hidden && <EyeInvisibleOutlined style={{ color: token.colorTextDisabled }} />,
     },
     {
       title: "Loss Reason",
