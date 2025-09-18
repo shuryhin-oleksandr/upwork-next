@@ -66,10 +66,11 @@ export default function Leads() {
     {
       title: "Loss Reason",
       dataIndex: ["meta", "lossReason"],
-      render: (value) => (
-        <Text style={{ textWrap: "nowrap" }}>
+      align: "center",
+      render: (value, record) => (
+        value ? <Text style={{ textWrap: "nowrap" }}>
           {lossReasons?.find((reason) => reason.id === value)?.name}
-        </Text>
+        </Text> : record.hidden && "-"
       ),
     },
   ];
