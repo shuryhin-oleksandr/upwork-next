@@ -218,11 +218,11 @@ const RoomsTable: React.FC = () => {
       editableType: "select",
       selectOptions: lossReasons?.map((reason) => ({
         label: reason.name,
-        value: reason._id,
+        value: reason.id,
       })),
       render: (value) => (
         <Text style={{ textWrap: "nowrap" }}>
-          {lossReasons?.find((reason) => reason._id === value)?.name}
+          {lossReasons?.find((reason) => reason.id === value)?.name}
         </Text>
       ),
     },
