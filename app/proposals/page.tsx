@@ -2,6 +2,7 @@
 
 import { EditableType, SelectOption } from "@/app/(home)/interfaces";
 import { EditableCell, EditableRow } from "@/app/(home)/RoomsTable";
+import { DATE_FORMAT } from "@/app/lib/constants";
 import { createProposalMeta, getProposals, updateProposalMeta } from "@/app/proposals/api";
 import { Proposal, ProposalStatus } from "@/app/proposals/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -84,7 +85,7 @@ function ProposalsTable({
       key: "createdDateTime",
       render: (value: string) => (
         <TypographyText style={{ textWrap: "nowrap" }}>
-          {dayjs(value).format("D MMM YY")}
+          {dayjs(value).format(DATE_FORMAT)}
         </TypographyText>
       ),
     },

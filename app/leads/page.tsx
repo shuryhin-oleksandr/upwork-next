@@ -10,6 +10,7 @@ import { RangePickerProps } from "antd/es/date-picker";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { getLeads } from "./api";
+import { DATE_FORMAT } from "@/app/lib/constants";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -49,6 +50,11 @@ export default function Leads() {
     {
       title: "Room Name",
       dataIndex: "roomName",
+    },
+    {
+      title: "Created",
+      dataIndex: "createdAtDateTime",
+      render: (value: string) => dayjs(value).format(DATE_FORMAT),
     },
     {
       title: "Status",
