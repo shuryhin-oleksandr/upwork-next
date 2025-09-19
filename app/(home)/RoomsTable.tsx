@@ -1,10 +1,7 @@
-import { EditableCell } from "@/app/components/EditableCell";
-import { EditableRow } from "@/app/components/EditableRow";
-import { EditableType, SelectOption } from "@/app/components/interfaces";
+import makeColumns, { components, DefaultColumnType } from "@/app/components/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TableProps } from "antd";
 import { message, Switch, Table, theme, Typography } from "antd";
-import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
@@ -97,12 +94,7 @@ const RoomsTable: React.FC = () => {
   if (isError) return <span>Error: {error.message}</span>;
   if (isLossReasonsError) return <span>Loss reasons error: {lossReasonsError.message}</span>;
 
-  const defaultColumns: (ColumnTypes[number] & {
-    editable?: boolean;
-    editableType?: EditableType;
-    dataIndex: NamePath<Room>;
-    selectOptions?: SelectOption[];
-  })[] = [
+  const defaultColumns: DefaultColumnType<Room>[] = [
     {
       title: "Name",
       dataIndex: "roomName",
@@ -234,31 +226,6 @@ const RoomsTable: React.FC = () => {
     else roomMetaUpdateMutation.mutate(row.meta);
   };
 
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell<Room>,
-    },
-  };
-
-  const columns = defaultColumns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Room) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-        editableType: col.editableType,
-        selectOptions: col.selectOptions,
-      }),
-    };
-  });
-
   return (
     <div>
       {contextHolder}
@@ -275,7 +242,7 @@ const RoomsTable: React.FC = () => {
         rowClassName={() => "editable-row"}
         bordered
         dataSource={data}
-        columns={columns as ColumnTypes}
+        columns={makeColumns(defaultColumns, handleSave) as ColumnTypes}
         rowKey={(record) => record.id}
         pagination={{
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
