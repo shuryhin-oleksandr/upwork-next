@@ -140,7 +140,7 @@ export default function Leads() {
         ) : (
           record.hidden && "-"
         ),
-      editable: true,
+      editable: false,
       editableType: "select",
       selectOptions: lossReasons?.map((reason) => ({ label: reason.name, value: reason.id })),
     },
