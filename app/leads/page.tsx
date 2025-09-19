@@ -11,7 +11,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { getLeads } from "./api";
 import { DATE_FORMAT } from "@/app/lib/constants";
-import makeEditableColumns, { DefaultColumnType } from "@/app/components/utils";
+import makeEditableColumns, { ColumnTypes, DefaultColumnType } from "@/app/components/utils";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -98,7 +98,7 @@ export default function Leads() {
       <Card style={{ marginTop: "2rem" }}>
         <Table
           dataSource={leads}
-          columns={columns}
+          columns={columns as ColumnTypes<Lead>}
           loading={isLeadsFetching || isLossReasonsPending}
           rowKey="id"
           size="small"

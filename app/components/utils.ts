@@ -2,7 +2,7 @@ import { SelectOption, EditableType } from "./interfaces";
 import type { TableProps } from "antd";
 import { NamePath } from "antd/es/form/interface";
 
-type ColumnTypes<T> = Exclude<TableProps<T>["columns"], undefined>;
+export type ColumnTypes<T> = Exclude<TableProps<T>["columns"], undefined>;
 
 export type DefaultColumnType<T> = ColumnTypes<T>[number] & {
   editable?: boolean;
