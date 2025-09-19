@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import { getLeads } from "./api";
 import { DATE_FORMAT } from "@/app/lib/constants";
+import makeEditableColumns, { DefaultColumnType } from "@/app/components/utils";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -46,7 +47,7 @@ export default function Leads() {
   if (leadsError) return <div>Error loading leads</div>;
   if (isLossReasonsError) return <div>Loss reasons error: {lossReasonsError.message}</div>;
 
-  const columns = [
+  const defaultColumns: DefaultColumnType<Lead>[] = [
     {
       title: "Room Name",
       dataIndex: "roomName",
@@ -67,13 +68,21 @@ export default function Leads() {
       title: "Loss Reason",
       dataIndex: ["meta", "lossReason"],
       align: "center",
-      render: (value, record) => (
-        value ? <Text style={{ textWrap: "nowrap" }}>
-          {lossReasons?.find((reason) => reason.id === value)?.name}
-        </Text> : record.hidden && "-"
-      ),
+      render: (value, record) =>
+        value ? (
+          <Text style={{ textWrap: "nowrap" }}>
+            {lossReasons?.find((reason) => reason.id === value)?.name}
+          </Text>
+        ) : (
+          record.hidden && "-"
+        ),
     },
   ];
+
+  const handleSave = (row: Lead) => null;
+  
+  const columns = makeEditableColumns<Lead>(defaultColumns, handleSave);
+
   return (
     <div>
       <RangePicker value={dateRange} onChange={(dates) => setDateRange(dates)} />

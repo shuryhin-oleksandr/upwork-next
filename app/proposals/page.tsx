@@ -1,6 +1,6 @@
 "use client";
 
-import { EditableType, SelectOption } from "@/app/(home)/interfaces";
+import { EditableType, SelectOption } from "@/app/components/interfaces";
 import { EditableCell } from "@/app/components/EditableCell";
 import { EditableRow } from "@/app/components/EditableRow";
 import { DATE_FORMAT } from "@/app/lib/constants";

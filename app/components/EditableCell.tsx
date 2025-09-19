@@ -4,10 +4,9 @@ import _ from "lodash";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { EditableContext } from "./EditableContext";
 import { NamePath } from "antd/es/form/interface";
+import { EditableType } from "@/app/components/interfaces";
 
 const { TextArea } = Input;
-
-export type EditableType = "text" | "number" | "date" | "select";
 
 export interface EditableCellProps<T> {
   title: React.ReactNode;

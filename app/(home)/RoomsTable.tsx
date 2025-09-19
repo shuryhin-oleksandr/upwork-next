@@ -1,3 +1,6 @@
+import { EditableCell } from "@/app/components/EditableCell";
+import { EditableRow } from "@/app/components/EditableRow";
+import { EditableType, SelectOption } from "@/app/components/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TableProps } from "antd";
 import { message, Switch, Table, theme, Typography } from "antd";
@@ -9,9 +12,7 @@ import _ from "lodash";
 import React, { useState } from "react";
 import { createRoomMeta, getLossReasons, getRooms, updateRoomMeta } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
-import { EditableType, LossReason, Room, SelectOption } from "./interfaces";
-import { EditableRow } from "@/app/components/EditableRow";
-import { EditableCell } from "@/app/components/EditableCell";
+import { LossReason, Room } from "./interfaces";
 
 dayjs.extend(isSameOrAfter);
 

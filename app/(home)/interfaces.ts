@@ -1,3 +1,4 @@
+import { EditableType } from "@/app/components/interfaces";
 import { NamePath } from "antd/es/form/interface";
 import React from "react";
 
@@ -56,11 +57,4 @@ export interface EditableCellProps {
   handleSave: (record: Room) => void;
   editableType?: EditableType;
   selectOptions?: { label: string; value: string }[];
-}
-
-export type EditableType = "text" | "number" | "date" | "select";
-
-export interface SelectOption {
-  label: string;
-  value: string;
 }
