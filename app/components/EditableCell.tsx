@@ -8,7 +8,7 @@ import { EditableType } from "@/app/components/interfaces";
 
 const { TextArea } = Input;
 
-export interface EditableCellProps<T> {
+interface EditableCellProps<T> {
   title: React.ReactNode;
   editable: boolean;
   dataIndex: NamePath<T>;
