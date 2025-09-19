@@ -7,7 +7,7 @@ import { Lead } from "@/app/leads/interfaces";
 import { DATE_FORMAT } from "@/app/lib/constants";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { App, Button, Card, DatePicker, Table, theme, Typography } from "antd";
+import { App, Button, Card, DatePicker, Flex, Statistic, Table, theme, Typography } from "antd";
 import { RangePickerProps } from "antd/es/date-picker";
 import dayjs from "dayjs";
 import _ from "lodash";
@@ -19,10 +19,27 @@ const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 function LeadStats({ leads, lossReasons }: { leads?: Lead[]; lossReasons?: LossReason[] }) {
+  const totalCount = leads?.length || 0;
+
+  const hiddenLeads = leads?.filter((lead) => lead.hidden);
   const reasonMap = _.keyBy(lossReasons, "id");
-  const countsById = _.countBy(leads, (lead) => lead.meta?.lossReason ?? null);
-  const countsByName = _.mapKeys(countsById, (count, id) => reasonMap[id]?.name ?? null);
-  return <Text>{JSON.stringify(countsByName)}</Text>;
+  const countsById = _.countBy(hiddenLeads, (lead) => lead.meta?.lossReason ?? null);
+  const countsByName = _.mapKeys(countsById, (count, id) => reasonMap[id]?.name ?? "Undefined");
+
+  countsByName["Active"] = leads?.filter((lead) => !lead.hidden).length ?? 0;
+  countsByName["Total"] = totalCount;
+  return (
+    <Flex gap="large">
+      {Object.entries(countsByName).map(([lossReason, count]: [string, number]) => (
+        <Statistic
+          key={lossReason}
+          title={lossReason}
+          value={totalCount ? `${count} - ${Math.round((count / totalCount) * 100)}%` : "-"}
+          style={{ textAlign: "center", marginLeft: lossReason === "Active" ? "auto" : undefined }}
+        />
+      ))}
+    </Flex>
+  );
 }
 
 export default function Leads() {
@@ -167,9 +184,11 @@ export default function Leads() {
       >
         Analyze
       </Button>
-      <Card style={{ marginTop: "2rem" }}>
-        <LeadStats leads={leads} lossReasons={lossReasons} />
-      </Card>
+      {leads?.length && lossReasons?.length && (
+        <Card style={{ marginTop: "2rem" }}>
+          <LeadStats leads={leads} lossReasons={lossReasons} />
+        </Card>
+      )}
       <Card style={{ marginTop: "2rem" }}>
         <Table
           components={components}

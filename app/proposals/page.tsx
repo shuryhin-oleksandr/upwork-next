@@ -253,9 +253,11 @@ export default function Proposals() {
       >
         Analyze
       </Button>
-      <Card style={{ marginTop: "2rem" }}>
-        <BidStats {...{ proposals, isLoading }} />
-      </Card>
+      {proposals?.length && (
+        <Card style={{ marginTop: "2rem" }}>
+          <BidStats {...{ proposals, isLoading }} />
+        </Card>
+      )}
       <Card style={{ marginTop: "2rem" }}>
         <ProposalsTable {...{ proposals, isLoading, queryKey }} />
       </Card>
