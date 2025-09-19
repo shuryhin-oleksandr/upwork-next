@@ -1,13 +1,14 @@
 import makeColumns, { components, DefaultColumnType } from "@/app/components/utils";
+import { createRoomMeta, updateRoomMeta } from "@/app/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { TableProps } from "antd";
-import { message, Switch, Table, theme, Typography } from "antd";
+import { App, Switch, Table, theme, Typography } from "antd";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
 import _ from "lodash";
 import React, { useState } from "react";
-import { createRoomMeta, getLossReasons, getRooms, updateRoomMeta } from "./api";
+import { getLossReasons, getRooms } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
 import { LossReason, Room } from "./interfaces";
 
@@ -20,7 +21,8 @@ type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
 const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
-  const [messageApi, contextHolder] = message.useMessage();
+    const { message } = App.useApp();
+
   const [excludeContracts, setExcludeContracts] = useState(true);
 
   const queryKey = ["rooms", excludeContracts];
@@ -53,11 +55,11 @@ const RoomsTable: React.FC = () => {
       return { previousRooms };
     },
     onSuccess: () => {
-      messageApi.success("Room created successfully!");
+      message.success("RoomMeta created successfully!");
     },
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
-      messageApi.error(`Room creation failed: ${errorMessage} !`);
+      message.error(`RoomMeta creation failed: ${errorMessage} !`);
       queryClient.setQueryData(queryKey, context?.previousRooms);
     },
     onSettled: () => {
@@ -79,11 +81,11 @@ const RoomsTable: React.FC = () => {
       return { previousRooms };
     },
     onSuccess: () => {
-      messageApi.success("Room updated successfully!");
+      message.success("RoomMeta updated successfully!");
     },
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
-      messageApi.error(`Room update failed: ${errorMessage} !`);
+      message.error(`RoomMeta update failed: ${errorMessage} !`);
       queryClient.setQueryData(queryKey, context?.previousRooms);
     },
     onSettled: () => {
@@ -222,13 +224,12 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    if (!row.meta?._id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
+    if (!row.meta?.id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
     else roomMetaUpdateMutation.mutate(row.meta);
   };
 
   return (
     <div>
-      {contextHolder}
       {/* TODO: Fix custom styles */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <Switch

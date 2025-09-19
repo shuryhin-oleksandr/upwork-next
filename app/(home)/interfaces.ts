@@ -18,12 +18,12 @@ export interface Room {
 }
 
 export interface RoomMeta {
-  _id: string;
+  id: string;
   roomId: string;
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  lossReason?: LossReason;
+  lossReason?: string;
 }
 
 export interface LossReason {
@@ -34,19 +34,19 @@ export interface LossReason {
 
 export interface CreateRoomMetaDto {
   roomId: string;
-  comment: string;
+  comment?: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  lossReason?: LossReason;
+  lossReason?: string;
 }
 
 export interface UpdateRoomMetaDto {
-  _id: string;
+  id: string;
   // TODO: roomId
-  comment: string;
+  comment?: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  lossReason?: LossReason;
+  lossReason?: string;
 }
 
 export interface EditableCellProps {

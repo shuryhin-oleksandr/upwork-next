@@ -4,6 +4,7 @@ export interface Lead {
   createdAtDateTime: string;
   hidden: boolean;
   meta: {
-    lossReason: string | null;
+    id: string;
+    lossReason?: string;
   };
 }

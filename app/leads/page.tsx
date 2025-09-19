@@ -6,11 +6,13 @@ import makeColumns, { ColumnTypes, components, DefaultColumnType } from "@/app/c
 import { Lead } from "@/app/leads/interfaces";
 import { DATE_FORMAT } from "@/app/lib/constants";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Card, DatePicker, Table, theme, Typography } from "antd";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { App, Button, Card, DatePicker, Table, theme, Typography } from "antd";
 import { RangePickerProps } from "antd/es/date-picker";
 import dayjs from "dayjs";
+import _ from "lodash";
 import { useState } from "react";
+import { createRoomMeta, updateRoomMeta } from "@/app/lib/api";
 import { getLeads } from "./api";
 
 const { Text } = Typography;
@@ -18,6 +20,8 @@ const { RangePicker } = DatePicker;
 
 export default function Leads() {
   const { token } = theme.useToken();
+  const queryClient = useQueryClient();
+  const { message } = App.useApp();
 
   type RangePickerValue = RangePickerProps["value"];
   const initialEndDate = dayjs();
@@ -28,6 +32,7 @@ export default function Leads() {
     data: leads,
     error: leadsError,
     isFetching: isLeadsFetching,
+    isLoading: isLeadsLoading,
     refetch: refetchLeads,
   } = useQuery<Lead[]>({
     queryKey: ["leads"],
@@ -43,6 +48,65 @@ export default function Leads() {
     queryKey: ["loss-reasons"],
     queryFn: getLossReasons,
   });
+
+  const mainQueryKey = ["leads"];
+
+  const roomMetaCreateMutation = useMutation({
+    mutationFn: createRoomMeta,
+    onMutate: (data) => {
+      queryClient.cancelQueries({ queryKey: mainQueryKey });
+      const previousRooms = queryClient.getQueryData(mainQueryKey);
+
+      queryClient.setQueryData(mainQueryKey, (oldRooms: Lead[]) =>
+        oldRooms.map((room: Lead) =>
+          room.id === data.roomId ? _.merge({}, room, { meta: data }) : room
+        )
+      );
+      return { previousRooms };
+    },
+    onSuccess: () => {
+      message.success("Room created successfully!");
+    },
+    onError: (error, _, context) => {
+      const errorMessage = error?.response?.data?.message || error.message;
+      message.error(`Room creation failed: ${errorMessage} !`);
+      queryClient.setQueryData(mainQueryKey, context?.previousRooms);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: mainQueryKey });
+    },
+  });
+
+  const roomMetaUpdateMutation = useMutation({
+    mutationFn: updateRoomMeta,
+    onMutate: (data) => {
+      queryClient.cancelQueries({ queryKey: mainQueryKey });
+      const previousRooms = queryClient.getQueryData(mainQueryKey);
+
+      queryClient.setQueryData(mainQueryKey, (oldRooms: Lead[]) =>
+        oldRooms.map((room: Lead) =>
+          room.meta?.id === data.id ? _.merge({}, room, { meta: data }) : room
+        )
+      );
+      return { previousRooms };
+    },
+    onSuccess: () => {
+      message.success("Room updated successfully!");
+    },
+    onError: (error, _, context) => {
+      const errorMessage = error?.response?.data?.message || error.message;
+      message.error(`Room update failed: ${errorMessage} !`);
+      queryClient.setQueryData(mainQueryKey, context?.previousRooms);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: mainQueryKey });
+    },
+  });
+
+  const handleSave = (row: Lead) => {
+    if (!row.meta?.id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
+    else roomMetaUpdateMutation.mutate(row.meta);
+  };
 
   if (leadsError) return <div>Error loading leads</div>;
   if (isLossReasonsError) return <div>Loss reasons error: {lossReasonsError.message}</div>;
@@ -76,10 +140,11 @@ export default function Leads() {
         ) : (
           record.hidden && "-"
         ),
+      editable: true,
+      editableType: "select",
+      selectOptions: lossReasons?.map((reason) => ({ label: reason.name, value: reason.id })),
     },
   ];
-
-  const handleSave = (row: Lead) => null;
 
   const columns = makeColumns<Lead>(defaultColumns, handleSave);
 
@@ -100,7 +165,7 @@ export default function Leads() {
           components={components}
           dataSource={leads}
           columns={columns as ColumnTypes<Lead>}
-          loading={isLeadsFetching || isLossReasonsPending}
+          loading={isLeadsLoading || isLossReasonsPending}
           rowKey="id"
           size="small"
           pagination={{
@@ -108,6 +173,7 @@ export default function Leads() {
             showSizeChanger: true,
             defaultPageSize: 50,
           }}
+          rowClassName={() => "editable-row"}
         />
       </Card>
     </div>
