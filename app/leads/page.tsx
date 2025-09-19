@@ -18,6 +18,13 @@ import { getLeads } from "./api";
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
+function LeadStats({ leads, lossReasons }: { leads?: Lead[]; lossReasons?: LossReason[] }) {
+  const reasonMap = _.keyBy(lossReasons, "id");
+  const countsById = _.countBy(leads, (lead) => lead.meta?.lossReason ?? null);
+  const countsByName = _.mapKeys(countsById, (count, id) => reasonMap[id]?.name ?? null);
+  return <Text>{JSON.stringify(countsByName)}</Text>;
+}
+
 export default function Leads() {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
@@ -160,6 +167,9 @@ export default function Leads() {
       >
         Analyze
       </Button>
+      <Card style={{ marginTop: "2rem" }}>
+        <LeadStats leads={leads} lossReasons={lossReasons} />
+      </Card>
       <Card style={{ marginTop: "2rem" }}>
         <Table
           components={components}
