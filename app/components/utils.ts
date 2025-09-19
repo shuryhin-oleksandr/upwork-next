@@ -1,6 +1,8 @@
-import { SelectOption, EditableType } from "./interfaces";
+import { EditableCell } from "@/app/components/EditableCell";
+import { EditableRow } from "@/app/components/EditableRow";
 import type { TableProps } from "antd";
 import { NamePath } from "antd/es/form/interface";
+import { EditableType, SelectOption } from "./interfaces";
 
 export type ColumnTypes<T> = Exclude<TableProps<T>["columns"], undefined>;
 
@@ -11,7 +13,7 @@ export type DefaultColumnType<T> = ColumnTypes<T>[number] & {
   selectOptions?: SelectOption[];
 };
 
-export default function makeEditableColumns<T>(
+export default function makeColumns<T>(
   defaultColumns: DefaultColumnType<T>[],
   handleSave: (record: T) => void
 ) {
@@ -33,3 +35,10 @@ export default function makeEditableColumns<T>(
     };
   });
 }
+
+export const components = {
+  body: {
+    row: EditableRow,
+    cell: EditableCell,
+  },
+};

@@ -1,8 +1,7 @@
 "use client";
 
 import { EditableType, SelectOption } from "@/app/components/interfaces";
-import { EditableCell } from "@/app/components/EditableCell";
-import { EditableRow } from "@/app/components/EditableRow";
+import makeColumns, { components } from "@/app/components/utils";
 import { DATE_FORMAT } from "@/app/lib/constants";
 import { createProposalMeta, getProposals, updateProposalMeta } from "@/app/proposals/api";
 import { Proposal, ProposalStatus } from "@/app/proposals/interfaces";
@@ -212,30 +211,7 @@ function ProposalsTable({
     else proposalMetaUpdateMutation.mutate(row.meta);
   };
 
-  const columns = defaultColumns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Proposal) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-        editableType: col.editableType,
-        selectOptions: col.selectOptions,
-      }),
-    };
-  });
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell<Proposal>,
-    },
-  };
+  const columns = makeColumns<Proposal>(defaultColumns, handleSave);
 
   return (
     <Table<Proposal>

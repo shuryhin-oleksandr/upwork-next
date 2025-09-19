@@ -2,7 +2,9 @@
 
 import { getLossReasons } from "@/app/(home)/api";
 import { LossReason } from "@/app/(home)/interfaces";
+import makeColumns, { ColumnTypes, components, DefaultColumnType } from "@/app/components/utils";
 import { Lead } from "@/app/leads/interfaces";
+import { DATE_FORMAT } from "@/app/lib/constants";
 import { EyeInvisibleOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Button, Card, DatePicker, Table, theme, Typography } from "antd";
@@ -10,8 +12,6 @@ import { RangePickerProps } from "antd/es/date-picker";
 import dayjs from "dayjs";
 import { useState } from "react";
 import { getLeads } from "./api";
-import { DATE_FORMAT } from "@/app/lib/constants";
-import makeEditableColumns, { ColumnTypes, DefaultColumnType } from "@/app/components/utils";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -80,8 +80,8 @@ export default function Leads() {
   ];
 
   const handleSave = (row: Lead) => null;
-  
-  const columns = makeEditableColumns<Lead>(defaultColumns, handleSave);
+
+  const columns = makeColumns<Lead>(defaultColumns, handleSave);
 
   return (
     <div>
@@ -97,6 +97,7 @@ export default function Leads() {
       </Button>
       <Card style={{ marginTop: "2rem" }}>
         <Table
+          components={components}
           dataSource={leads}
           columns={columns as ColumnTypes<Lead>}
           loading={isLeadsFetching || isLossReasonsPending}
