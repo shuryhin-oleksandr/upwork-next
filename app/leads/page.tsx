@@ -5,7 +5,7 @@ import { LossReason } from "@/app/(home)/interfaces";
 import makeColumns, { ColumnTypes, components, DefaultColumnType } from "@/app/components/utils";
 import { Lead } from "@/app/leads/interfaces";
 import { DATE_FORMAT } from "@/app/lib/constants";
-import { EyeInvisibleOutlined } from "@ant-design/icons";
+import { EyeInvisibleOutlined, MessageOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App, Button, Card, DatePicker, Flex, Statistic, Table, theme, Typography } from "antd";
 import { RangePickerProps } from "antd/es/date-picker";
@@ -144,6 +144,15 @@ export default function Leads() {
       title: "Created",
       dataIndex: "createdAtDateTime",
       render: (value: string) => dayjs(value).format(DATE_FORMAT),
+    },
+    {
+      title: "Source",
+      dataIndex: "roomType",
+      align: "center",
+      render: (roomType: string) =>
+        roomType == "ONE_ON_ONE" ? (
+          <MessageOutlined style={{ color: token.colorTextDisabled }} />
+        ) : null,
     },
     {
       title: "Status",
