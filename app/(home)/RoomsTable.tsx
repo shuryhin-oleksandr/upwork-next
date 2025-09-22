@@ -243,7 +243,7 @@ const RoomsTable: React.FC = () => {
     selectOptions?: SelectOption[];
   })[] = [
     {
-      title: "Name",
+      title: "Room",
       dataIndex: "roomName",
       width: "18%",
       render: (text: string, record: Room) => (
@@ -253,7 +253,7 @@ const RoomsTable: React.FC = () => {
       ),
     },
     {
-      title: "Topic",
+      title: "Job",
       dataIndex: "topic",
       width: "27%",
       render: (topic: string, room: Room) =>
