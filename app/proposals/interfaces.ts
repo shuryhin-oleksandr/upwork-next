@@ -4,7 +4,7 @@ export interface CreateProposalMetaDto {
 }
 
 export interface UpdateProposalMetaDto {
-  _id: string;
+  id: string;
   proposalId: string;
   hiredRate?: number;
 }
@@ -16,7 +16,7 @@ export interface ProposalMeta {
 }
 
 export interface Proposal {
-  _id: string;
+  id: string;
   proposalId: string;
   upworkStatus: string;
   jobUrl: string;

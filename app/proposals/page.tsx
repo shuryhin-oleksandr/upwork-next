@@ -1,11 +1,13 @@
 "use client";
 
-import { EditableType, SelectOption } from "@/app/(home)/interfaces";
-import { EditableCell, EditableRow } from "@/app/(home)/RoomsTable";
+import { EditableType, SelectOption } from "@/app/components/interfaces";
+import makeColumns, { components } from "@/app/components/utils";
+import { DATE_FORMAT } from "@/app/lib/constants";
 import { createProposalMeta, getProposals, updateProposalMeta } from "@/app/proposals/api";
 import { Proposal, ProposalStatus } from "@/app/proposals/interfaces";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App, Button, Card, DatePicker, Flex, Statistic, Table, TableProps } from "antd";
+import { RangePickerProps } from "antd/es/date-picker";
 import { NamePath } from "antd/es/form/interface";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
@@ -83,7 +85,7 @@ function ProposalsTable({
       key: "createdDateTime",
       render: (value: string) => (
         <TypographyText style={{ textWrap: "nowrap" }}>
-          {dayjs(value).format("D MMM YY")}
+          {dayjs(value).format(DATE_FORMAT)}
         </TypographyText>
       ),
     },
@@ -209,30 +211,7 @@ function ProposalsTable({
     else proposalMetaUpdateMutation.mutate(row.meta);
   };
 
-  const columns = defaultColumns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Proposal) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-        editableType: col.editableType,
-        selectOptions: col.selectOptions,
-      }),
-    };
-  });
-
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
+  const columns = makeColumns<Proposal>(defaultColumns, handleSave);
 
   return (
     <Table<Proposal>
@@ -248,7 +227,8 @@ function ProposalsTable({
 }
 
 export default function Proposals() {
-  const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
+  type RangePickerValue = RangePickerProps["value"];
+  const [dateRange, setDateRange] = useState<RangePickerValue>();
   const queryKey = ["proposals", dateRange];
   const {
     data: proposals,
@@ -257,7 +237,7 @@ export default function Proposals() {
     refetch,
   } = useQuery<Proposal[]>({
     queryKey,
-    queryFn: () => getProposals({ startDate: dateRange![0], endDate: dateRange![1] }),
+    queryFn: () => getProposals({ startDate: dateRange?.[0], endDate: dateRange?.[1] }),
     enabled: false,
   });
   if (error) return <div>Error loading proposals</div>;
@@ -273,9 +253,11 @@ export default function Proposals() {
       >
         Analyze
       </Button>
-      <Card style={{ marginTop: "2rem" }}>
-        <BidStats {...{ proposals, isLoading }} />
-      </Card>
+      {proposals?.length && (
+        <Card style={{ marginTop: "2rem" }}>
+          <BidStats {...{ proposals, isLoading }} />
+        </Card>
+      )}
       <Card style={{ marginTop: "2rem" }}>
         <ProposalsTable {...{ proposals, isLoading, queryKey }} />
       </Card>

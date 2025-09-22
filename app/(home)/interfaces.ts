@@ -1,3 +1,4 @@
+import { EditableType } from "@/app/components/interfaces";
 import { NamePath } from "antd/es/form/interface";
 import React from "react";
 
@@ -17,12 +18,12 @@ export interface Room {
 }
 
 export interface RoomMeta {
-  _id: string;
+  id: string;
   roomId: string;
   comment: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  lossReason?: LossReason;
+  lossReason?: string;
 }
 
 export interface LossReason {
@@ -33,23 +34,19 @@ export interface LossReason {
 
 export interface CreateRoomMetaDto {
   roomId: string;
-  comment: string;
+  comment?: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  lossReason?: LossReason;
+  lossReason?: string;
 }
 
 export interface UpdateRoomMetaDto {
-  _id: string;
+  id: string;
   // TODO: roomId
-  comment: string;
+  comment?: string;
   bant?: number;
   nextFollowUpDateCustom?: string;
-  lossReason?: LossReason;
-}
-
-export interface EditableRowProps {
-  index: number;
+  lossReason?: string;
 }
 
 export interface EditableCellProps {
@@ -60,11 +57,4 @@ export interface EditableCellProps {
   handleSave: (record: Room) => void;
   editableType?: EditableType;
   selectOptions?: { label: string; value: string }[];
-}
-
-export type EditableType = "text" | "number" | "date" | "select";
-
-export interface SelectOption {
-  label: string;
-  value: string;
 }

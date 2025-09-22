@@ -1,168 +1,28 @@
+import makeColumns, { components, DefaultColumnType } from "@/app/components/utils";
+import { createRoomMeta, updateRoomMeta } from "@/app/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { GetRef, TableProps } from "antd";
-import {
-  DatePicker,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Select,
-  Switch,
-  Table,
-  theme,
-  Typography,
-} from "antd";
-import { NamePath } from "antd/es/form/interface";
+import type { TableProps } from "antd";
+import { App, Switch, Table, theme, Typography } from "antd";
 import TypographyText from "antd/es/typography/Text";
 import dayjs from "dayjs";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
-import { motion } from "framer-motion";
 import _ from "lodash";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { createRoomMeta, getLossReasons, getRooms, updateRoomMeta } from "./api";
+import React, { useState } from "react";
+import { getLossReasons, getRooms } from "./api";
 import { FollowUpDate, MemoizedBantTag } from "./components";
-import {
-  EditableCellProps,
-  EditableRowProps,
-  EditableType,
-  LossReason,
-  Room,
-  SelectOption,
-} from "./interfaces";
+import { LossReason, Room } from "./interfaces";
 
 dayjs.extend(isSameOrAfter);
 
-const { TextArea } = Input;
 const { Text } = Typography;
 
-type FormInstance<T> = GetRef<typeof Form<T>>;
-
-const EditableContext = React.createContext<FormInstance<Room> | null>(null);
-// Index needed for compatibility with Antd Table public API
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const EditableRow: React.FC<EditableRowProps> = ({ index, ...props }) => {
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} component={false}>
-      <EditableContext.Provider value={form}>
-        <motion.tr {...props} layout />
-      </EditableContext.Provider>
-    </Form>
-  );
-};
-
 type ColumnTypes = Exclude<TableProps<Room>["columns"], undefined>;
-
-export const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
-  // Index needed for compatibility with Antd Table public API
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  title,
-  editable,
-  children,
-  dataIndex,
-  record,
-  handleSave,
-  editableType = "text",
-  selectOptions,
-  ...restProps
-}) => {
-  const [editing, setEditing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const form = useContext(EditableContext)!;
-
-  useEffect(() => {
-    if (editing) {
-      inputRef.current?.focus();
-    }
-  }, [editing]);
-
-  const toggleEdit = () => {
-    setEditing(!editing);
-    if (!editing) {
-      const value = _.get(record, dataIndex);
-      // TODO: Ratinalise conversion to Dayjs
-      if (value && editableType === "date") {
-        form.setFieldValue(dataIndex, dayjs(value));
-      } else {
-        form.setFieldValue(dataIndex, value);
-      }
-    }
-  };
-
-  const save = async () => {
-    try {
-      const values = await form.validateFields();
-      let newValue = _.get(values, dataIndex);
-      if (editableType === "date") newValue = newValue?.toISOString() ?? null;
-      if (editableType === "select") newValue = newValue ?? null;
-      const originalValue = _.get(record, dataIndex);
-
-      toggleEdit();
-      if (_.isEqual(originalValue, newValue)) {
-        return;
-      }
-
-      const updatedRecord = _.set({ ...record }, dataIndex, newValue);
-      handleSave(updatedRecord);
-    } catch (errInfo) {
-      console.log("Save failed:", errInfo);
-    }
-  };
-
-  let childNode = children;
-
-  if (editable) {
-    childNode = editing ? (
-      <Form.Item style={{ margin: 0 }} name={dataIndex}>
-        {editableType === "select" && (
-          <Select
-            options={selectOptions}
-            onChange={save}
-            onOpenChange={toggleEdit}
-            defaultOpen={true}
-            allowClear
-          />
-        )}
-        {editableType === "number" && (
-          <InputNumber
-            ref={inputRef}
-            onPressEnter={save}
-            onBlur={save}
-            style={{ width: "100%" }}
-            controls={false}
-          />
-        )}
-        {editableType === "date" && (
-          <DatePicker
-            // TODO: Fix ref type
-            ref={inputRef}
-            onChange={() => save()}
-            // onBlue fires before onChange, so it toggles input and prevents onChange
-            onOpenChange={(open) => !open && toggleEdit()}
-            style={{ width: "100%" }}
-            format="D MMM YY"
-            defaultOpen
-          />
-        )}
-        {editableType === "text" && (
-          <TextArea ref={inputRef} onPressEnter={save} onBlur={save} autoSize />
-        )}
-      </Form.Item>
-    ) : (
-      <div className="editable-cell-value-wrap" onClick={toggleEdit}>
-        {/* Padding here needed to avoid jumping of select column (see select arrow width) */}
-        <div style={{ padding: editableType === "select" ? "0 9px" : 0 }}>{children}</div>
-      </div>
-    );
-  }
-
-  return <td {...restProps}>{childNode}</td>;
-};
 
 const RoomsTable: React.FC = () => {
   const { token } = theme.useToken();
   const queryClient = useQueryClient();
-  const [messageApi, contextHolder] = message.useMessage();
+    const { message } = App.useApp();
+
   const [excludeContracts, setExcludeContracts] = useState(true);
 
   const queryKey = ["rooms", excludeContracts];
@@ -195,11 +55,11 @@ const RoomsTable: React.FC = () => {
       return { previousRooms };
     },
     onSuccess: () => {
-      messageApi.success("Room created successfully!");
+      message.success("RoomMeta created successfully!");
     },
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
-      messageApi.error(`Room creation failed: ${errorMessage} !`);
+      message.error(`RoomMeta creation failed: ${errorMessage} !`);
       queryClient.setQueryData(queryKey, context?.previousRooms);
     },
     onSettled: () => {
@@ -221,11 +81,11 @@ const RoomsTable: React.FC = () => {
       return { previousRooms };
     },
     onSuccess: () => {
-      messageApi.success("Room updated successfully!");
+      message.success("RoomMeta updated successfully!");
     },
     onError: (error, _, context) => {
       const errorMessage = error?.response?.data?.message || error.message;
-      messageApi.error(`Room update failed: ${errorMessage} !`);
+      message.error(`RoomMeta update failed: ${errorMessage} !`);
       queryClient.setQueryData(queryKey, context?.previousRooms);
     },
     onSettled: () => {
@@ -236,12 +96,7 @@ const RoomsTable: React.FC = () => {
   if (isError) return <span>Error: {error.message}</span>;
   if (isLossReasonsError) return <span>Loss reasons error: {lossReasonsError.message}</span>;
 
-  const defaultColumns: (ColumnTypes[number] & {
-    editable?: boolean;
-    editableType?: EditableType;
-    dataIndex: NamePath<Room>;
-    selectOptions?: SelectOption[];
-  })[] = [
+  const defaultColumns: DefaultColumnType<Room>[] = [
     {
       title: "Room",
       dataIndex: "roomName",
@@ -369,38 +224,12 @@ const RoomsTable: React.FC = () => {
   ];
 
   const handleSave = (row: Room) => {
-    if (!row.meta?._id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
+    if (!row.meta?.id) roomMetaCreateMutation.mutate({ ...row.meta, roomId: row.id });
     else roomMetaUpdateMutation.mutate(row.meta);
   };
 
-  const components = {
-    body: {
-      row: EditableRow,
-      cell: EditableCell,
-    },
-  };
-
-  const columns = defaultColumns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Room) => ({
-        record,
-        editable: col.editable,
-        dataIndex: col.dataIndex,
-        title: col.title,
-        handleSave,
-        editableType: col.editableType,
-        selectOptions: col.selectOptions,
-      }),
-    };
-  });
-
   return (
     <div>
-      {contextHolder}
       {/* TODO: Fix custom styles */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <Switch
@@ -414,7 +243,7 @@ const RoomsTable: React.FC = () => {
         rowClassName={() => "editable-row"}
         bordered
         dataSource={data}
-        columns={columns as ColumnTypes}
+        columns={makeColumns(defaultColumns, handleSave) as ColumnTypes}
         rowKey={(record) => record.id}
         pagination={{
           showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,

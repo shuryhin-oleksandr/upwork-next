@@ -13,9 +13,9 @@ const { Title, Text } = Typography;
 const { useToken } = theme;
 
 const LINKS = [
-  { href: "/", label: "Rooms" },
-  { href: "/bid-analysis", label: "Bid Analysis" },
-  { href: "/proposals", label: "Proposals" },
+  { href: "/", label: "Follow ups" },
+  { href: "/proposals", label: "Bid analysis" },
+  { href: "/leads", label: "Lead analysis" },
   { href: "/industry-analysis", label: "Industry Analysis" },
   { href: "/canonical-industries", label: "Canonical Industries" },
 ];

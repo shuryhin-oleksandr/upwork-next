@@ -6,8 +6,8 @@ export const getProposals = async ({
   startDate,
   endDate,
 }: {
-  startDate: Dayjs | null;
-  endDate: Dayjs | null;
+  startDate?: Dayjs | null;
+  endDate?: Dayjs | null;
 }) => {
   const url = "/upwork/proposals";
   const response = await api.get(url, { params: { startDate, endDate } });
