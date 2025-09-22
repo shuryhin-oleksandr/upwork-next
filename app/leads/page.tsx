@@ -14,6 +14,7 @@ import _ from "lodash";
 import { useState } from "react";
 import { createRoomMeta, updateRoomMeta } from "@/app/lib/api";
 import { getLeads } from "./api";
+import { on } from "events";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -25,8 +26,10 @@ function LeadStats({ leads, lossReasons }: { leads?: Lead[]; lossReasons?: LossR
   const reasonMap = _.keyBy(lossReasons, "id");
   const countsById = _.countBy(hiddenLeads, (lead) => lead.meta?.lossReason ?? null);
   const countsByName = _.mapKeys(countsById, (count, id) => reasonMap[id]?.name ?? "Undefined");
-
   countsByName["Active"] = leads?.filter((lead) => !lead.hidden).length ?? 0;
+
+  const oneOnOneCount = leads?.filter((lead) => lead.roomType === "ONE_ON_ONE").length ?? 0;
+  if (oneOnOneCount > 0) countsByName["DM"] = oneOnOneCount;
   countsByName["Total"] = totalCount;
   return (
     <Flex gap="large">
@@ -35,7 +38,10 @@ function LeadStats({ leads, lossReasons }: { leads?: Lead[]; lossReasons?: LossR
           key={lossReason}
           title={lossReason}
           value={totalCount ? `${count} - ${Math.round((count / totalCount) * 100)}%` : "-"}
-          style={{ textAlign: "center", marginLeft: lossReason === "Active" ? "auto" : undefined }}
+          style={{
+            textAlign: "center",
+            marginLeft: ["DM", "Total"].includes(lossReason) ? "auto" : undefined,
+          }}
         />
       ))}
     </Flex>
