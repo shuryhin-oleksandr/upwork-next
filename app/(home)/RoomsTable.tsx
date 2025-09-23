@@ -75,7 +75,7 @@ const RoomsTable: React.FC = () => {
 
       queryClient.setQueryData(queryKey, (oldRooms: Room[]) =>
         oldRooms.map((room: Room) =>
-          room.meta?._id === data._id ? _.merge({}, room, { meta: data }) : room
+          room.meta?.id === data.id ? _.merge({}, room, { meta: data }) : room
         )
       );
       return { previousRooms };
