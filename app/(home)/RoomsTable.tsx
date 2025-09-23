@@ -98,7 +98,7 @@ const RoomsTable: React.FC = () => {
 
   const defaultColumns: DefaultColumnType<Room>[] = [
     {
-      title: "Name",
+      title: "Room",
       dataIndex: "roomName",
       width: "18%",
       render: (text: string, record: Room) => (
@@ -108,9 +108,9 @@ const RoomsTable: React.FC = () => {
       ),
     },
     {
-      title: "Topic",
+      title: "Job",
       dataIndex: "topic",
-      width: "30%",
+      width: "27%",
       render: (topic: string, room: Room) =>
         room.jobUrl && (
           <a href={room.jobUrl} target="_blank" rel="noopener noreferrer">
@@ -131,7 +131,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Comment",
       dataIndex: ["meta", "comment"],
-      width: "28%",
+      width: "26%",
       editable: true,
       sorter: {
         multiple: 2,
@@ -207,7 +207,7 @@ const RoomsTable: React.FC = () => {
     {
       title: "Loss",
       dataIndex: ["meta", "lossReason"],
-      width: "5%",
+      width: "10%",
       align: "center",
       editable: true,
       editableType: "select",

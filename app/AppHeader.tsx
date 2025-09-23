@@ -16,6 +16,8 @@ const LINKS = [
   { href: "/", label: "Follow ups" },
   { href: "/proposals", label: "Bid analysis" },
   { href: "/leads", label: "Lead analysis" },
+  { href: "/industry-analysis", label: "Industry Analysis" },
+  { href: "/canonical-industries", label: "Canonical Industries" },
 ];
 
 export default function AppHeader() {
