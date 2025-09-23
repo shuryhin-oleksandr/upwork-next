@@ -5,7 +5,7 @@ import { LossReason } from "@/app/(home)/interfaces";
 import makeColumns, { ColumnTypes, components, DefaultColumnType } from "@/app/components/utils";
 import { Lead } from "@/app/leads/interfaces";
 import { DATE_FORMAT } from "@/app/lib/constants";
-import { EyeInvisibleOutlined } from "@ant-design/icons";
+import { EyeInvisibleOutlined, MessageOutlined } from "@ant-design/icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { App, Button, Card, DatePicker, Flex, Statistic, Table, theme, Typography } from "antd";
 import { RangePickerProps } from "antd/es/date-picker";
@@ -14,6 +14,7 @@ import _ from "lodash";
 import { useState } from "react";
 import { createRoomMeta, updateRoomMeta } from "@/app/lib/api";
 import { getLeads } from "./api";
+import { on } from "events";
 
 const { Text } = Typography;
 const { RangePicker } = DatePicker;
@@ -25,8 +26,10 @@ function LeadStats({ leads, lossReasons }: { leads?: Lead[]; lossReasons?: LossR
   const reasonMap = _.keyBy(lossReasons, "id");
   const countsById = _.countBy(hiddenLeads, (lead) => lead.meta?.lossReason ?? null);
   const countsByName = _.mapKeys(countsById, (count, id) => reasonMap[id]?.name ?? "Undefined");
-
   countsByName["Active"] = leads?.filter((lead) => !lead.hidden).length ?? 0;
+
+  const oneOnOneCount = leads?.filter((lead) => lead.roomType === "ONE_ON_ONE").length ?? 0;
+  if (oneOnOneCount > 0) countsByName["DM"] = oneOnOneCount;
   countsByName["Total"] = totalCount;
   return (
     <Flex gap="large">
@@ -35,7 +38,10 @@ function LeadStats({ leads, lossReasons }: { leads?: Lead[]; lossReasons?: LossR
           key={lossReason}
           title={lossReason}
           value={totalCount ? `${count} - ${Math.round((count / totalCount) * 100)}%` : "-"}
-          style={{ textAlign: "center", marginLeft: lossReason === "Active" ? "auto" : undefined }}
+          style={{
+            textAlign: "center",
+            marginLeft: ["DM", "Total"].includes(lossReason) ? "auto" : undefined,
+          }}
         />
       ))}
     </Flex>
@@ -144,6 +150,15 @@ export default function Leads() {
       title: "Created",
       dataIndex: "createdAtDateTime",
       render: (value: string) => dayjs(value).format(DATE_FORMAT),
+    },
+    {
+      title: "Source",
+      dataIndex: "roomType",
+      align: "center",
+      render: (roomType: string) =>
+        roomType == "ONE_ON_ONE" ? (
+          <MessageOutlined style={{ color: token.colorTextDisabled }} />
+        ) : null,
     },
     {
       title: "Status",
