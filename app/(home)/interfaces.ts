@@ -1,0 +1,60 @@
+import { EditableType } from "@/app/components/interfaces";
+import { NamePath } from "antd/es/form/interface";
+import React from "react";
+
+export interface Room {
+  id: string;
+  roomName: string;
+  topic: string;
+  url: string;
+  jobUrl: string;
+  //  TODO: Rationalise
+  nextFollowUpNumber: number;
+  nextFollowUpDate: string;
+  nextFollowUpDateIsCustom: boolean | null;
+  isContract: boolean;
+  isFollowUpLimitExceeded: boolean;
+  meta: RoomMeta;
+}
+
+export interface RoomMeta {
+  id: string;
+  roomId: string;
+  comment: string;
+  bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: string;
+}
+
+export interface LossReason {
+  // TODO: use id instead of _id
+  id: string;
+  name: string;
+}
+
+export interface CreateRoomMetaDto {
+  roomId: string;
+  comment?: string;
+  bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: string;
+}
+
+export interface UpdateRoomMetaDto {
+  id: string;
+  // TODO: roomId
+  comment?: string;
+  bant?: number;
+  nextFollowUpDateCustom?: string;
+  lossReason?: string;
+}
+
+export interface EditableCellProps {
+  title: React.ReactNode;
+  editable: boolean;
+  dataIndex: NamePath<Room>;
+  record: Room;
+  handleSave: (record: Room) => void;
+  editableType?: EditableType;
+  selectOptions?: { label: string; value: string }[];
+}
